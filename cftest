@@ -1,15 +1,26 @@
 #!/usr/bin/env python
+# coding=utf-8
+#
 # cftest - CLI tool for testing solutions to problems from http://www.codeforces.com
-# Copyright (C) 2014-2015  Zoran Plesivcak <zplesiv@gmail.com>
+# Copyright (C) 2014-2015  Zoran Plesivčak <zplesiv@gmail.com>
 # This software is distributed under the terms of the MIT License.
+#
 
 import sys
-import string
 import argparse
+import re
+
+# Python2 and Python3 compatibility
+try:
+    from urllib2 import urlopen
+    from HTMLParser import HTMLParser
+except:
+    from urllib.request import urlopen
+    from html.parser import HTMLParser
 
 # Default configuration
 DEFAULT_LANGUAGES = ["cpp"]
-DEFAULT_PROBLEMS = string.ascii_uppercase
+
 
 # -----------------------------------------------------------------------------
 
@@ -36,13 +47,56 @@ parser.add_argument(
         str(DEFAULT_LANGUAGES) + ")"
 )
 
-# Parse CLI arguments
+# Parse and normalize CLI arguments
 args = parser.parse_args()
 args.lang = sorted(set(args.lang)) if args.lang else DEFAULT_LANGUAGES
-if args.PROBLEMS[0]:
-    args.PROBLEMS = sorted(set(''.join(args.PROBLEMS[0])))
-else:
-    args.PROBLEMS = DEFAULT_LANGUAGES
+args.PROBLEMS = sorted(set(''.join(args.PROBLEMS[0])))
+
+# -----------------------------------------------------------------------------
+
+# Contest parser class
+class CodeforcesContestParser(HTMLParser):
+
+    def __init__(self, contest):
+        HTMLParser.__init__(self)
+        self.contest = contest
+        self.start_contest = False
+        self.start_problem = False
+        self.name = ''
+        self.problems = []
+        self.problem_names = []
+
+    def handle_starttag(self, tag, attrs):
+        if self.name == '' and attrs == [('style', 'color: black'), ('href', '/contest/%s' % (self.contest))]:
+                self.start_contest = True
+        elif tag == 'option':
+            if len(attrs) == 1:
+                regexp = re.compile(r"'[A-Z]'")
+                string = str(attrs[0])
+                search = regexp.search(string)
+                if search is not None:
+                    self.problems.append(search.group(0).split("'")[-2])
+                    self.start_problem = True
+
+    def handle_endtag(self, tag):
+        if tag == 'a' and self.start_contest:
+            self.start_contest = False
+        elif self.start_problem:
+            self.start_problem = False
+
+    def handle_data(self, data):
+        if self.start_contest:
+            self.name = data
+        elif self.start_problem:
+            self.problem_names.append(data)
+
+# Parses the contest page
+def parse_contest(contest):
+    url = 'http://codeforces.com/contest/{0}'.format(contest)
+    html = urlopen(url).read()
+    parser = CodeforcesContestParser(contest)
+    parser.feed(html.decode('utf-8'))
+    return parser
 
 # -----------------------------------------------------------------------------
 
@@ -56,4 +110,11 @@ if __name__ == "__main__":
     print(args.lang)
     print(args.CONTEST)
     print(args.PROBLEMS)
+    allc = parse_contest(args.CONTEST)
 
+    print(allc.contest)
+    print(allc.start_contest)
+    print(allc.start_problem)
+    print(allc.name)
+    print(allc.problems)
+    print(allc.problem_names)
