@@ -1,0 +1,59 @@
+#!/usr/bin/env python
+# cftest - CLI tool for testing solutions to problems from http://www.codeforces.com
+# Copyright (C) 2014-2015  Zoran Plesivcak <zplesiv@gmail.com>
+# This software is distributed under the terms of the MIT License.
+
+import sys
+import string
+import argparse
+
+# Default configuration
+DEFAULT_LANGUAGES = ["cpp"]
+DEFAULT_PROBLEMS = string.ascii_uppercase
+
+# -----------------------------------------------------------------------------
+
+# Construct parser
+parser = argparse.ArgumentParser(
+    description=
+        """Select contest (number) and optionally problems (letters) for which
+        to prepare testing environment in current directory.
+        """,
+    epilog="Examples..."
+)
+parser.add_argument("CONTEST", help="Codeforces contest number")
+parser.add_argument("PROBLEMS", action="append", type=str, nargs="*",
+    help="Problems' letters (Defaults to all problems)")
+parser.add_argument(
+    "-d", "--create-subdir", action="count", default=0,
+    help=
+        """Create additional level of sub-directories (can be given multiple
+        times, max. 2 times have effect)"""
+)
+parser.add_argument(
+    "-l", "--lang", action="append", choices=["py", "cpp"], default=[],
+    help="Languages for which test environment will be prepared (Default: " +
+        str(DEFAULT_LANGUAGES) + ")"
+)
+
+# Parse CLI arguments
+args = parser.parse_args()
+args.lang = sorted(set(args.lang)) if args.lang else DEFAULT_LANGUAGES
+if args.PROBLEMS[0]:
+    args.PROBLEMS = sorted(set(''.join(args.PROBLEMS[0])))
+else:
+    args.PROBLEMS = DEFAULT_LANGUAGES
+
+# -----------------------------------------------------------------------------
+
+if __name__ == "__main__":
+    # When no arguments given show Help
+    if len(sys.argv) == 1:
+        parser.print_help()
+        sys.exit(1)
+
+    print(args.create_subdir)
+    print(args.lang)
+    print(args.CONTEST)
+    print(args.PROBLEMS)
+
