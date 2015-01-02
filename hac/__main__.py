@@ -10,6 +10,7 @@ import sys
 import argparse
 import re
 import os
+import shutil
 
 # Python2 and Python3 compatibility
 try:
@@ -21,8 +22,9 @@ except:
 
 # Default configuration
 DEFAULT_LANGUAGES = ["cpp"]
-CONTEST_DIR_PREFIX = ""
-
+PREFIX_CONTEST_DIR = ""
+PREFIX_INPUT_FILES = 'input'
+PREFIX_OUTPUT_FILES = 'output'
 
 # -----------------------------------------------------------------------------
 
@@ -39,13 +41,15 @@ parser.add_argument("PROBLEMS", action="append", type=str, nargs="*",
     help="Problems' letters (Defaults to all problems)")
 parser.add_argument(
     "-f", "--force", action="store_true",
-    help="Overwrite existing directories (Not enabled by default)"
+    help=
+        """Overwrite existing directories (Not enabled by default,
+        DANGEROUS!!!)"""
 )
 parser.add_argument(
     "-d", "--create-subdirs", type=int, choices=[0, 1, 2], default=1,
     help=
         """Levels of directories to create (Defaults to 1, e.g. create
-        directories for problems)"""
+        directories for problems in current directory)"""
 )
 parser.add_argument(
     "-l", "--lang", action="append", choices=["py", "cpp"], default=[],
@@ -54,6 +58,51 @@ parser.add_argument(
 )
 
 # -----------------------------------------------------------------------------
+
+# Problems parser class
+class CodeforcesProblemParser(HTMLParser):
+
+    def __init__(self, folder):
+        HTMLParser.__init__(self)
+        self.folder = folder
+        self.num_tests = 0
+        self.testcase = None
+        self.start_copy = False
+
+    def handle_starttag(self, tag, attrs):
+        if tag == 'div':
+            if attrs == [('class', 'input')]:
+                self.num_tests += 1
+                self.testcase = open(
+                    '%s/%s%d' % (self.folder, PREFIX_INPUT_FILES, self.num_tests), 'w')
+            elif attrs == [('class', 'output')]:
+                self.testcase = open(
+                    '%s/%s%d' % (self.folder, PREFIX_OUTPUT_FILES, self.num_tests), 'w')
+        elif tag == 'pre':
+            if self.testcase != None:
+                self.start_copy = True
+
+    def handle_endtag(self, tag):
+        if tag == 'br':
+            if self.start_copy:
+                self.testcase.write('\n')
+                self.end_line = True
+        if tag == 'pre':
+            if self.start_copy:
+                if not self.end_line:
+                    self.testcase.write('\n')
+                self.testcase.close()
+                self.testcase = None
+                self.start_copy = False
+
+    def handle_entityref(self, name):
+        if self.start_copy:
+            self.testcase.write(self.unescape(('&%s;' % name)))
+
+    def handle_data(self, data):
+        if self.start_copy:
+            self.testcase.write(data)
+            self.end_line = False
 
 # Contest parser class
 class CodeforcesContestParser(HTMLParser):
@@ -91,6 +140,14 @@ class CodeforcesContestParser(HTMLParser):
         elif self.start_problem:
             self.problem_names.append(data)
 
+# Parses the problem page
+def parse_problem(folder, contest, problem):
+    url = 'http://codeforces.com/contest/{0}/problem/{1}'.format(contest, problem)
+    html = urlopen(url).read()
+    parser = CodeforcesProblemParser(folder)
+    parser.feed(html.decode('utf-8').encode('utf-8')) # Should fix special chars problems.
+    return parser.num_tests
+
 # Parses the contest page
 def parse_contest(contest):
     url = 'http://codeforces.com/contest/{0}'.format(contest)
@@ -99,14 +156,22 @@ def parse_contest(contest):
     parser.feed(html.decode('utf-8'))
     return parser
 
-# Create directory-structure or notify if exist already
-def create_directories(path):
-    try:
-        os.makedirs(path)
-    except:
-        print('WARNING: Directory "{0}" already exists{1}!'.format(
-            os.path.relpath(path),
-            " and it's NOT EMPTY" if os.listdir(path) else ""))
+# Warnings
+def warn(s): sys.stdout.write("WARNING: " + s + "\n")
+def erro(s): sys.stderr.write("ERROR: " + s + "\n")
+
+# Create directory-structure (return True if directory is empty)
+def create_directory(path, force=False):
+    if os.path.exists(path):
+        if force:
+            shutil.rmtree(path)
+        else:
+            warn('Directory "{0}" already exists{1}!'.format(
+                os.path.relpath(path),
+                " and it's NOT EMPTY" if os.listdir(path) else ""))
+
+    os.makedirs(path)
+    return not bool(os.listdir(path))
 
 # -----------------------------------------------------------------------------
 
@@ -131,21 +196,28 @@ if __name__ == "__main__":
         problems = sorted(set(content.problems) & set(args.PROBLEMS))
 
     if len(problems) == 0:
-        sys.stderr.write("No eligible problems chosen...\n")
-        sys.stderr.write("Problems available in contest {0}: {1}.\n".
+        erro("No eligible problems chosen...")
+        erro("Problems available in contest {0}: {1}.".
             format(args.CONTEST, str(content.problems or "[<no problems>]")))
         sys.exit(2)
 
     # Create contest directory starting from current directory (if needed)
     contest_path = os.curdir
-    if (args.create_subdirs == 2):
+    if args.create_subdirs == 2:
         contest_path = os.path.join(contest_path,
-            CONTEST_DIR_PREFIX + str(args.CONTEST))
-        create_directories(contest_path)
+            PREFIX_CONTEST_DIR + str(args.CONTEST))
+        create_directory(contest_path, False)
 
     for idx, prb in enumerate(problems):
-        problem_path = os.path.join(contest_path, prb)
-        create_directories(problem_path)
+        if args.create_subdirs >= 1:
+            problem_path = os.path.join(contest_path, prb)
+        dir_empty = create_directory(problem_path, args.force)
+
+        ### TODO
+        if dir_empty:
+            num_tests = parse_problem(problem_path, args.CONTEST, prb)
+            print(idx,prb,num_tests)
+
         #try:
             #os.makedirs(problem_path)
         #except:
