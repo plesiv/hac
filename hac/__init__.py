@@ -1,10 +1,11 @@
+# -*- coding: utf-8 -*-
 """
 hac - Helper for Algorithm Competitions
 
 """
 __author__ = 'Zoran Plesivčak'
-__version__ = '0.1.0-dev'
-__licence__ = 'GPL-2'
+__version__ = '0.1.0'
+__license__ = 'GPLv2'
 
 
 class ExitStatus:
