@@ -1,7 +1,24 @@
+import sys
+
 from setuptools import setup, find_packages
+from setuptools.command.test import test as TestCommand
 from codecs import open
 
 import hac
+
+
+class PyTest(TestCommand):
+    def finalize_options(self):
+        TestCommand.finalize_options(self)
+        self.test_args = [
+            '--doctest-modules', '--verbose',
+            './hac', './tests'
+        ]
+        self.test_suite = True
+
+    def run_tests(self):
+        import pytest
+        sys.exit(pytest.main(self.test_args))
 
 
 def long_description():
@@ -31,8 +48,8 @@ setup(
     entry_points=entry_points,
     extras_require={},
     install_requires=[],
-    tests_require=[],
-    cmdclass={},
+    tests_require=['pytest'],
+    cmdclass = {'test': PyTest},
 
     classifiers=[
         'Development Status :: 3 - Alpha',
