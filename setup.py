@@ -32,7 +32,7 @@ setup(
     extras_require={},
     install_requires=[],
     tests_require=[],
-    cmdclass={'test': PyTest},
+    cmdclass={},
 
     classifiers=[
         'Development Status :: 3 - Alpha',
