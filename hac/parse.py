@@ -85,7 +85,18 @@ common_args = [
                 "dest": "force"
             }
         },
-    )
+    ),
+    {
+        "names": ("command",),
+        "params": {
+            "nargs": "?",
+            "choices": ["prep", "show"],
+            "help":
+                """Prepare environment or show information about current
+                configuration, diagnostics etc.""",
+            "metavar": "prep | show"
+        }
+    },
 ]
 
 #TODO version to cli arguments

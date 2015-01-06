@@ -13,7 +13,6 @@ cli_parser = argparse.ArgumentParser(
         """how to use...
         """,#TODO
     epilog="Examples...",#TODO
-    formatter_class=argparse.ArgumentDefaultsHelpFormatter
 )
 
 
