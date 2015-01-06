@@ -75,6 +75,7 @@ commmon_args = [
         }
     },
     #TODO force defaults to False
+    #TODO remove defaults in help
     (
         {
             "names": ("-f", "--force"),
@@ -96,8 +97,7 @@ commmon_args = [
 ]
 
 #TODO version to cli arguments
-
-cli_specific_args = []
+#TODO test-cases for arguments
 
 for arg in commmon_args:
     # Mutually exclusive group of arguments for arguments in tuple.
@@ -110,6 +110,25 @@ for arg in commmon_args:
     else:
         cli_parser.add_argument(*arg["names"], **arg["params"])
 
-# parser.add_argument("CONTEST", help="Codeforces contest number")
-# parser.add_argument("PROBLEMS", action="append", type=str, nargs="*",
-#     help="Problems' letters (Defaults to all problems)")
+
+# Add CLI specific arguments.
+cli_parser.add_argument(
+    "location",
+    #TODO format help better
+    help=
+        """Unique identifier for contest (options: [a] URL, [b] 'website ID'/'contest
+        ID') or specific problem (URL)""",
+    metavar="(CONTEST | PROBLEM)",
+    #metavar="(CONTEST | CONTEST URL | PROBLEM URL)",
+)
+cli_parser.add_argument(
+    "problems",
+    action="append",
+    nargs="*",
+    help=
+        """Optional identifiers for additional problems (options: [a] problem's
+        ID, [b] problem's number) from contest specified by previous
+        argument""",
+    metavar="PROBLEM"
+    #metavar="[(PROBLEM ID | PROBLEM ORDINAL NUMBER | PROBLEM URL) ...]",
+)
