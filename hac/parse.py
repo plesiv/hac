@@ -14,7 +14,6 @@ common_args = [
     {
         "names": ("-d", "--subdir-depth"),
         "params": {
-            "default": 1,
             "type": int,
             "choices": [0, 1, 2],
             "help":
@@ -31,7 +30,6 @@ common_args = [
         "names": ("-l", "--lang"),
         "params": {
             "action": "append",
-            "default": [],
             "choices": ["no", "py", "cpp"],
             "help":
                 """Languages for which to prepare the environment""",
@@ -42,7 +40,6 @@ common_args = [
         "names": ("-r", "--runner"),
         "params": {
             "action": "append",
-            "default": [],
             "choices": ["no", "sh"],
             "help":
                 """Runners for which to prepare the environment""",
@@ -52,7 +49,6 @@ common_args = [
     {
         "names": ("-w", "--workdir"),
         "params": {
-            "default": os.curdir,
             "help":
                 """Change working directory for program""",
             "metavar": "DIR",
@@ -62,7 +58,6 @@ common_args = [
     {
         "names": ("-t", "--testcases"),
         "params": {
-            "default": 1,
             "type": int,
             "choices": [0, 1],
             "help":

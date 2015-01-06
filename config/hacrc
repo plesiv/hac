@@ -9,7 +9,7 @@
 # User configuration instructions:
 #   1) copy contents of this file to ~/.config/hac/hacrc (it is best to copy
 #      entire config directory; "sh>" denotes shell prompt)
-#       
+#
 #       sh> cp -r config ~/.config/hac
 #
 #   2) modify ~/.config/hac/hacrc (user configuration overrides default global

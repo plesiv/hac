@@ -1,3 +1,3 @@
-Helper for Algorithm Competitions 
-================================= 
+Helper for Algorithm Competitions
+=================================
 

@@ -11,6 +11,21 @@ from hac.config import \
 from hac.cli import cli_parser
 
 
+def dict_override(a, b):
+    """Overriding dictionary values.
+
+    Values in dict b overwrite values in dict a, except when value in dict b is
+    None.
+    """
+    res = {}
+    for key in set(a.keys() + b.keys()):
+        if key in a:
+            res[key] = a[key]
+        if (key in b) and (b[key] != None):
+            res[key] = b[key]
+    return res
+
+
 def main(args=sys.argv[1:]):
     """Execution flow of the main function:
 
@@ -18,22 +33,29 @@ def main(args=sys.argv[1:]):
     2) branch according to specified command
     """
 
-    # TODO read default configuration
-    cont = config_parser.parse_args(
-        ['@' + os.path.join(DEFAULT_CONFIG_DIR, CONFIG_FILENAME)])
-    print(vars(cont))
-    sys.exit(ExitStatus.ERROR)
+    # Get default global configuration
+    global_config_file = os.path.join(DEFAULT_CONFIG_DIR, CONFIG_FILENAME)
+    env_global = config_parser.parse_args(['@' + global_config_file])
+
+    # Get local configuration
+    user_config_file = os.path.join(USER_CONFIG_DIR, CONFIG_FILENAME)
+    if os.path.exists(user_config_file):
+        env_user = config_parser.parse_args(['@' + user_config_file])
 
     # Show help and exit when no arguments given.
     if len(args) == 0:
         cli_parser.print_help()
         sys.exit(ExitStatus.ERROR)
 
+    # Parse CLI arguments
+    env_cli = cli_parser.parse_args(args=args)
 
-    # TODO read local configuration
+    # Resolve configuration
+    conf_user = dict_override(vars(env_global), vars(env_user))
+    conf_all = dict_override(conf_user, vars(env_cli))
 
-    # Override default and user configuration with CLI arguments
-    args = cli_parser.parse_args(args=args) # TODO env add
-    print(vars(args))
+    print(conf_user)
+    print(conf_all)
 
-    # TODO create whole directory structure which doesn't exist
+    # TODO create whole directory structure for dir that doesn't exist
+
