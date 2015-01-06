@@ -1,0 +1,37 @@
+# DO NOT DIRECTLY MODIFY THIS FILE!
+#
+#
+# Purpose:
+#   a) default global hac configuration file,
+#   b) template for user configuration
+#
+#
+# User configuration instructions:
+#   1) copy contents of this file to ~/.config/hac/hacrc (it is best to copy
+#      entire config directory; "sh>" denotes shell prompt)
+#       
+#       sh> cp -r config ~/.config/hac
+#
+#   2) modify ~/.config/hac/hacrc (user configuration overrides default global
+#      configuration)
+#
+
+
+# directory for every problem (no top-level directory for contest)
+--subdir-depth=1
+
+# create template source and runner for C++
+--lang=cpp
+
+# create POSIX-shell script runner
+--runner=sh
+
+# work in current directory (don't put literals for path)
+--workdir=.
+
+# download and prepare pre-tests
+--testcases=1
+
+# warn if files exist already
+--no-force
+
