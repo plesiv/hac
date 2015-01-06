@@ -35,3 +35,6 @@
 # warn if files exist already
 --no-force
 
+# prepare the environment when no explicit command given
+prep
+
