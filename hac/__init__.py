@@ -8,7 +8,7 @@ __version__ = '0.1.0'
 __license__ = 'GPLv2'
 
 
-class ExitStatus:
+class ExitStatus(object):
     """Exit status code constants."""
     OK = 0
     ERROR = 1
