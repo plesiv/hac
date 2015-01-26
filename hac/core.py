@@ -8,7 +8,8 @@ import textwrap
 from hac import ExitStatus
 from hac.config import DEFAULTS, config_parser
 from hac.cli import cli_parser
-from hac.plugins import get_sites
+from hac.plugins import collect_sites
+from hac.utility import match_site, get_site
 
 
 def dict_override(a, b):
@@ -50,6 +51,21 @@ def reduce_list(a):
     return sorted(set(b))
 
 
+def remove_optionals(a):
+    """Removes optional arguments that precede mandatory arguments.
+
+    >>> remove_optionals(['--cpp', '-no', 'php', '-t', 'py'])
+    ['php', '-t', 'py']
+
+    >>> remove_optionals(['--cpp', '-no'])
+    []
+    """
+    b = a[:]
+    while(len(b)>0 and b[0].startswith("-")):
+        del b[0]
+    return b
+
+
 def main(args=sys.argv[1:]):
     """Execution flow of the main function:
 
@@ -68,24 +84,35 @@ def main(args=sys.argv[1:]):
     if os.path.exists(user_config_file):
         env_user = config_parser.parse_args(['@' + user_config_file])
 
+    # Resolve configuration read from files
+    conf_user = dict_override(vars(env_global), vars(env_user))
+
     # Show help and exit when no arguments given.
     if len(args) == 0:
         cli_parser.print_help()
         sys.exit(ExitStatus.ERROR)
 
-    # Parse CLI arguments
-    env_cli = cli_parser.parse_args(args=args)
+    # When no command given, use default from configuration files
+    rargs = remove_optionals(args)
+    if (len(rargs) < 1) or (rargs[0] not in {"prep", "show"}):
+        args.insert(0, conf_user["command"])
 
-    # Resolve configuration
-    conf_user = dict_override(vars(env_global), vars(env_user))
+    # Parse CLI arguments and resolve with respect to configuration files
+    env_cli = cli_parser.parse_args(args=args)
     conf_all = dict_override(conf_user, vars(env_cli))
 
     # Reduce lang and runner lists
     conf_all["lang"] = reduce_list(conf_all["lang"])
     conf_all["runner"] = reduce_list(conf_all["runner"])
 
-    # Get web-site processors (user-defined and application default ones)
-    sites = get_sites()
+    # Get web-site processors (user-defined and default)
+    sites = collect_sites()
+
+    # 1) Heuristically match web-site -> site-url
+    # 2) Extract site object
+    # NOTE: Done in two steps for consistency and testability
+    site_url = match_site(sites, conf_all)
+    site_obj = get_site(sites, site_url)
 
     # TODO to-logging
     import pprint; pp = pprint.PrettyPrinter(indent=4)
@@ -95,6 +122,9 @@ def main(args=sys.argv[1:]):
     # TODO to-logging
     print(sites[0].url, sites[0].match_contest(None))
     print(sites[1].url, sites[1].match_contest(None))
+
+    # TODO to-logging
+    print("Picked {0}".format(site_obj.url))
 
     # TODO #1 web page-information DS
     # TODO #2 web-parsing DS and processor

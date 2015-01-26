@@ -28,7 +28,7 @@ def discover_sites(dirs):
 
 
 # Retrieves default and user-specified web-site processors
-def get_sites():
+def collect_sites():
     """User-specified web-site processors of the same name override default
     processors.
     """
@@ -37,5 +37,5 @@ def get_sites():
                      DEFAULTS["sites_dirname"]),
         os.path.join(DEFAULTS["config_app_dirpath"],
                      DEFAULTS["sites_dirname"]),
-    ]);
+    ])
 
