@@ -17,24 +17,25 @@ def discover_sites(dirs):
     for cdir in dirs:
         if os.path.isdir(cdir):
             for filename in os.listdir(cdir):
-                modname, ext = os.path.splitext(filename)
-                if ext == '.py':
-                    file, path, descr = imp.find_module(modname, [cdir])
-                    if file:
-                        # Loading the module registers the plugin in
-                        # ISiteRegistry
-                        mod = imp.load_module(modname, file, path, descr)
+                mname, mext = os.path.splitext(filename)
+                if mext == ".py":
+                    fname, path, descr = imp.find_module(mname, [cdir])
+                    if fname:
+                        # Loading the module registers the web-site processor
+                        # class in ISiteRegistry.sites
+                        mod = imp.load_module(mname, fname, path, descr)
     return [ site() for site in ISiteRegistry.sites ]
 
 
 # Retrieves default and user-specified web-site processors
 def get_sites():
-    """
+    """User-specified web-site processors of the same name override default
+    processors.
     """
     return discover_sites([
-        os.path.join(DEFAULTS["config_app_dirpath"],
-                     DEFAULTS["sites_dirname"]),
         os.path.join(DEFAULTS["config_user_dirpath"],
+                     DEFAULTS["sites_dirname"]),
+        os.path.join(DEFAULTS["config_app_dirpath"],
                      DEFAULTS["sites_dirname"]),
     ]);
 

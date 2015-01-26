@@ -14,18 +14,14 @@ class SiteCodeforces(ISite):
         self.source_limit_kbyte = 64
 
     def match_contest(self, conf):
-        print("Codeforces:match_contest");
-        pass
+        return "Codeforces:match_contest"
 
     def get_contest(self, url):
-        print("Codeforces:get_contest");
-        pass
+        return "Codeforces:get_contest"
 
     def match_problem(self, conf):
-        print("Codeforces:match_problem");
-        pass
+        return "Codeforces:match_problem"
 
     def get_problem(self, url):
-        print("Codeforces:get_problem");
-        pass
+        return "Codeforces:get_problem"
 
