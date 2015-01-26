@@ -5,6 +5,9 @@
     - problems
 """
 
+from abc import ABCMeta, abstractmethod
+
+
 # Utility: portable (Python2/Python3) metaclassing
 def with_metaclass(mcls):
     def decorator(cls):
@@ -17,7 +20,7 @@ def with_metaclass(mcls):
 
 
 # Web-site data-structure
-class ISiteRegistry(type):
+class ISiteRegistry(ABCMeta):
     sites = []
     def __init__(cls, name, bases, attrs):
         if name != 'ISite':
@@ -36,16 +39,20 @@ class ISite(object):
         self.memory_limit_kbyte = memory_limit_kbyte
         self.source_limit_kbyte = source_limit_kbyte
 
+    @abstractmethod
     def match_contest(self, conf):
         pass
 
+    @abstractmethod
     def get_contest(self, url):
         pass
 
-    def match_problem(self, conf):
+    @abstractmethod
+    def match_problems(self, conf):
         pass
 
-    def get_problem(self, url):
+    @abstractmethod
+    def get_problems(self, urls):
         pass
 
 

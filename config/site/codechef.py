@@ -19,9 +19,9 @@ class SiteCodechef(ISite):
     def get_contest(self, url):
         return "CodeChef:get_contest"
 
-    def match_problem(self, conf):
-        return "CodeChef:match_problem"
+    def match_problems(self, conf):
+        return "CodeChef:match_problems"
 
-    def get_problem(self, url):
-        return "CodeChef:get_problem"
+    def get_problems(self, urls):
+        return "CodeChef:get_problems"
 

@@ -19,9 +19,9 @@ class SiteCodeforces(ISite):
     def get_contest(self, url):
         return "Codeforces:get_contest"
 
-    def match_problem(self, conf):
-        return "Codeforces:match_problem"
+    def match_problems(self, conf):
+        return "Codeforces:match_problems"
 
-    def get_problem(self, url):
-        return "Codeforces:get_problem"
+    def get_problems(self, url):
+        return "Codeforces:get_problems"
 

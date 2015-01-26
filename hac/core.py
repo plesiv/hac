@@ -114,6 +114,15 @@ def main(args=sys.argv[1:]):
     site_url = match_site(sites, conf_all)
     site_obj = get_site(sites, site_url)
 
+    # Use web-site processor to get contest data
+    contest_url = site_obj.match_contest(conf_all)
+    contest_obj = site_obj.get_contest(contest_url)
+
+    # Use web-site processor to get problems data
+    problems_urls = site_obj.match_problems(conf_all)
+    problems_objs = site_obj.get_problems(problems_urls)
+
+
     # TODO to-logging
     import pprint; pp = pprint.PrettyPrinter(indent=4)
     print("USER"); pp.pprint(conf_user)
