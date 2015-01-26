@@ -7,14 +7,16 @@ import argparse
 from hac.parse import common_args, add_packed_arguments
 
 
-# Configuration in filesystem.
-DEFAULT_CONFIG_DIR = "config"
-USER_CONFIG_DIR = os.environ.get('HAC_CONFIG_DIR', os.path.expanduser('~/.config/hac'))
-CONFIG_FILENAME = "hacrc"
-# TODO Windows compat
+# Application configuration constants.
+DEFAULTS = {
+    "config_filename": "hacrc",
+    "config_app_dirpath": "config",
+    "config_user_dirpath": os.environ.get('HAC_CONFIG_DIR',
+        os.path.expanduser('~/.config/hac')),
+    "sites_dirname": "site"
+}
 
-
-# Custom parser, ignores lines starting with '#'
+# Custom configuration-file parser, ignores lines starting with '#'
 class ConfigParser(argparse.ArgumentParser):
 
     def convert_arg_line_to_args(self, arg_line):
@@ -26,7 +28,8 @@ class ConfigParser(argparse.ArgumentParser):
             yield arg
 
 
-# Construct configuration parser with common arguments.
+# Construct configuration-file parser with common arguments.
 config_parser = ConfigParser(fromfile_prefix_chars='@')
 add_packed_arguments(config_parser, common_args)
 
+# TODO Windows compat

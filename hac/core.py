@@ -6,9 +6,9 @@ import sys
 import textwrap
 
 from hac import ExitStatus
-from hac.config import DEFAULT_CONFIG_DIR, USER_CONFIG_DIR, CONFIG_FILENAME, \
-    config_parser
+from hac.config import DEFAULTS, config_parser
 from hac.cli import cli_parser
+from hac.plugins import get_sites
 
 
 def dict_override(a, b):
@@ -39,12 +39,14 @@ def main(args=sys.argv[1:]):
     2) branch according to command (prep, show)
     """
 
-    # Get default global configuration
-    global_config_file = os.path.join(DEFAULT_CONFIG_DIR, CONFIG_FILENAME)
+    # Get default application configuration
+    global_config_file = os.path.join(DEFAULTS["config_app_dirpath"],
+        DEFAULTS["config_filename"])
     env_global = config_parser.parse_args(['@' + global_config_file])
 
-    # Get local configuration
-    user_config_file = os.path.join(USER_CONFIG_DIR, CONFIG_FILENAME)
+    # Get user specifirc configuration
+    user_config_file = os.path.join(DEFAULTS["config_user_dirpath"],
+        DEFAULTS["config_filename"])
     if os.path.exists(user_config_file):
         env_user = config_parser.parse_args(['@' + user_config_file])
 
@@ -69,7 +71,15 @@ def main(args=sys.argv[1:]):
     print("USER"); pp.pprint(conf_user)
     print("ALL"); pp.pprint(conf_all)
 
+    sites = get_sites()
+    print(sites[0].url)
+    sites[0].match_contest(3)
+
     # TODO create whole directory structure for dir that doesn't exist
     # TODO resolve paths got from user (~ etc.)
     # TODO lang, runner; no multiples, no clears previous enables
+    # TODO configurable name of directories for site (ID or NAME)
+    # TODO configurable name of directories for contest (ID or NAME)
+    # TODO configurable name of directories for problem (ID or NAME)
+    # TODO quiet mode -> don't show errors
 
