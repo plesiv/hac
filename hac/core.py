@@ -101,9 +101,10 @@ def main(args=sys.argv[1:]):
     env_cli = cli_parser.parse_args(args=args)
     conf_all = dict_override(conf_user, vars(env_cli))
 
-    # Reduce lang and runner lists
+    # Reduce lang, runner lists and extract problems
     conf_all["lang"] = reduce_list(conf_all["lang"])
     conf_all["runner"] = reduce_list(conf_all["runner"])
+    conf_all["problems"] = conf_all["problems"][0]
 
     # Get web-site processors (user-defined and default)
     sites = collect_sites()
@@ -122,18 +123,16 @@ def main(args=sys.argv[1:]):
     problems_urls = site_obj.match_problems(conf_all)
     problems_objs = site_obj.get_problems(problems_urls)
 
-
     # TODO to-logging
     import pprint; pp = pprint.PrettyPrinter(indent=4)
     print("USER"); pp.pprint(conf_user)
     print("ALL"); pp.pprint(conf_all)
 
     # TODO to-logging
-    print(sites[0].url, sites[0].match_contest(None))
-    print(sites[1].url, sites[1].match_contest(None))
-
-    # TODO to-logging
-    print("Picked {0}".format(site_obj.url))
+    print("Site: {0}".format(site_obj.url))
+    print("Contest URL: {0}".format(contest_url))
+    for p in problems_urls:
+        print("Problems URLs: {0}".format(p))
 
     # TODO #1 web page-information DS
     # TODO #2 web-parsing DS and processor
