@@ -1,8 +1,8 @@
-hac.egg-info
 dist
 build
 *.pyc
 *.egg
+*.egg-info
 .cache
 .eggs
 .project
