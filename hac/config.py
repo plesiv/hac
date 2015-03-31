@@ -1,21 +1,13 @@
 # -*- coding: utf-8 -*-
 """Parsing configuration files.
 """
-import os
 import argparse
 
 from hac.parse import common_args, add_packed_arguments
 
 
-# Application configuration constants.
-DEFAULTS = {
-    "config_filename": "hacrc",
-    "config_app_dirpath": "config",
-    "config_user_dirpath": os.environ.get('HAC_CONFIG_DIR',
-        os.path.expanduser('~/.config/hac')),
-    "sites_dirname": "site"
-}
-
+# TODO Document HAC_CONFIG_DIR var
+# TODO Windows compat
 # Custom configuration-file parser, ignores lines starting with '#'
 class ConfigParser(argparse.ArgumentParser):
 
@@ -27,9 +19,7 @@ class ConfigParser(argparse.ArgumentParser):
                 continue
             yield arg
 
-
 # Construct configuration-file parser with common arguments.
 config_parser = ConfigParser(fromfile_prefix_chars='@')
 add_packed_arguments(config_parser, common_args)
 
-# TODO Windows compat

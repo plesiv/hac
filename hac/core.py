@@ -5,8 +5,8 @@ import os
 import sys
 import textwrap
 
-from hac import ExitStatus
-from hac.config import DEFAULTS, config_parser
+from hac import DEFAULT_CONFIGS, ExitStatus
+from hac.config import config_parser
 from hac.commands import commands_list
 from hac.cli import cli_parser
 from hac.plugins import collect_sites
@@ -77,14 +77,16 @@ def main(args=sys.argv[1:]):
 
     # -- Configuration files -------------------------------------------------
     # Get default application configuration
-    global_config_file = os.path.join(DEFAULTS["config_app_dirpath"],
-        DEFAULTS["config_filename"])
+    global_config_file = os.path.join(
+        DEFAULT_CONFIGS["config_app_dirpath"],
+        DEFAULT_CONFIGS["config_filename"])
     env_global = config_parser.parse_args(['@' + global_config_file])
     conf_global = vars(env_global)
 
     # Get user specifirc configuration
-    user_config_file = os.path.join(DEFAULTS["config_user_dirpath"],
-        DEFAULTS["config_filename"])
+    user_config_file = os.path.join(
+        DEFAULT_CONFIGS["config_user_dirpath"],
+        DEFAULT_CONFIGS["config_filename"])
 
     if os.path.exists(user_config_file):
         env_user = config_parser.parse_args(['@' + user_config_file])

@@ -4,8 +4,8 @@
 
 import os
 import imp
+from hac import DEFAULT_CONFIGS
 from hac.data import ISiteRegistry
-from hac.config import DEFAULTS
 
 
 # Generic function for dynamically discovering all web-site processors. Returns
@@ -33,9 +33,9 @@ def collect_sites():
     processors.
     """
     return discover_sites([
-        os.path.join(DEFAULTS["config_user_dirpath"],
-                     DEFAULTS["sites_dirname"]),
-        os.path.join(DEFAULTS["config_app_dirpath"],
-                     DEFAULTS["sites_dirname"]),
+        os.path.join(DEFAULT_CONFIGS["config_user_dirpath"],
+                     DEFAULT_CONFIGS["sites_dirname"]),
+        os.path.join(DEFAULT_CONFIGS["config_app_dirpath"],
+                     DEFAULT_CONFIGS["sites_dirname"]),
     ])
 
