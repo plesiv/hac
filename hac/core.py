@@ -6,9 +6,9 @@ import sys
 import textwrap
 
 from hac import DEFAULT_CONFIGS, ExitStatus
-from hac.config import config_parser
 from hac.commands import commands_list
-from hac.cli import cli_parser
+from hac.parse_cli import cli_parser
+from hac.parse_config import config_parser
 from hac.plugins import collect_sites
 from hac.util_common import error
 from hac.util_site import match_site, get_site

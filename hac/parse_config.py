@@ -3,7 +3,7 @@
 """
 import argparse
 
-from hac.parse import common_args, add_packed_arguments
+from hac.parse_common import common_args, add_packed_arguments
 
 
 # TODO Document HAC_CONFIG_DIR var

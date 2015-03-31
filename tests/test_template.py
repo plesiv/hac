@@ -1,8 +1,6 @@
 """General pytest template."""
 import pytest
 
-import hac.cli
-
 
 class TestTemp(object):
     def test_basic_template(self):
