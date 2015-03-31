@@ -9,9 +9,8 @@ from hac import DEFAULT_CONFIGS, ExitStatus
 from hac.commands import commands_list
 from hac.parse_cli import cli_parser
 from hac.parse_config import config_parser
-from hac.plugins import collect_sites
 from hac.util_common import error
-from hac.util_site import match_site, get_site
+from hac.util_site import plugin_sites_collect, site_match, site_get
 
 
 def dict_override(a, b):
@@ -131,14 +130,14 @@ def main(args=sys.argv[1:]):
 
     # -- Retrieve contest and problem info -----------------------------------
     # Get web-site processors (user-defined and default)
-    sites = collect_sites()
+    sites = plugin_sites_collect()
 
     # 1) Heuristically match web-site -> site-url
     # 2) Extract site object
     # NOTE: Done in two steps for consistency and testability
-    # TODO match_site return no match when match can't be made -> handle this
-    site_url = match_site(sites, conf_all)
-    site_obj = get_site(sites, site_url)
+    # TODO site_match return no match when match can't be made -> handle this
+    site_url = site_match(sites, conf_all)
+    site_obj = site_get(sites, site_url)
 
     # Use web-site processor to get contest data
     contest_url = site_obj.match_contest(conf_all)

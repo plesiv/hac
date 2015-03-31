@@ -1,7 +1,5 @@
 # -*- coding: utf-8 -*-
-"""
-hac - Helper for Algorithm Competitions
-
+"""hac - Helper for Algorithm Competitions
 """
 import os
 
