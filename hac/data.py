@@ -74,14 +74,14 @@ class Contest(object):
 # Problem data-structure
 class Problem(object):
     def __init__(self, url=None, name=None, ID=None, time_limit_ms=2000,
-                 memory_limit_kbyte=262144, source_limit_kbyte=64, inputs=[],
-                 outputs=[]):
+                 memory_limit_kbyte=262144, source_limit_kbyte=64, inputs=None,
+                 outputs=None):
         self.url = url
         self.name = name
         self.ID = ID
         self.time_limit_ms = time_limit_ms
         self.memory_limit_kbyte = memory_limit_kbyte
         self.source_limit_kbyte = source_limit_kbyte
-        self.inputs = inputs
-        self.outputs = outputs
+        self.inputs = inputs or []
+        self.outputs = outputs or []
 
