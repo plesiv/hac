@@ -106,12 +106,18 @@ def main(args=sys.argv[1:]):
     conf_all["runner"] = reduce_list(conf_all["runner"])
     conf_all["problems"] = conf_all["problems"][0]
 
+    # Normalize location member (should be URL)
+    if not conf_all['location'].startswith('http://') and \
+       not conf_all['location'].startswith('https://'):
+        conf_all['location'] = 'http://' + conf_all['location']
+
     # Get web-site processors (user-defined and default)
     sites = collect_sites()
 
     # 1) Heuristically match web-site -> site-url
     # 2) Extract site object
     # NOTE: Done in two steps for consistency and testability
+    # TODO match_site return no match when match can't be made -> handle this
     site_url = match_site(sites, conf_all)
     site_obj = get_site(sites, site_url)
 

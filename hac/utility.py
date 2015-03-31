@@ -5,7 +5,8 @@
 # TODO crowd-source writing of this function
 def match_site(sites, conf): #very-stupid matching now
     for s in sites:
-        if(conf['location'].lower() in s.url.lower()):
+        if(s.name.lower() in conf['location'].lower() or
+           s.ID.lower() in conf['location'].lower()):
             return s.url
     return sites[0].url
 
