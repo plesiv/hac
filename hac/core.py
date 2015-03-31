@@ -7,9 +7,11 @@ import textwrap
 
 from hac import ExitStatus
 from hac.config import DEFAULTS, config_parser
+from hac.commands import commands_list
 from hac.cli import cli_parser
 from hac.plugins import collect_sites
-from hac.utility import match_site, get_site
+from hac.util_common import error
+from hac.util_site import match_site, get_site
 
 
 def dict_override(a, b):
@@ -73,20 +75,25 @@ def main(args=sys.argv[1:]):
     2) branch according to command (prep, show)
     """
 
+    # -- Configuration files -------------------------------------------------
     # Get default application configuration
     global_config_file = os.path.join(DEFAULTS["config_app_dirpath"],
         DEFAULTS["config_filename"])
     env_global = config_parser.parse_args(['@' + global_config_file])
+    conf_global = vars(env_global)
 
     # Get user specifirc configuration
     user_config_file = os.path.join(DEFAULTS["config_user_dirpath"],
         DEFAULTS["config_filename"])
+
     if os.path.exists(user_config_file):
         env_user = config_parser.parse_args(['@' + user_config_file])
+        # Resolve configuration read from files
+        conf_user = dict_override(conf_global, vars(env_user))
+    else:
+        conf_user = conf_global
 
-    # Resolve configuration read from files
-    conf_user = dict_override(vars(env_global), vars(env_user))
-
+    # -- Custom CLI handling -------------------------------------------------
     # Show help and exit when no arguments given.
     if len(args) == 0:
         cli_parser.print_help()
@@ -94,13 +101,22 @@ def main(args=sys.argv[1:]):
 
     # When no command given, use default from configuration files
     rargs = remove_optionals(args)
-    if (len(rargs) < 1) or (rargs[0] not in {"prep", "show"}):
+    if (len(rargs) < 1) or (rargs[0] not in set(commands_list)):
         args.insert(0, conf_user["command"])
+
+    # When no location given
+    if (len(rargs) == 1) and (rargs[0] in set(commands_list)):
+        error("No CONTEST / PROBLEM given!")
+        sys.exit(ExitStatus.ERROR)
 
     # Parse CLI arguments and resolve with respect to configuration files
     env_cli = cli_parser.parse_args(args=args)
-    conf_all = dict_override(conf_user, vars(env_cli))
+    if env_cli:
+        conf_all = dict_override(conf_user, vars(env_cli))
+    else:
+        conf_all = conf_user
 
+    # -- Normalization of input/config ---------------------------------------
     # Reduce lang, runner lists and extract problems
     conf_all["lang"] = reduce_list(conf_all["lang"])
     conf_all["runner"] = reduce_list(conf_all["runner"])
@@ -111,6 +127,7 @@ def main(args=sys.argv[1:]):
        not conf_all['location'].startswith('https://'):
         conf_all['location'] = 'http://' + conf_all['location']
 
+    # -- Retrieve contest and problem info -----------------------------------
     # Get web-site processors (user-defined and default)
     sites = collect_sites()
 
@@ -129,6 +146,8 @@ def main(args=sys.argv[1:]):
     problems_urls = site_obj.match_problems(conf_all)
     problems_objs = site_obj.get_problems(problems_urls)
 
+    from pudb import set_trace; set_trace()
+    # -- Execute command (e.g. prepare problems )-----------------------------
     # TODO to-logging
     import pprint; pp = pprint.PrettyPrinter(indent=4)
     print("USER"); pp.pprint(conf_user)
