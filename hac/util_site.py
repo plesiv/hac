@@ -11,7 +11,6 @@ else:
     from urllib.parse import urlparse
 
 import hac
-from hac import CONST_SETTINGS
 from hac.data import ISiteRegistry
 
 
@@ -41,11 +40,11 @@ def plugin_sites_collect():
     processors.
     """
     return _plugin_sites_discover([
-        os.path.join(CONST_SETTINGS["config_user_dirpath"],
-                     CONST_SETTINGS["dir_sites"]),
-        os.path.join(hac.VAR_SETTINGS["app_root_dir"],
-                     CONST_SETTINGS["config_app_dirpath"],
-                     CONST_SETTINGS["dir_sites"]),
+        os.path.join(hac.SETTINGS_CONST["config_user_dirpath"],
+                     hac.SETTINGS_CONST["dir_sites"]),
+        os.path.join(hac.SETTINGS_VAR["app_root_dir"],
+                     hac.SETTINGS_CONST["config_app_dirpath"],
+                     hac.SETTINGS_CONST["dir_sites"]),
     ])
 
 

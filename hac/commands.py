@@ -79,7 +79,7 @@ def _command_show(**args):
     }
 
     args_labels = args_labels_default
-    if hac.VAR_SETTINGS["verbose_output"]:
+    if hac.SETTINGS_VAR["verbose_output"]:
         args_labels.update(args_labels_verobse)
 
     # Prepare arguments for printing

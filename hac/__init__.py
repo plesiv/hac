@@ -11,14 +11,14 @@ __license__ = 'GPLv2'
 
 # Initializes shared settings
 def init_settings():
-    global VAR_SETTINGS
-    VAR_SETTINGS = {
+    global SETTINGS_VAR
+    SETTINGS_VAR = {
         "app_root_dir": '/',
         "verbose_output" : False,
     }
 
 # Application configuration constants.
-CONST_SETTINGS = {
+SETTINGS_CONST = {
     "config_filename": "hacrc",
     "config_app_dirpath": "config",
     "config_user_dirpath": \

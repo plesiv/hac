@@ -6,7 +6,7 @@
 
 Converting objects of type ISite, Contest and Problem to dictionary (via "dict"
 function) depends on global application setting
-hac.VAR_SETTINGS["verbose_output"] being initialized.
+hac.SETTINGS_VAR["verbose_output"] being initialized.
 """
 from abc import ABCMeta, abstractmethod
 
@@ -50,7 +50,7 @@ class ISite(object):
         self.source_limit_kbyte = source_limit_kbyte
 
     def __iter__(self):
-        keys = ISite.keys_verbose if hac.VAR_SETTINGS["verbose_output"] else ISite.keys_default
+        keys = ISite.keys_verbose if hac.SETTINGS_VAR["verbose_output"] else ISite.keys_default
         for key in keys:
             yield (key, getattr(self, key))
 
@@ -92,7 +92,7 @@ class Contest(object):
         self.url = url
 
     def __iter__(self):
-        keys = Contest.keys_verbose if hac.VAR_SETTINGS["verbose_output"] else Contest.keys_default
+        keys = Contest.keys_verbose if hac.SETTINGS_VAR["verbose_output"] else Contest.keys_default
         for key in keys:
             yield (key, getattr(self, key))
 
@@ -118,7 +118,7 @@ class Problem(object):
         self.outputs = outputs or []
 
     def __iter__(self):
-        keys = Problem.keys_verbose if hac.VAR_SETTINGS["verbose_output"] else Problem.keys_default
+        keys = Problem.keys_verbose if hac.SETTINGS_VAR["verbose_output"] else Problem.keys_default
         for key in keys:
             yield (key, getattr(self, key))
 
