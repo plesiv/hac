@@ -12,6 +12,10 @@ __license__ = 'GPLv2'
 # Initializes shared settings
 def init_settings():
 
+    # Application top directory
+    global HAC_ROOT_DIR
+    HAC_ROOT_DIR = '/'
+
     # Controls the verbosity of output
     global VERBOSE_OUTPUT
     VERBOSE_OUTPUT = False

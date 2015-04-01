@@ -49,6 +49,7 @@ common_args = [
         }
     },
     {
+        #TODO document that workdir has to exist beforehand
         "names": ("-w", "--workdir"),
         "params": {
             "help":

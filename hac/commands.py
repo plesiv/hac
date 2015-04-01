@@ -15,15 +15,38 @@ Each command expects dictionary "args" to contain following entries:
     - contest_obj: selected contest (instance of hac.data.Contest),
     - problems_objs: list of selected problems (instances of hac.data.Problem).
 """
+import sys
+from os import mkdir
+from os.path import realpath, exists, isdir, join
 from pprint import PrettyPrinter
 
 import hac
+from hac import ExitStatus
+from hac.util_common import warn, error, mkdir_safe
 
 
 def _command_prep(**args):
     """Prepares the environment for selected problems.
     """
-    print ("Command: prep")
+    conf_all = args['conf_all']
+    dir_working = realpath(conf_all['workdir'])
+
+    # Directories #1: working directory has to exist
+    if not isdir(dir_working):
+        error('Directory "' + dir_working + '" does not exist!')
+        sys.exit(ExitStatus.ERROR)
+
+    # Directories #2: contest directory
+    contest_obj = args['contest_obj']
+    if conf_all['subdir_depth'] == 2:
+        dir_contest = join(dir_working, contest_obj.ID)
+        mkdir_safe(dir_contest)
+    else:
+        dir_contest = dir_working
+
+    # Directories #3: problems directories
+    problems_objs = args['problems_objs']
+
 
 def _command_show(**args):
     """Displays information about:
@@ -35,15 +58,15 @@ def _command_show(**args):
 
     # Prepare labels for arguments output
     args_labels_default = {
-        'conf_all':      '1c --- Total configuration      (overrides 1b)',
-        'sites':         '2  --- Available site processors              ',
-        'site_obj':      '3a --- Selected site processor                ',
-        'contest_obj':   '3b --- Selected contest                       ',
-        'problems_objs': '3c --- Selected problems                      ',
+        'conf_all':      '1c --- Total config (overide 1b) .... ',
+        'site_obj':      '3a --- Selected site processor ...... ',
+        'contest_obj':   '3b --- Selected contest ............. ',
+        'problems_objs': '3c --- Selected problems ............ ',
     }
     args_labels_verobse = {
-        'conf_global':   '1a --- App default configuration',
-        'conf_user':     '1b --- User files configuration (overrides 1a)'
+        'conf_global':   '1a --- App default config ........... ',
+        'conf_user':     '1b --- User files config (override 1a)',
+        'sites':         '2  --- Available site processors .... '
     }
 
     args_labels = args_labels_default

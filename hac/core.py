@@ -4,69 +4,15 @@
 import os
 import sys
 import textwrap
+from os.path import dirname, realpath
 
 import hac
-
 from hac import DEFAULT_CONFIGS, ExitStatus
 from hac.commands import app_commands
 from hac.parse_cli import cli_parser
 from hac.parse_config import config_parser
-from hac.util_common import error
+from hac.util_common import dict_override, list_reduce, optargs_trim, error
 from hac.util_site import plugin_sites_collect, site_match, site_get
-
-
-def dict_override(a, b):
-    """Overriding dictionary values.
-
-    Values in second dictionary override the values in the first one (except
-    when relevant value in second dictionary is None).
-
-    >>> dict_override({'a': 1,'b': 2}, {'a': 3,'b': None}) == {'a': 3,'b': 2}
-    True
-
-    >>> dict_override({'a': 3,'b': None}, {'a': 1,'b': 2}) == {'a': 1,'b': 2}
-    True
-    """
-    res = {}
-    for key in (set(a.keys()) | set(b.keys())):
-        if (key in b) and (b[key] != None):
-            res[key] = b[key]
-        else:
-            res[key] = a[key]
-    return res
-
-
-def reduce_list(a):
-    """Reduces provided list in two steps:
-        1) removes all elements from list that appear prior to any 'no' element,
-        2) removes duplicates and sorts elements.
-
-    >>> reduce_list(['cpp', 'no', 'php', 'py', 'php', 'py'])
-    ['php', 'py']
-
-    >>> reduce_list(['cpp', 'no', 'php', 'py', 'php', 'no', 'py', 'cpp'])
-    ['cpp', 'py']
-    """
-    b = list(reversed(a))
-    if "no" in b:
-        ind = b.index("no")
-        del b[ind:]
-    return sorted(set(b))
-
-
-def remove_optionals(a):
-    """Removes optional arguments that precede mandatory arguments.
-
-    >>> remove_optionals(['--cpp', '-no', 'php', '-t', 'py'])
-    ['php', '-t', 'py']
-
-    >>> remove_optionals(['--cpp', '-no'])
-    []
-    """
-    b = a[:]
-    while(len(b)>0 and b[0].startswith("-")):
-        del b[0]
-    return b
 
 
 def main(args=sys.argv[1:]):
@@ -79,6 +25,7 @@ def main(args=sys.argv[1:]):
     # -- Configuration files -------------------------------------------------
     # Get default application configuration
     global_config_file = os.path.join(
+        hac.HAC_ROOT_DIR,
         DEFAULT_CONFIGS["config_app_dirpath"],
         DEFAULT_CONFIGS["config_filename"])
     assert os.path.exists(global_config_file)
@@ -104,7 +51,7 @@ def main(args=sys.argv[1:]):
         sys.exit(ExitStatus.ERROR)
 
     # When no command given, use default from configuration files
-    rargs = remove_optionals(args)
+    rargs = optargs_trim(args)
     if (len(rargs) < 1) or (rargs[0] not in app_commands):
         args.insert(0, conf_user["command"])
 
@@ -122,8 +69,8 @@ def main(args=sys.argv[1:]):
 
     # -- Normalization of input/config ---------------------------------------
     # Reduce lang, runner lists and extract problems
-    conf_all["lang"] = reduce_list(conf_all["lang"])
-    conf_all["runner"] = reduce_list(conf_all["runner"])
+    conf_all["lang"] = list_reduce(conf_all["lang"])
+    conf_all["runner"] = list_reduce(conf_all["runner"])
     conf_all["problems"] = conf_all["problems"][0]
 
     # Normalize location member (should be URL)
@@ -152,9 +99,6 @@ def main(args=sys.argv[1:]):
     # -- Execute command (e.g. prepare environment for problems )-------------
     assert conf_all["command"] in app_commands
 
-    # Initialize settings
-    hac.init_settings()
-
     # TODO: adjust verbosity according to settings
     hac.VERBOSE_OUTPUT = False
 
@@ -168,11 +112,10 @@ def main(args=sys.argv[1:]):
         contest_obj = contest_obj,
         problems_objs = problems_objs)
 
-    # TODO #1 web page-information DS
-    # TODO #2 web-parsing DS and processor
+    # TODO problems selectable by number and letter
+    # TODO notify about non-existence of the given problem
     # TODO #3 decipher which problems to fetch (URL, other) [when no selected,
     #         get all]
-    # TODO #4 show command
     # TODO #5 prep command
 
     # TODO create whole directory structure for dir that doesn't exist

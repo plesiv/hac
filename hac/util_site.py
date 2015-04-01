@@ -10,6 +10,7 @@ if sys.version_info.major == 2:
 else:
     from urllib.parse import urlparse
 
+import hac
 from hac import DEFAULT_CONFIGS
 from hac.data import ISiteRegistry
 
@@ -42,7 +43,8 @@ def plugin_sites_collect():
     return _plugin_sites_discover([
         os.path.join(DEFAULT_CONFIGS["config_user_dirpath"],
                      DEFAULT_CONFIGS["sites_dirname"]),
-        os.path.join(DEFAULT_CONFIGS["config_app_dirpath"],
+        os.path.join(hac.HAC_ROOT_DIR,
+                     DEFAULT_CONFIGS["config_app_dirpath"],
                      DEFAULT_CONFIGS["sites_dirname"]),
     ])
 

@@ -3,6 +3,10 @@
     - web-sites
     - contests
     - problems
+
+Converting objects of type ISite, Contest and Problem to dictionary (via "dict"
+function) depends on global application setting hac.VERBOSE_OUTPUT being
+initialized.
 """
 from abc import ABCMeta, abstractmethod
 
