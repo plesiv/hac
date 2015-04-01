@@ -11,23 +11,22 @@ __license__ = 'GPLv2'
 
 # Initializes shared settings
 def init_settings():
-
-    # Application top directory
-    global HAC_ROOT_DIR
-    HAC_ROOT_DIR = '/'
-
-    # Controls the verbosity of output
-    global VERBOSE_OUTPUT
-    VERBOSE_OUTPUT = False
+    global VAR_SETTINGS
+    VAR_SETTINGS = {
+        "app_root_dir": '/',
+        "verbose_output" : False,
+    }
 
 # Application configuration constants.
-DEFAULT_CONFIGS = {
+CONST_SETTINGS = {
     "config_filename": "hacrc",
     "config_app_dirpath": "config",
     "config_user_dirpath": \
         os.environ.get('HAC_CONFIG_DIR',
         os.path.expanduser('~/.config/hac')),
-    "sites_dirname": "site"
+    "dir_langs": "lang",
+    "dir_runners": "runner",
+    "dir_sites": "site",
 }
 
 # Enumeration containing exit-status codes.

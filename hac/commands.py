@@ -27,6 +27,8 @@ from hac.util_common import warn, error, mkdir_safe
 
 def _command_prep(**args):
     """Prepares the environment for selected problems.
+
+    This command is idempotent irrespective of the "--force" switch.
     """
     conf_all = args['conf_all']
     dir_working = realpath(conf_all['workdir'])
@@ -40,12 +42,19 @@ def _command_prep(**args):
     contest_obj = args['contest_obj']
     if conf_all['subdir_depth'] == 2:
         dir_contest = join(dir_working, contest_obj.ID)
-        mkdir_safe(dir_contest)
+        mkdir_safe(dir_contest, force=conf_all['force'])
     else:
         dir_contest = dir_working
 
     # Directories #3: problems directories
     problems_objs = args['problems_objs']
+    if conf_all['subdir_depth'] >= 1:
+        problems_dirs = {}
+        for prob in problems_objs:
+            problems_dirs[prob] = join(dir_contest, prob.ID)
+            mkdir_safe(problems_dirs[prob], force=conf_all['force'])
+    else:
+        problems_dirs = {prob: dir_contest for prob in problems_objs}
 
 
 def _command_show(**args):
@@ -70,7 +79,7 @@ def _command_show(**args):
     }
 
     args_labels = args_labels_default
-    if hac.VERBOSE_OUTPUT:
+    if hac.VAR_SETTINGS["verbose_output"]:
         args_labels.update(args_labels_verobse)
 
     # Prepare arguments for printing

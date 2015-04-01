@@ -7,7 +7,7 @@ import textwrap
 from os.path import dirname, realpath
 
 import hac
-from hac import DEFAULT_CONFIGS, ExitStatus
+from hac import CONST_SETTINGS, ExitStatus
 from hac.commands import app_commands
 from hac.parse_cli import cli_parser
 from hac.parse_config import config_parser
@@ -25,17 +25,17 @@ def main(args=sys.argv[1:]):
     # -- Configuration files -------------------------------------------------
     # Get default application configuration
     global_config_file = os.path.join(
-        hac.HAC_ROOT_DIR,
-        DEFAULT_CONFIGS["config_app_dirpath"],
-        DEFAULT_CONFIGS["config_filename"])
+        hac.VAR_SETTINGS["app_root_dir"],
+        CONST_SETTINGS["config_app_dirpath"],
+        CONST_SETTINGS["config_filename"])
     assert os.path.exists(global_config_file)
     env_global = config_parser.parse_args(['@' + global_config_file])
     conf_global = vars(env_global)
 
     # Get user specifirc configuration
     user_config_file = os.path.join(
-        DEFAULT_CONFIGS["config_user_dirpath"],
-        DEFAULT_CONFIGS["config_filename"])
+        CONST_SETTINGS["config_user_dirpath"],
+        CONST_SETTINGS["config_filename"])
 
     if os.path.exists(user_config_file):
         env_user = config_parser.parse_args(['@' + user_config_file])
@@ -100,7 +100,7 @@ def main(args=sys.argv[1:]):
     assert conf_all["command"] in app_commands
 
     # TODO: adjust verbosity according to settings
-    hac.VERBOSE_OUTPUT = False
+    hac.VAR_SETTINGS["verbose_output"] = False
 
     # Execute selected command with all relevant information
     app_commands[conf_all["command"]](
