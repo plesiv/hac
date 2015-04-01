@@ -8,6 +8,14 @@ __author__ = 'Zoran Plesivčak'
 __version__ = '0.1.0'
 __license__ = 'GPLv2'
 
+
+# Initializes shared settings
+def init_settings():
+
+    # Controls the verbosity of output
+    global VERBOSE_OUTPUT
+    VERBOSE_OUTPUT = False
+
 # Application configuration constants.
 DEFAULT_CONFIGS = {
     "config_filename": "hacrc",

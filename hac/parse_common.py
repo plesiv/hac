@@ -3,6 +3,8 @@
 """
 import os
 
+from hac.commands import app_commands
+
 
 # Arguments used in CLI and configuration files. Each element in list is
 # either:
@@ -90,11 +92,11 @@ common_args = [
         "names": ("command",),
         "params": {
             "nargs": "?",
-            "choices": ["prep", "show"],
+            "choices": sorted(app_commands.keys()),
             "help":
                 """Prepare environment or show information about current
                 configuration, diagnostics etc.""",
-            "metavar": "prep | show"
+            "metavar": " | ".join(sorted(app_commands.keys()))
         }
     },
 ]

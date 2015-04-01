@@ -5,6 +5,8 @@ import os
 import sys
 import textwrap
 
+import hac
+
 from hac import DEFAULT_CONFIGS, ExitStatus
 from hac.commands import app_commands
 from hac.parse_cli import cli_parser
@@ -148,17 +150,23 @@ def main(args=sys.argv[1:]):
     problems_objs = site_obj.get_problems(problems_urls)
 
     # -- Execute command (e.g. prepare environment for problems )-------------
+    assert conf_all["command"] in app_commands
 
-    # TODO to-logging
-    import pprint; pp = pprint.PrettyPrinter(indent=4)
-    print("USER"); pp.pprint(conf_user)
-    print("ALL"); pp.pprint(conf_all)
+    # Initialize settings
+    hac.init_settings()
 
-    # TODO to-logging
-    print("Site: {0}".format(site_obj.url))
-    print("Contest URL: {0}".format(contest_url))
-    for p in problems_urls:
-        print("Problems URLs: {0}".format(p))
+    # TODO: adjust verbosity according to settings
+    hac.VERBOSE_OUTPUT = False
+
+    # Execute selected command with all relevant information
+    app_commands[conf_all["command"]](
+        conf_global = conf_global,
+        conf_user = conf_user,
+        conf_all = conf_all,
+        sites = sites,
+        site_obj = site_obj,
+        contest_obj = contest_obj,
+        problems_objs = problems_objs)
 
     # TODO #1 web page-information DS
     # TODO #2 web-parsing DS and processor

@@ -4,8 +4,9 @@
     - contests
     - problems
 """
-
 from abc import ABCMeta, abstractmethod
+
+import hac
 
 
 # Utility: portable (Python2/Python3) metaclassing
@@ -26,18 +27,28 @@ class ISiteRegistry(ABCMeta):
         if name != 'ISite':
             ISiteRegistry.sites.append(cls)
 
+
 @with_metaclass(ISiteRegistry)
 class ISite(object):
+    """Site template.
     """
-    """
-    def __init__(self, url=None, name=None, ID=None, time_limit_ms=2000,
+    keys_default = ['ID', 'url']
+    keys_verbose = ['name', 'ID', 'url', 'time_limit_ms', 'memory_limit_kbyte',
+                    'source_limit_kbyte']
+
+    def __init__(self, name=None, ID=None, url=None, time_limit_ms=2000,
                  memory_limit_kbyte=262144, source_limit_kbyte=64):
-        self.url = url
         self.name = name
         self.ID = ID
+        self.url = url
         self.time_limit_ms = time_limit_ms
         self.memory_limit_kbyte = memory_limit_kbyte
         self.source_limit_kbyte = source_limit_kbyte
+
+    def __iter__(self):
+        keys = ISite.keys_verbose if hac.VERBOSE_OUTPUT else ISite.keys_default
+        for key in keys:
+            yield (key, getattr(self, key))
 
     @abstractmethod
     def match_contest(self, conf):
@@ -66,22 +77,44 @@ class ISite(object):
 
 # Contest data-structure
 class Contest(object):
-    def __init__(self, url=None, name=None, ID=None):
-        self.url = url
+    """Contest info container.
+    """
+    keys_default = ['ID', 'url']
+    keys_verbose = ['name', 'ID', 'url']
+
+    def __init__(self, name=None, ID=None, url=None):
         self.name = name
         self.ID = ID
+        self.url = url
+
+    def __iter__(self):
+        keys = Contest.keys_verbose if hac.VERBOSE_OUTPUT else Contest.keys_default
+        for key in keys:
+            yield (key, getattr(self, key))
+
 
 # Problem data-structure
 class Problem(object):
-    def __init__(self, url=None, name=None, ID=None, time_limit_ms=2000,
+    """Problem info container.
+    """
+    keys_default = ['ID', 'url']
+    keys_verbose = ['name', 'ID', 'url', 'time_limit_ms', 'memory_limit_kbyte',
+                    'source_limit_kbyte', 'inputs', 'outputs']
+
+    def __init__(self, name=None, ID=None, url=None, time_limit_ms=2000,
                  memory_limit_kbyte=262144, source_limit_kbyte=64, inputs=None,
                  outputs=None):
-        self.url = url
         self.name = name
         self.ID = ID
+        self.url = url
         self.time_limit_ms = time_limit_ms
         self.memory_limit_kbyte = memory_limit_kbyte
         self.source_limit_kbyte = source_limit_kbyte
         self.inputs = inputs or []
         self.outputs = outputs or []
+
+    def __iter__(self):
+        keys = Problem.keys_verbose if hac.VERBOSE_OUTPUT else Problem.keys_default
+        for key in keys:
+            yield (key, getattr(self, key))
 
