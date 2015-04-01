@@ -6,7 +6,7 @@ import sys
 import textwrap
 
 from hac import DEFAULT_CONFIGS, ExitStatus
-from hac.commands import commands_list
+from hac.commands import app_commands
 from hac.parse_cli import cli_parser
 from hac.parse_config import config_parser
 from hac.util_common import error
@@ -79,6 +79,7 @@ def main(args=sys.argv[1:]):
     global_config_file = os.path.join(
         DEFAULT_CONFIGS["config_app_dirpath"],
         DEFAULT_CONFIGS["config_filename"])
+    assert os.path.exists(global_config_file)
     env_global = config_parser.parse_args(['@' + global_config_file])
     conf_global = vars(env_global)
 
@@ -102,11 +103,11 @@ def main(args=sys.argv[1:]):
 
     # When no command given, use default from configuration files
     rargs = remove_optionals(args)
-    if (len(rargs) < 1) or (rargs[0] not in set(commands_list)):
+    if (len(rargs) < 1) or (rargs[0] not in app_commands):
         args.insert(0, conf_user["command"])
 
     # When no location given
-    if (len(rargs) == 1) and (rargs[0] in set(commands_list)):
+    if (len(rargs) == 1) and (rargs[0] in app_commands):
         error("No CONTEST / PROBLEM given!")
         sys.exit(ExitStatus.ERROR)
 
@@ -129,14 +130,13 @@ def main(args=sys.argv[1:]):
         conf_all['location'] = 'http://' + conf_all['location']
 
     # -- Retrieve contest and problem info -----------------------------------
-    # Get web-site processors (user-defined and default)
+    # Discover site-processor plugins (user-defined and default)
     sites = plugin_sites_collect()
 
-    # 1) Heuristically match web-site -> site-url
-    # 2) Extract site object
     # NOTE: Done in two steps for consistency and testability
-    # TODO site_match return no match when match can't be made -> handle this
+    # 1) Match site, retrieve site-url
     site_url = site_match(sites, conf_all)
+    # 2) Extract site object
     site_obj = site_get(sites, site_url)
 
     # Use web-site processor to get contest data
@@ -147,8 +147,8 @@ def main(args=sys.argv[1:]):
     problems_urls = site_obj.match_problems(conf_all)
     problems_objs = site_obj.get_problems(problems_urls)
 
-    from pudb import set_trace; set_trace()
-    # -- Execute command (e.g. prepare problems )-----------------------------
+    # -- Execute command (e.g. prepare environment for problems )-------------
+
     # TODO to-logging
     import pprint; pp = pprint.PrettyPrinter(indent=4)
     print("USER"); pp.pprint(conf_user)
@@ -162,7 +162,8 @@ def main(args=sys.argv[1:]):
 
     # TODO #1 web page-information DS
     # TODO #2 web-parsing DS and processor
-    # TODO #3 decipher which problems to fetch (URL, other)
+    # TODO #3 decipher which problems to fetch (URL, other) [when no selected,
+    #         get all]
     # TODO #4 show command
     # TODO #5 prep command
 
