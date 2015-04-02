@@ -11,7 +11,7 @@ from hac import ExitStatus
 from hac.commands import app_commands
 from hac.parse_cli import cli_parser
 from hac.parse_config import config_parser
-from hac.util_common import dict_override, list_reduce, optargs_trim, error
+from hac.util_common import dict_override, list_reduce, mainargs_index, error
 from hac.util_site import plugin_sites_collect, site_match, site_get
 
 
@@ -51,16 +51,17 @@ def main(args=sys.argv[1:]):
         sys.exit(ExitStatus.ERROR)
 
     # When no command given, use default from configuration files
-    rargs = optargs_trim(args)
-    if (len(rargs) < 1) or (rargs[0] not in app_commands):
-        args.insert(0, conf_user["command"])
+    margs_ind = mainargs_index(args)
+    if (margs_ind == len(args)) or (args[margs_ind] not in app_commands):
+        args.insert(margs_ind, conf_user["command"])
 
-    # When no location given
-    if (len(rargs) == 1) and (rargs[0] in app_commands):
+    # When no location given (application command is the last argument)
+    if (len(args) == margs_ind + 1) and (args[margs_ind] in app_commands):
         error("No CONTEST / PROBLEM given!")
         sys.exit(ExitStatus.ERROR)
 
     # Parse CLI arguments and resolve with respect to configuration files
+    #from pudb import set_trace; set_trace()
     env_cli = cli_parser.parse_args(args=args)
     if env_cli:
         conf_all = dict_override(conf_user, vars(env_cli))

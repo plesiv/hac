@@ -54,19 +54,20 @@ def list_reduce(a):
     return sorted(set(b))
 
 
-def optargs_trim(a):
+def mainargs_index(a):
     """Removes optional arguments that precede mandatory arguments.
 
-    >>> optargs_trim(['--cpp', '-no', 'php', '-t', 'py'])
-    ['php', '-t', 'py']
+    >>> mainargs_index(['-lcpp', '--no', '-t', 'php', 'py'])
+    3
 
-    >>> optargs_trim(['--cpp', '-no'])
-    []
+    >>> mainargs_index(['--cpp', '--no'])
+    2
+
+    >>> mainargs_index([])
+    0
     """
-    b = a[:]
-    while(len(b)>0 and b[0].startswith("-")):
-        del b[0]
-    return b
+    indices = [ i for i, v in enumerate(a) if not v.startswith("-") ]
+    return indices[0] if indices else len(a)
 
 
 # -- Filesystem operations ----------------------------------------------------

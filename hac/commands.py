@@ -48,7 +48,7 @@ def _command_prep(**args):
 
     # Directories #3: problems directories
     problems_objs = args['problems_objs']
-    if conf_all['subdir_depth'] >= 1:
+    if conf_all['subdir_depth'] >= 1 and isdir(dir_contest):
         problems_dirs = {}
         for prob in problems_objs:
             problems_dirs[prob] = join(dir_contest, prob.ID)
