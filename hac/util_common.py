@@ -2,7 +2,7 @@
 """Common utilities.
 """
 import sys
-from os import mkdir
+from os import mkdir, remove
 from os.path import exists, isdir
 
 
@@ -72,16 +72,27 @@ def mainargs_index(a):
 
 # -- Filesystem operations ----------------------------------------------------
 def mkdir_safe(path, force=False):
-    """Notify if:
+    """Carefully handles directory creation. Notifies about special
+    occurrences.
 
-        1) force is false and
-        2) directory already exists.
+    Argument force used to decide if priorly existing file named "path" should
+    be replaced with directory named "path".
     """
-    if (not force) and exists(path):
+    if not exists(path):
+        mkdir(path)
+    else:
         if isdir(path):
             warn('Directory "' + path + '" already exists!')
         else:
-            warn('"' + path + '" is not a directory!')
-    elif not exists(path):
-        mkdir(path)
+            # Distinguish between two cases (depending on argument force), if:
+            #
+            #   - path exists and
+            #   - it's not a directory
+            #
+            if force:
+                warn('Deleting file "' + path + '" and creating directory!')
+                remove(path)
+                mkdir(path)
+            else:
+                warn('"' + path + '" is not a directory!')
 

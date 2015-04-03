@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """Implementation of application commands.
 
-Each command expects dictionary "args" to contain following entries:
+Commands can access following entries from dictionary "args":
 
     - conf_global: dictionary containing default application settings,
     - conf_user: dictionary containing user settings from configuration files
@@ -46,15 +46,18 @@ def _command_prep(**args):
     else:
         dir_contest = dir_working
 
-    # Directories #3: problems directories
-    problems_objs = args['problems_objs']
-    if conf_all['subdir_depth'] >= 1 and isdir(dir_contest):
-        problems_dirs = {}
-        for prob in problems_objs:
-            problems_dirs[prob] = join(dir_contest, prob.ID)
-            mkdir_safe(problems_dirs[prob], force=conf_all['force'])
-    else:
-        problems_dirs = {prob: dir_contest for prob in problems_objs}
+    # Proceed if have directory hierachy until this point
+    if (isdir(dir_contest)):
+
+        # Directories #3: problems directories
+        problems_objs = args['problems_objs']
+        if conf_all['subdir_depth'] >= 1:
+            problems_dirs = {}
+            for prob in problems_objs:
+                problems_dirs[prob] = join(dir_contest, prob.ID)
+                mkdir_safe(problems_dirs[prob], force=conf_all['force'])
+        else:
+            problems_dirs = {prob: dir_contest for prob in problems_objs}
 
 
 def _command_show(**args):
