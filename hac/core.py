@@ -7,12 +7,12 @@ import textwrap
 from os.path import dirname, realpath
 
 import hac
-from hac import ExitStatus
+from hac import DataType, ExitStatus
 from hac.commands import app_commands
 from hac.parse_cli import cli_parser
 from hac.parse_config import config_parser
 from hac.util_common import dict_override, list_reduce, mainargs_index, error
-from hac.util_site import plugin_sites_collect, site_match, site_get
+from hac.util_data import plugin_collect, plugin_match_site
 
 
 def main(args=sys.argv[1:]):
@@ -22,11 +22,16 @@ def main(args=sys.argv[1:]):
     2) branch according to command (prep, show)
     """
 
-    # -- Configuration files -------------------------------------------------
+    # -- Discover pluggins and templates -------------------------------------
+    # Discover site-processor plugins (user-defined and default)
+    sites = plugin_collect(DataType.SITE)
+
+
+    # -- Read configuration files --------------------------------------------
     # Get default application configuration
     global_config_file = os.path.join(
         hac.SETTINGS_VAR["app_root_dir"],
-        hac.SETTINGS_CONST["config_app_dirpath"],
+        hac.SETTINGS_CONST["config_app_path"],
         hac.SETTINGS_CONST["config_filename"])
     assert os.path.exists(global_config_file)
     env_global = config_parser.parse_args(['@' + global_config_file])
@@ -34,7 +39,7 @@ def main(args=sys.argv[1:]):
 
     # Get user specifirc configuration
     user_config_file = os.path.join(
-        hac.SETTINGS_CONST["config_user_dirpath"],
+        hac.SETTINGS_CONST["config_user_path"],
         hac.SETTINGS_CONST["config_filename"])
 
     if os.path.exists(user_config_file):
@@ -80,14 +85,13 @@ def main(args=sys.argv[1:]):
         conf_all['location'] = 'http://' + conf_all['location']
 
     # -- Retrieve contest and problem info -----------------------------------
-    # Discover site-processor plugins (user-defined and default)
-    sites = plugin_sites_collect()
-
     # NOTE: Done in two steps for consistency and testability
     # 1) Match site, retrieve site-url
-    site_url = site_match(sites, conf_all)
+    site_url = plugin_match_site(sites, conf_all)
     # 2) Extract site object
-    site_obj = site_get(sites, site_url)
+    site_matched = [site for site in sites if site_url == site.url]
+    assert site_matched
+    site_obj = site_matched[0]
 
     # Use web-site processor to get contest data
     contest_url = site_obj.match_contest(conf_all)

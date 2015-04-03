@@ -5,11 +5,10 @@
     - problems
 
 NOTE: Before converting objects of type ISite, Contest and Problem to
-dictionary (via "dict" function) following global application setting must be
-initialized:
+      dictionary (via "dict" function) following global application setting
+      must be initialized:
 
-    hac.SETTINGS_VAR["verbose_output"]
-
+        hac.SETTINGS_VAR["verbose_output"]
 """
 from abc import ABCMeta, abstractmethod
 
@@ -72,11 +71,6 @@ class ISite(object):
         """Expects list of well formated URLs. Returns list of Problem objects.
         """
         pass
-
-
-# -- Dynamic data (discovered) ------------------------------------------------
-
-
 
 
 # -- Containers ---------------------------------------------------------------

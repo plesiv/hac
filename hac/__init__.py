@@ -9,28 +9,47 @@ __version__ = '0.1.0'
 __license__ = 'GPLv2'
 
 
-# Initializes shared settings
+# -- Enums --------------------------------------------------------------------
+class DataType(object):
+    """Data types."""
+    LANG = 0
+    RUNNER = 1
+    SITE = 2
+
+
+class ExitStatus(object):
+    """Exit status code constants."""
+    OK = 0
+    ERROR = 1
+
+
+# -- Settings -----------------------------------------------------------------
 def init_settings():
+    """Initializes shared settings.
+    """
     global SETTINGS_VAR
+
+    # Application variable settings
     SETTINGS_VAR = {
         "app_root_dir": '/',
         "verbose_output" : False,
     }
 
-# Application configuration constants.
+# Application constant settings.
 SETTINGS_CONST = {
     "config_filename": "hacrc",
-    "config_app_dirpath": "config",
-    "config_user_dirpath": \
+    "config_app_path": "config",
+    "config_user_path": \
         os.environ.get('HAC_CONFIG_DIR',
         os.path.expanduser('~/.config/hac')),
-    "dir_langs": "lang",
-    "dir_runners": "runner",
-    "dir_sites": "site",
+    "plugin_path": {
+        DataType.LANG: "lang",
+        DataType.RUNNER: "runner",
+        DataType.SITE: "site",
+    },
+    "plugin_temp": {
+        DataType.LANG: "temp",
+        DataType.RUNNER: "temp",
+    },
 }
 
-# Enumeration containing exit-status codes.
-class ExitStatus(object):
-    """Exit status code constants."""
-    OK = 0
-    ERROR = 1
