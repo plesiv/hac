@@ -4,28 +4,23 @@
     - contests
     - problems
 
-Converting objects of type ISite, Contest and Problem to dictionary (via "dict"
-function) depends on global application setting
-hac.SETTINGS_VAR["verbose_output"] being initialized.
+NOTE: Before converting objects of type ISite, Contest and Problem to
+dictionary (via "dict" function) following global application setting must be
+initialized:
+
+    hac.SETTINGS_VAR["verbose_output"]
+
 """
 from abc import ABCMeta, abstractmethod
 
 import hac
+from hac.util_common import with_metaclass
 
 
-# Utility: portable (Python2/Python3) metaclassing
-def with_metaclass(mcls):
-    def decorator(cls):
-        body = vars(cls).copy()
-        # clean out class body
-        body.pop('__dict__', None)
-        body.pop('__weakref__', None)
-        return mcls(cls.__name__, cls.__bases__, body)
-    return decorator
-
-
-# Web-site data-structure
+# -- Dynamic data (plugins) ---------------------------------------------------
 class ISiteRegistry(ABCMeta):
+    """Dynamic registry of sites (plugin architecture).
+    """
     sites = []
     def __init__(cls, name, bases, attrs):
         if name != 'ISite':
@@ -79,7 +74,12 @@ class ISite(object):
         pass
 
 
-# Contest data-structure
+# -- Dynamic data (discovered) ------------------------------------------------
+
+
+
+
+# -- Containers ---------------------------------------------------------------
 class Contest(object):
     """Contest info container.
     """
@@ -97,7 +97,6 @@ class Contest(object):
             yield (key, getattr(self, key))
 
 
-# Problem data-structure
 class Problem(object):
     """Problem info container.
     """

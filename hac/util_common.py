@@ -6,7 +6,7 @@ from os import mkdir, remove
 from os.path import exists, isdir
 
 
-# -- Printing to STDERR -------------------------------------------------------
+# -- Printing to CLI ----------------------------------------------------------
 def warn(msg):
     sys.stderr.write("WARNING: " + msg + "\n")
 
@@ -14,7 +14,7 @@ def error(msg):
     sys.stderr.write("ERROR: " + msg + "\n")
 
 
-# -- Helpers for lists and dictionaries ---------------------------------------
+# -- Lists and dictionaries ---------------------------------------------------
 def dict_override(a, b):
     """Overriding dictionary values.
 
@@ -70,7 +70,7 @@ def mainargs_index(a):
     return indices[0] if indices else len(a)
 
 
-# -- Filesystem operations ----------------------------------------------------
+# -- Filesystem ---------------------------------------------------------------
 def mkdir_safe(path, force=False):
     """Carefully handles directory creation. Notifies about special
     occurrences.
@@ -95,4 +95,15 @@ def mkdir_safe(path, force=False):
                 mkdir(path)
             else:
                 warn('"' + path + '" is not a directory!')
+
+
+# -- Metaclassing (portable, works on Python2/Python3) ------------------------
+def with_metaclass(mcls):
+    def decorator(cls):
+        body = vars(cls).copy()
+        # Clean out class body.
+        body.pop('__dict__', None)
+        body.pop('__weakref__', None)
+        return mcls(cls.__name__, cls.__bases__, body)
+    return decorator
 
