@@ -70,14 +70,14 @@ def mainargs_index(a):
     return indices[0] if indices else len(a)
 
 
-def choice_extract(a):
+def choice_generate(a):
     """Returns input list with additional entries that represent choices
     without priority specifiers.
 
-    >>> choice_extract(['no', 'cpp.0', 'cpp.1'])
+    >>> choice_generate(['no', 'cpp.0', 'cpp.1'])
     ['cpp', 'cpp.0', 'cpp.1', 'no']
 
-    >>> choice_extract(['no', 'cpp.0', 'cpp.1', 'py.15'])
+    >>> choice_generate(['no', 'cpp.0', 'cpp.1', 'py.15'])
     ['cpp', 'cpp.0', 'cpp.1', 'no', 'py', 'py.15']
     """
     SEP = '.'
@@ -86,6 +86,72 @@ def choice_extract(a):
         if SEP in e:
             b.add(e.split(SEP)[0])
     return sorted(b)
+
+
+def choice_generate(a):
+    """Returns input list with additional entries that represent choices
+    without priority specifiers.
+
+    >>> choice_generate(['no', 'cpp.0', 'cpp.1'])
+    ['cpp', 'cpp.0', 'cpp.1', 'no']
+
+    >>> choice_generate(['no', 'cpp.0', 'cpp.1', 'py.15'])
+    ['cpp', 'cpp.0', 'cpp.1', 'no', 'py', 'py.15']
+    """
+    SEP = '.'
+    b = set(a)
+    for e in a:
+        if SEP in e:
+            b.add(e.split(SEP)[0])
+    return sorted(b)
+
+
+def choice_normal(a, b):
+    """Normalizes list a so that among multiple choices that differ only in
+    priority modifier, just the highest priority one is present in the output
+    list. All the members in the output list are in the canonic form
+    <TYPE>.<PRIORITY>.
+
+    If in there is entry without the priority modifier in the input list, it
+    corresponds to the request for highest priority choice available (one with
+    lowest priority modifier).
+
+    >>> choice_normal(['cpp.0', 'cpp.1', 'py'], ['cpp.0', 'cpp.1', 'py.15'])
+    ['cpp.0', 'py.15']
+
+    >>> choice_normal(['cpp', 'py.1', 'py'], ['cpp.1', 'py.0', 'py.1'])
+    ['cpp.1', 'py.0']
+
+    DEFINITIONS:
+        - regular entries: 'cpp', 'cpp.0', 'py', 'py.15'
+        - canonic entries: 'cpp.0', 'py.15'
+        - bare entries: 'cpp', 'py'
+    """
+    SEP = '.'
+    assert all([SEP in ec for ec in b])
+    c2c = {ec: ec for ec in b}  # Map canonic to canonic.
+
+    r2c = c2c.copy()            # Map regular to canonic.
+    for ec in sorted(set(b)):
+        eb = ec.split(SEP)[0]
+        if eb not in r2c:
+            r2c[eb] = ec
+
+    r2b = {}                    # Map regular to bare.
+    for er in r2c:
+        assert SEP in r2c[er]
+        r2b[er] = r2c[er].split(SEP)[0]
+
+    b_track = set()
+    ret = []
+    for er in sorted(set(a)):
+        eb = r2b[er]
+        ec = r2c[er]
+        if eb not in b_track:
+            b_track.add(eb)
+            ret.append(ec)
+
+    return ret
 
 
 # -- Filesystem ---------------------------------------------------------------

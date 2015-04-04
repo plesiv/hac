@@ -13,7 +13,7 @@ from hac.parse_common import get_pargs_pack_common, pargs_packed_add
 from hac.parse_config import get_bare_parser_config
 from hac.parse_cli import get_pargs_pack_cli, get_bare_parser_cli
 from hac.util_common import error, dict_override, list_reduce, mainargs_index,\
-    choice_extract
+    choice_generate, choice_normal
 from hac.util_data import plugin_collect, plugin_match_site
 
 
@@ -30,14 +30,20 @@ def main(args=sys.argv[1:]):
     plugin_langs = plugin_collect(DataType.LANG)     # Get language-templates
     plugin_runners = plugin_collect(DataType.RUNNER) # Get runners
     plugin_sites = plugin_collect(DataType.SITE)     # Get site-processors
-    #assert plugin_langs and plugin_runners and plugin_sites
+
+    # Helper data. If available_langs == ['cpp.0', 'cpp.1', 'py.15']), then
+    # choice_langs == ['cpp', 'cpp.0', 'cpp.1', 'py', 'py.15']
+    available_langs = plugin_langs.keys()
+    choice_langs = choice_generate(available_langs)
+    available_runners = plugin_runners.keys()
+    choice_runners = choice_generate(available_runners)
 
 
     # -- Construct parsers (uses data from plug-ins) -------------------------
     # Get parser arguments.
     pargs_pack_common = get_pargs_pack_common(
-            choice_lang = choice_extract(plugin_langs.keys()),
-            choice_runner = choice_extract(plugin_runners.keys()),
+            choice_langs = choice_langs,
+            choice_runners = choice_runners,
     )
     pargs_pack_cli = get_pargs_pack_cli()
 
@@ -49,8 +55,9 @@ def main(args=sys.argv[1:]):
     pargs_packed_add(parser_cli, pargs_pack_common)
     pargs_packed_add(parser_cli, pargs_pack_cli)
 
-    # -- Read configuration files --------------------------------------------
-    # Get default application configuration
+
+    # -- Get configuration from files ----------------------------------------
+    # Get default application configuration.
     global_config_file = os.path.join(
         hac.SETTINGS_VAR["app_root_dir"],
         hac.SETTINGS_CONST["config_app_path"],
@@ -59,7 +66,7 @@ def main(args=sys.argv[1:]):
     env_global = parser_config.parse_args(['@' + global_config_file])
     conf_global = vars(env_global)
 
-    # Get user specifirc configuration
+    # Get user specific configuration.
     user_config_file = os.path.join(
         hac.SETTINGS_CONST["config_user_path"],
         hac.SETTINGS_CONST["config_filename"])
@@ -71,43 +78,52 @@ def main(args=sys.argv[1:]):
     else:
         conf_user = conf_global
 
-    # -- Custom CLI handling -------------------------------------------------
+
+    # -- Get configuration from CLI ------------------------------------------
     # Show help and exit when no arguments given.
     if len(args) == 0:
         parser_cli.print_help()
         sys.exit(ExitStatus.ERROR)
 
-    # When no command given, use default from configuration files
+    # When no command given, use default from configuration files.
     margs_ind = mainargs_index(args)
     if (margs_ind == len(args)) or (args[margs_ind] not in app_commands):
         args.insert(margs_ind, conf_user["command"])
 
-    # When no location given (application command is the last argument)
+    # When no location given, notify user.
     if (len(args) == margs_ind + 1) and (args[margs_ind] in app_commands):
         error("No CONTEST / PROBLEM given!")
         sys.exit(ExitStatus.ERROR)
 
     # Parse CLI arguments and resolve with respect to configuration files
-    #from pudb import set_trace; set_trace()
     env_cli = parser_cli.parse_args(args=args)
     if env_cli:
         conf_all = dict_override(conf_user, vars(env_cli))
     else:
         conf_all = conf_user
 
-    # -- Normalization of input/config ---------------------------------------
+
+    # -- Normalize aggregated configuration ----------------------------------
     # Reduce lang, runner lists and extract problems
     conf_all["lang"] = list_reduce(conf_all["lang"])
     conf_all["runner"] = list_reduce(conf_all["runner"])
     conf_all["problems"] = conf_all["problems"][0]
+
+    # Normalize lang and runner lists
+    # If available_langs == ['cpp.0', 'cpp.1', 'py.15'], then
+    # conf_all["runner"] == ['cpp.0', 'cpp.1', 'py'] is normalized to
+    # ['cpp.0', 'py.15']
+    conf_all["lang"] = choice_normal(conf_all["lang"], available_langs)
+    conf_all["runner"] = choice_normal(conf_all["runner"], available_runners)
 
     # Normalize location member (should be URL)
     if not conf_all['location'].startswith('http://') and \
        not conf_all['location'].startswith('https://'):
         conf_all['location'] = 'http://' + conf_all['location']
 
-    # -- Retrieve contest and problem info -----------------------------------
-    # NOTE: Done in two steps for consistency and testability
+
+    # NOTE: Following tasks each done in two steps for testability.
+    # -- Match site processor ------------------------------------------------
     # 1) Match site, retrieve site-url
     site_url = plugin_match_site(plugin_sites, conf_all)
     # 2) Extract site object
@@ -115,6 +131,8 @@ def main(args=sys.argv[1:]):
     assert site_matched
     site_obj = site_matched[0]
 
+
+    # -- Retrieve contest and problem info -----------------------------------
     # Use web-site processor to get contest data
     contest_url = site_obj.match_contest(conf_all)
     contest_obj = site_obj.get_contest(contest_url)
@@ -127,7 +145,7 @@ def main(args=sys.argv[1:]):
     assert conf_all["command"] in app_commands
 
     # TODO: adjust verbosity according to settings
-    hac.SETTINGS_VAR["verbose_output"] = True
+    hac.SETTINGS_VAR["verbose_output"] = False
 
     # Execute selected command with all relevant information
     app_commands[conf_all["command"]](

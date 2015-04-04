@@ -79,7 +79,7 @@ _pargs_pack_common_const = [
     },
 ]
 
-def get_pargs_pack_common(choice_lang = [], choice_runner = []):
+def get_pargs_pack_common(choice_langs = [], choice_runners = []):
     """Returns merge of constant and variable common parse arguments.
     """
     _pargs_pack_common_var = [
@@ -90,7 +90,7 @@ def get_pargs_pack_common(choice_lang = [], choice_runner = []):
             "names": ("-l", "--lang"),
             "params": {
                 "action": "append",
-                "choices": ['no'] + choice_lang,
+                "choices": ['no'] + choice_langs,
                 "help":
                     """Languages for which to prepare the environment""",
                 "dest": "lang"
@@ -100,7 +100,7 @@ def get_pargs_pack_common(choice_lang = [], choice_runner = []):
             "names": ("-r", "--runner"),
             "params": {
                 "action": "append",
-                "choices": ['no'] + choice_runner,
+                "choices": ['no'] + choice_runners,
                 "help":
                     """Runners for which to prepare the environment""",
                 "dest": "runner"
