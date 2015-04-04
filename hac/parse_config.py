@@ -3,14 +3,11 @@
 """
 import argparse
 
-from hac.parse_common import common_args, add_packed_arguments
 
-
-# TODO Document HAC_CONFIG_DIR var
-# TODO Windows compat
-# Custom configuration-file parser, ignores lines starting with '#'
-class ConfigParser(argparse.ArgumentParser):
-
+class ParserConfig(argparse.ArgumentParser):
+    """Class defining parsers for configuration files. Ignores lines starting
+    with '#', and parses all other lines as if they were given on CLI.
+    """
     def convert_arg_line_to_args(self, arg_line):
         if len(arg_line) > 0 and arg_line[0] == '#':
             return
@@ -19,7 +16,10 @@ class ConfigParser(argparse.ArgumentParser):
                 continue
             yield arg
 
-# Construct configuration-file parser with common arguments.
-config_parser = ConfigParser(fromfile_prefix_chars='@')
-add_packed_arguments(config_parser, common_args)
+
+def get_bare_parser_config():
+    """Returns bare parser for configuration files. Arguments should be added
+    to parser manually.
+    """
+    return ParserConfig(fromfile_prefix_chars='@')
 

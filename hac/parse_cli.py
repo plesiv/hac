@@ -4,37 +4,52 @@
 import os
 import argparse
 
-from hac.parse_common import common_args, add_packed_arguments
+
+"""Parse arguments used in CLI parser.
+"""
+_pargs_pack_cli = [
+    {
+        "names": ("location",),
+        "params": {
+            "help":
+                """Unique identifier for contest (options: [a] URL, [b]
+                'website ID'/'contest ID') or specific problem (URL)""",
+            "metavar": "(CONTEST | PROBLEM)",
+        }
+    },
+    #TODO format help better
+    {
+        "names": ("problems",),
+        "params": {
+            "action": "append",
+            "nargs": "*",
+            "help":
+                """Optional identifiers for additional problems (options: [a]
+                problem's ID, [b] problem's number) from contest specified by
+                previous argument""",
+            "metavar": "PROBLEM"
+        }
+    },
+]
 
 
-# Construct CLI parser.
-cli_parser = argparse.ArgumentParser(
-    description=
-        """how to use...
-        """,#TODO
-    epilog="Examples...",#TODO
-)
+def get_pargs_pack_cli():
+    """Returns CLI parse arguments.
+    """
+    return _pargs_pack_cli
 
-# Add common arguments to CLI parser.
-add_packed_arguments(cli_parser, common_args)
 
-#TODO format help better
-# Add CLI specific arguments.
-cli_parser.add_argument(
-    "location",
-    help=
-        """Unique identifier for contest (options: [a] URL, [b] 'website ID'/'contest
-        ID') or specific problem (URL)""",
-    metavar="(CONTEST | PROBLEM)",
-)
+# Parser notes.
+_parser_cli_description = "how to use..." #TODO
+_parser_cli_epilog = "Examples..." #TODO
 
-cli_parser.add_argument(
-    "problems",
-    action="append",
-    nargs="*",
-    help=
-        """Optional identifiers for additional problems (options: [a] problem's
-        ID, [b] problem's number) from contest specified by previous
-        argument""",
-    metavar="PROBLEM"
-)
+
+def get_bare_parser_cli():
+    """Returns bare CLI parser object without arguments. Arguments should be
+    added to parser manually.
+    """
+    return argparse.ArgumentParser(
+        description = _parser_cli_description,
+        epilog = _parser_cli_epilog,
+    )
+

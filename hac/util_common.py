@@ -70,6 +70,24 @@ def mainargs_index(a):
     return indices[0] if indices else len(a)
 
 
+def choice_extract(a):
+    """Returns input list with additional entries that represent choices
+    without priority specifiers.
+
+    >>> choice_extract(['no', 'cpp.0', 'cpp.1'])
+    ['cpp', 'cpp.0', 'cpp.1', 'no']
+
+    >>> choice_extract(['no', 'cpp.0', 'cpp.1', 'py.15'])
+    ['cpp', 'cpp.0', 'cpp.1', 'no', 'py', 'py.15']
+    """
+    SEP = '.'
+    b = set(a)
+    for e in a:
+        if SEP in e:
+            b.add(e.split(SEP)[0])
+    return sorted(b)
+
+
 # -- Filesystem ---------------------------------------------------------------
 def mkdir_safe(path, force=False):
     """Carefully handles directory creation. Notifies about special

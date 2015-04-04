@@ -66,7 +66,7 @@ def _plugin_discover_langs(dirs):
 def _plugin_discover_runners(dirs):
     """
     """
-    pass
+    return {}
 
 # -- Sites --------------------------------------------------------------------
 def _plugin_discover_sites(dirs):

@@ -9,9 +9,11 @@ from os.path import dirname, realpath
 import hac
 from hac import DataType, ExitStatus
 from hac.commands import app_commands
-from hac.parse_cli import cli_parser
-from hac.parse_config import config_parser
-from hac.util_common import dict_override, list_reduce, mainargs_index, error
+from hac.parse_common import get_pargs_pack_common, pargs_packed_add
+from hac.parse_config import get_bare_parser_config
+from hac.parse_cli import get_pargs_pack_cli, get_bare_parser_cli
+from hac.util_common import error, dict_override, list_reduce, mainargs_index,\
+    choice_extract
 from hac.util_data import plugin_collect, plugin_match_site
 
 
@@ -30,8 +32,22 @@ def main(args=sys.argv[1:]):
     plugin_sites = plugin_collect(DataType.SITE)     # Get site-processors
     #assert plugin_langs and plugin_runners and plugin_sites
 
-    # Update application settings according to found plug-ins
-    hac.SETTINGS_VAR["cli_optargs"][DataType.LANG].extend(plugin_langs.keys())
+
+    # -- Construct parsers (uses data from plug-ins) -------------------------
+    # Get parser arguments.
+    pargs_pack_common = get_pargs_pack_common(
+            choice_lang = choice_extract(plugin_langs.keys()),
+            choice_runner = choice_extract(plugin_runners.keys()),
+    )
+    pargs_pack_cli = get_pargs_pack_cli()
+
+    # Add arguments to parsers.
+    parser_config = get_bare_parser_config()
+    parser_cli = get_bare_parser_cli()
+
+    pargs_packed_add(parser_config, pargs_pack_common)
+    pargs_packed_add(parser_cli, pargs_pack_common)
+    pargs_packed_add(parser_cli, pargs_pack_cli)
 
     # -- Read configuration files --------------------------------------------
     # Get default application configuration
@@ -40,7 +56,7 @@ def main(args=sys.argv[1:]):
         hac.SETTINGS_CONST["config_app_path"],
         hac.SETTINGS_CONST["config_filename"])
     assert os.path.exists(global_config_file)
-    env_global = config_parser.parse_args(['@' + global_config_file])
+    env_global = parser_config.parse_args(['@' + global_config_file])
     conf_global = vars(env_global)
 
     # Get user specifirc configuration
@@ -49,7 +65,7 @@ def main(args=sys.argv[1:]):
         hac.SETTINGS_CONST["config_filename"])
 
     if os.path.exists(user_config_file):
-        env_user = config_parser.parse_args(['@' + user_config_file])
+        env_user = parser_config.parse_args(['@' + user_config_file])
         # Resolve configuration read from files
         conf_user = dict_override(conf_global, vars(env_user))
     else:
@@ -58,7 +74,7 @@ def main(args=sys.argv[1:]):
     # -- Custom CLI handling -------------------------------------------------
     # Show help and exit when no arguments given.
     if len(args) == 0:
-        cli_parser.print_help()
+        parser_cli.print_help()
         sys.exit(ExitStatus.ERROR)
 
     # When no command given, use default from configuration files
@@ -73,7 +89,7 @@ def main(args=sys.argv[1:]):
 
     # Parse CLI arguments and resolve with respect to configuration files
     #from pudb import set_trace; set_trace()
-    env_cli = cli_parser.parse_args(args=args)
+    env_cli = parser_cli.parse_args(args=args)
     if env_cli:
         conf_all = dict_override(conf_user, vars(env_cli))
     else:
@@ -107,7 +123,7 @@ def main(args=sys.argv[1:]):
     problems_urls = site_obj.match_problems(conf_all)
     problems_objs = site_obj.get_problems(problems_urls)
 
-    # -- Execute command (e.g. prepare environment for problems )-------------
+    # -- Execute selected command --------------------------------------------
     assert conf_all["command"] in app_commands
 
     # TODO: adjust verbosity according to settings

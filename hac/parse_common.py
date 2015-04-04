@@ -8,13 +8,12 @@ from hac import DataType
 from hac.commands import app_commands
 
 
-# Arguments used in CLI and configuration files. Each element in list is
-# either:
-#   - dict to be unpacked directly in `add_argument`
-#   - tuple containing dicts of arguments that should be put in
-#     mutually-exclusive group
-common_args = [
-    # TODO DEFAULTS and CHOICES from configs
+"""Constant common parse arguments used in:
+
+    - parsers for CLI files,
+    - parsers for configuration files.
+"""
+_pargs_pack_common_const = [
     {
         "names": ("-d", "--subdir-depth"),
         "params": {
@@ -25,29 +24,6 @@ common_args = [
                 directory, 1 - directory per task, 2 - directory for contest
                 and sub-directory per task""",
             "dest": "subdir_depth"
-        }
-    },
-    {
-        #TODO if -lno -> clear all previous langs
-        #TODO multiple langs separated by comma ?
-        #TODO for no lang in final and executor present -> output executors template
-        "names": ("-l", "--lang"),
-        "params": {
-            "action": "append",
-            "choices": ["py", "cpp"],
-            "help":
-                """Languages for which to prepare the environment""",
-            "dest": "lang"
-        }
-    },
-    {
-        "names": ("-r", "--runner"),
-        "params": {
-            "action": "append",
-            "choices": ["no", "sh"],
-            "help":
-                """Runners for which to prepare the environment""",
-            "dest": "runner"
         }
     },
     {
@@ -71,7 +47,6 @@ common_args = [
             "dest": "testcases"
         }
     },
-    #TODO force defaults to False
     #TODO remove defaults in help
     (
         {
@@ -104,11 +79,48 @@ common_args = [
     },
 ]
 
-#TODO version to cli arguments
-#TODO test-cases for arguments
+def get_pargs_pack_common(choice_lang = [], choice_runner = []):
+    """Returns merge of constant and variable common parse arguments.
+    """
+    _pargs_pack_common_var = [
+        {
+            #TODO if -lno -> clear all previous langs
+            #TODO multiple langs separated by comma ?
+            #TODO for no lang in final and executor present -> output executors template
+            "names": ("-l", "--lang"),
+            "params": {
+                "action": "append",
+                "choices": ['no'] + choice_lang,
+                "help":
+                    """Languages for which to prepare the environment""",
+                "dest": "lang"
+            }
+        },
+        {
+            "names": ("-r", "--runner"),
+            "params": {
+                "action": "append",
+                "choices": ['no'] + choice_runner,
+                "help":
+                    """Runners for which to prepare the environment""",
+                "dest": "runner"
+            }
+        },
+    ]
 
-# Unpacks arguments and adds them to parser
-def add_packed_arguments(parser, pack):
+    return _pargs_pack_common_const + _pargs_pack_common_var
+
+
+def pargs_packed_add(parser, pack):
+    """Unpacks parse arguments and adds them to parser.
+
+    Each element in pack is either:
+
+      - dict to be unpacked directly in `add_argument`
+      - tuple containing dicts of arguments that should be put in
+        mutually-exclusive group
+
+    """
     for arg in pack:
         # Unpack mutually-exclusive group (tuple).
         if type(arg) == tuple:

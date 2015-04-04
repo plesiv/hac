@@ -33,10 +33,6 @@ def init_settings():
     SETTINGS_VAR = {
         "app_root_dir": '/',
         "verbose_output" : False,
-        "cli_optargs": {
-            DataType.LANG: ['no'],
-            DataType.RUNNER: ['no'],
-        },
     }
 
 # Application constant settings.
