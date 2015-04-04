@@ -18,14 +18,20 @@ from hac.util_data import plugin_collect, plugin_match_site
 def main(args=sys.argv[1:]):
     """Execution flow of the main function:
 
-    1) get configuration (priorities: default < local < cli)
-    2) branch according to command (prep, show)
+    #TODO Execution flow correct
+    ... discover plugins
+    ... get configuration (priorities: default < local < cli)
+    ... branch according to command (prep, show)
     """
 
-    # -- Discover pluggins and templates -------------------------------------
-    # Discover site-processor plugins (user-defined and default)
-    sites = plugin_collect(DataType.SITE)
+    # -- Discover plug-ins and templates -------------------------------------
+    plugin_langs = plugin_collect(DataType.LANG)     # Get language-templates
+    plugin_runners = plugin_collect(DataType.RUNNER) # Get runners
+    plugin_sites = plugin_collect(DataType.SITE)     # Get site-processors
+    #assert plugin_langs and plugin_runners and plugin_sites
 
+    # Update application settings according to found plug-ins
+    hac.SETTINGS_VAR["cli_optargs"][DataType.LANG].extend(plugin_langs.keys())
 
     # -- Read configuration files --------------------------------------------
     # Get default application configuration
@@ -87,9 +93,9 @@ def main(args=sys.argv[1:]):
     # -- Retrieve contest and problem info -----------------------------------
     # NOTE: Done in two steps for consistency and testability
     # 1) Match site, retrieve site-url
-    site_url = plugin_match_site(sites, conf_all)
+    site_url = plugin_match_site(plugin_sites, conf_all)
     # 2) Extract site object
-    site_matched = [site for site in sites if site_url == site.url]
+    site_matched = [site for site in plugin_sites if site_url == site.url]
     assert site_matched
     site_obj = site_matched[0]
 
@@ -105,14 +111,16 @@ def main(args=sys.argv[1:]):
     assert conf_all["command"] in app_commands
 
     # TODO: adjust verbosity according to settings
-    hac.SETTINGS_VAR["verbose_output"] = False
+    hac.SETTINGS_VAR["verbose_output"] = True
 
     # Execute selected command with all relevant information
     app_commands[conf_all["command"]](
         conf_global = conf_global,
         conf_user = conf_user,
         conf_all = conf_all,
-        sites = sites,
+        plugin_langs = plugin_langs,
+        plugin_runners = plugin_runners,
+        plugin_sites = plugin_sites,
         site_obj = site_obj,
         contest_obj = contest_obj,
         problems_objs = problems_objs)

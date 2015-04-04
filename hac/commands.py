@@ -8,7 +8,13 @@ Commands can access following entries from dictionary "args":
                  (override default application settings),
     - conf_all: dictionary containing command-line settings (override user
                 settings from configuration files),
-    - sites: list of all available site-processors (objects whose classes
+    - plugin_langs: dictionary mapping language template designation to the
+                    contents of language template file
+    - plugin_runners: dictionary (of dictionaries) mapping runner templates
+                      designation to the dictionary which map language template
+                      designation to the contents of processed runner template
+                      file
+    - plugin_sites: list of all available site-processors (objects whose classes
              inherit from hac.data.ISite),
     - site_obj: selected site-processor (object whose class inherit from
                 hac.data.ISite),
@@ -70,15 +76,17 @@ def _command_show(**args):
 
     # Prepare labels for arguments output
     args_labels_default = {
-        'conf_all':      '1c --- Total config (overide 1b) .... ',
-        'site_obj':      '3a --- Selected site processor ...... ',
-        'contest_obj':   '3b --- Selected contest ............. ',
-        'problems_objs': '3c --- Selected problems ............ ',
+        'conf_all':       '1c --- Total config (overide 1b) .... ',
+        'site_obj':       '3a --- Selected site processor ...... ',
+        'contest_obj':    '3b --- Selected contest ............. ',
+        'problems_objs':  '3c --- Selected problems ............ ',
     }
     args_labels_verobse = {
-        'conf_global':   '1a --- App default config ........... ',
-        'conf_user':     '1b --- User files config (override 1a)',
-        'sites':         '2  --- Available site processors .... '
+        'conf_global':    '1a --- App default config ........... ',
+        'conf_user':      '1b --- User files config (override 1a)',
+        'plugin_langs':   '2a --- Available language templates . ',
+        'plugin_runners': '2b --- Available runner templates ... ',
+        'plugin_sites':   '2c --- Available site processors .... ',
     }
 
     args_labels = args_labels_default
@@ -90,11 +98,14 @@ def _command_show(**args):
         'conf_global': args['conf_global'],
         'conf_user': args['conf_user'],
         'conf_all': args['conf_all'],
-        'sites': [dict(site) for site in args['sites']],
+        'plugin_langs': args['plugin_langs'].keys(),
+        'plugin_runners': [], #TODO show all languages for runner
+        'plugin_sites': [dict(site) for site in args['plugin_sites']],
         'site_obj': dict(args['site_obj']),
         'contest_obj': dict(args['contest_obj']),
         'problems_objs': [dict(prob) for prob in args['problems_objs']]
     }
+    #TODO language x runner matrix
 
     # Construct dictionary with data to print
     data = {args_labels[key]: args_printable[key] for key in args_labels}

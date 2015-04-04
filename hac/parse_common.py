@@ -3,6 +3,8 @@
 """
 import os
 
+import hac
+from hac import DataType
 from hac.commands import app_commands
 
 
@@ -32,7 +34,7 @@ common_args = [
         "names": ("-l", "--lang"),
         "params": {
             "action": "append",
-            "choices": ["no", "py", "cpp"],
+            "choices": ["py", "cpp"],
             "help":
                 """Languages for which to prepare the environment""",
             "dest": "lang"

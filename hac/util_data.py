@@ -7,6 +7,7 @@ NOTE: for simplicity, language and runner templates are referred to as plug-ins
 import imp
 import os
 import sys
+import re
 
 if sys.version_info.major == 2:
     from urlparse import urlparse
@@ -18,11 +19,47 @@ from hac import DataType
 from hac.data import ISiteRegistry
 
 
+_plugin_filename_regex = {
+    DataType.LANG: r"(?P<temp>[^.]+)\.(?P<prio>[^.]+)\.(?P<ext>[^.]+)",
+    DataType.RUNNER: r"(?P<temp>[^.]+)\.(?P<prio>[^.]+)\.(?P<ext>[^.]+)",
+}
+
 # -- Languages ----------------------------------------------------------------
 def _plugin_discover_langs(dirs):
+    """Discovers all available programming language templates in a given list
+    of directories.
+
+    Programming language template file-names are expected to be in the format:
+
+        <PLUGIN_TEMP>.<PRIORITY>.<LANGUAGE-EXTENSION>
+
+    Where:
+
+        * <PLUGIN_TEMP> is application constant setting (from SETTINGS_CONST).
+        * <PRIORITY> is the integer higher or equal to zero. Lower <PRIORITY>
+                     number indicates higher priority.
+
+    For example highest priority Python language template would have filename:
+
+        temp.0.py
+
+    Function returns dictionary mapping "<LANGUAGE-EXTENSION>.<PRIORITY>" to
+    the contents of the given language template file.
     """
-    """
-    pass
+    filename_pattern = re.compile(_plugin_filename_regex[DataType.LANG]);
+
+    langs = {}
+    for cdir in dirs:
+        if os.path.isdir(cdir):
+            for filename in os.listdir(cdir):
+                tokens = filename_pattern.search(filename)
+                if tokens: # Filename matches specified regular expression
+                    key = tokens.group("ext") + "." + tokens.group("prio")
+                    if (key not in langs):
+                        with open(os.path.join(cdir, filename), 'r') as f:
+                            contents = f.read()
+                        langs[key] = contents
+    return langs
 
 
 # -- Runners ------------------------------------------------------------------
@@ -33,21 +70,23 @@ def _plugin_discover_runners(dirs):
 
 # -- Sites --------------------------------------------------------------------
 def _plugin_discover_sites(dirs):
-    """Dynamically discovers all web-site processors in a given directory.
+    """Dynamically discovers all web-site processors in a given list of
+    directories.
 
-    Returns list of site-processor objects. All discovered classes are
-    instantiated with empty constructor.
+    Returns list of site-processor objects. Site processors occurring in a
+    directories earlier in the input list have a higher priority. All
+    discovered classes are instantiated with empty constructor.
     """
     for cdir in dirs:
         if os.path.isdir(cdir):
             for filename in os.listdir(cdir):
-                mname, mext = os.path.splitext(filename)
-                if mext == ".py":
-                    fname, path, descr = imp.find_module(mname, [cdir])
+                froot, fext = os.path.splitext(filename)
+                if fext == ".py":
+                    fname, fpath, fdescr = imp.find_module(froot, [cdir])
                     if fname:
                         # Register discovered site-processor module in
                         # ISiteRegistry.sites
-                        mod = imp.load_module(mname, fname, path, descr)
+                        mod = imp.load_module(froot, fname, fpath, fdescr)
     return [ site() for site in ISiteRegistry.sites ]
 
 
@@ -64,16 +103,17 @@ def plugin_match_site(sites, conf): #very-stupid matching now
 
 
 # -- Common data utilities ----------------------------------------------------
-_plugin_discover_funcs = []
-_plugin_discover_funcs.insert(DataType.LANG, _plugin_discover_langs)
-_plugin_discover_funcs.insert(DataType.RUNNER, _plugin_discover_runners)
-_plugin_discover_funcs.insert(DataType.SITE, _plugin_discover_sites)
+_plugin_discover_funcs = {
+    DataType.LANG: _plugin_discover_langs,
+    DataType.RUNNER: _plugin_discover_runners,
+    DataType.SITE: _plugin_discover_sites,
+}
 
 
 def plugin_collect(data_type):
     """Retrieves application default and user-specified plug-ins.
 
-    User-specified plug-ins of the same name override applicatin default
+    User-specified plug-ins of the same name override application default
     plug-ins.
     """
     plugin_path = hac.SETTINGS_CONST["plugin_path"][data_type]
