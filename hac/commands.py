@@ -27,8 +27,8 @@ from os.path import realpath, exists, isdir, join
 from pprint import PrettyPrinter
 
 import hac
-from hac import ExitStatus
-from hac.util_common import warn, error, mkdir_safe
+from hac import DataType, ExitStatus
+from hac.util_common import warn, error, safe_mkdir, safe_fwrite
 
 
 def _command_prep(**args):
@@ -48,11 +48,11 @@ def _command_prep(**args):
     contest_obj = args['contest_obj']
     if conf_all['subdir_depth'] == 2:
         dir_contest = join(dir_working, contest_obj.ID)
-        mkdir_safe(dir_contest, force=conf_all['force'])
+        safe_mkdir(dir_contest, force=conf_all['force'])
     else:
         dir_contest = dir_working
 
-    # Proceed if have directory hierachy until this point
+    # Proceed if there exists directory hierachy until this point
     if (isdir(dir_contest)):
 
         # Directories #3: problems directories
@@ -61,9 +61,26 @@ def _command_prep(**args):
             problems_dirs = {}
             for prob in problems_objs:
                 problems_dirs[prob] = join(dir_contest, prob.ID)
-                mkdir_safe(problems_dirs[prob], force=conf_all['force'])
+                safe_mkdir(problems_dirs[prob], force=conf_all['force'])
         else:
             problems_dirs = {prob: dir_contest for prob in problems_objs}
+
+        # Files #1: create language templates for each problem
+        plugin_langs = args['plugin_langs']
+        selected_langs = conf_all['lang']
+        sep_langs = hac.SETTINGS_CONST['plugin_temp_sep'][DataType.LANG]
+
+        for prob in problems_objs:
+            if isdir(problems_dirs[prob]):
+                problem_path = join(problems_dirs[prob], prob.ID)
+
+                for lang in selected_langs:
+                    assert sep_langs in lang
+                    assert lang in plugin_langs
+                    lang_ext = lang.split(sep_langs)[0]
+                    problem_file = problem_path + '.' + lang_ext
+                    safe_fwrite(problem_file, plugin_langs[lang],
+                                force=conf_all['force'])
 
 
 def _command_show(**args):

@@ -12,7 +12,7 @@ class PyTest(TestCommand):
         TestCommand.finalize_options(self)
         self.test_args = [
             '--doctest-modules', '--verbose',
-            './config', './hac', './tests'
+            './config/site', './hac', './tests'
         ]
         self.test_suite = True
 

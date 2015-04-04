@@ -4,6 +4,7 @@
 import sys
 from os import mkdir, remove
 from os.path import exists, isdir
+from shutil import rmtree
 
 
 # -- Printing to CLI ----------------------------------------------------------
@@ -70,7 +71,7 @@ def mainargs_index(a):
     return indices[0] if indices else len(a)
 
 
-def choice_generate(a):
+def choice_generate(a, separator='.'):
     """Returns input list with additional entries that represent choices
     without priority specifiers.
 
@@ -80,33 +81,15 @@ def choice_generate(a):
     >>> choice_generate(['no', 'cpp.0', 'cpp.1', 'py.15'])
     ['cpp', 'cpp.0', 'cpp.1', 'no', 'py', 'py.15']
     """
-    SEP = '.'
+    separator = '.'
     b = set(a)
     for e in a:
-        if SEP in e:
-            b.add(e.split(SEP)[0])
+        if separator in e:
+            b.add(e.split(separator)[0])
     return sorted(b)
 
 
-def choice_generate(a):
-    """Returns input list with additional entries that represent choices
-    without priority specifiers.
-
-    >>> choice_generate(['no', 'cpp.0', 'cpp.1'])
-    ['cpp', 'cpp.0', 'cpp.1', 'no']
-
-    >>> choice_generate(['no', 'cpp.0', 'cpp.1', 'py.15'])
-    ['cpp', 'cpp.0', 'cpp.1', 'no', 'py', 'py.15']
-    """
-    SEP = '.'
-    b = set(a)
-    for e in a:
-        if SEP in e:
-            b.add(e.split(SEP)[0])
-    return sorted(b)
-
-
-def choice_normal(a, b):
+def choice_normal(a, b, separator='.'):
     """Normalizes list a so that among multiple choices that differ only in
     priority modifier, just the highest priority one is present in the output
     list. All the members in the output list are in the canonic form
@@ -127,20 +110,20 @@ def choice_normal(a, b):
         - canonic entries: 'cpp.0', 'py.15'
         - bare entries: 'cpp', 'py'
     """
-    SEP = '.'
-    assert all([SEP in ec for ec in b])
+    separator = '.'
+    assert all([separator in ec for ec in b])
     c2c = {ec: ec for ec in b}  # Map canonic to canonic.
 
     r2c = c2c.copy()            # Map regular to canonic.
     for ec in sorted(set(b)):
-        eb = ec.split(SEP)[0]
+        eb = ec.split(separator)[0]
         if eb not in r2c:
             r2c[eb] = ec
 
     r2b = {}                    # Map regular to bare.
     for er in r2c:
-        assert SEP in r2c[er]
-        r2b[er] = r2c[er].split(SEP)[0]
+        assert separator in r2c[er]
+        r2b[er] = r2c[er].split(separator)[0]
 
     b_track = set()
     ret = []
@@ -155,7 +138,7 @@ def choice_normal(a, b):
 
 
 # -- Filesystem ---------------------------------------------------------------
-def mkdir_safe(path, force=False):
+def safe_mkdir(path, force=False):
     """Carefully handles directory creation. Notifies about special
     occurrences.
 
@@ -179,6 +162,34 @@ def mkdir_safe(path, force=False):
                 mkdir(path)
             else:
                 warn('"' + path + '" is not a directory!')
+
+
+def safe_fwrite(path, contents="", force=False):
+    """Carefully handles file writing. Notifies about special occurrences.
+
+    Argument force used to decide if priorly existing file named "path" should
+    be overwritten with provided contents.
+    """
+    # Path exists and is directory.
+    if isdir(path):
+        if force:
+            warn('Deleting directory "' + path + '" and creating file!')
+            rmtree(path)
+        else:
+            warn('Directory named "' + path + '" already exists!')
+
+    # Path exists but is not directory.
+    elif exists(path):
+        if force:
+            warn('Deleting file "' + path + '" and creating file!')
+            remove(path)
+        else:
+            warn('File named "' + path + '" already exists!')
+
+    # Writing to file.
+    if not exists(path):
+        with open(path, 'w') as f:
+            f.write(contents)
 
 
 # -- Metaclassing (portable, works on Python2/Python3) ------------------------

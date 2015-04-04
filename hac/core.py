@@ -34,9 +34,12 @@ def main(args=sys.argv[1:]):
     # Helper data. If available_langs == ['cpp.0', 'cpp.1', 'py.15']), then
     # choice_langs == ['cpp', 'cpp.0', 'cpp.1', 'py', 'py.15']
     available_langs = plugin_langs.keys()
-    choice_langs = choice_generate(available_langs)
+    sep_langs = hac.SETTINGS_CONST['plugin_temp_sep'][DataType.LANG]
+    choice_langs = choice_generate(available_langs, sep_langs)
+
     available_runners = plugin_runners.keys()
-    choice_runners = choice_generate(available_runners)
+    sep_runners = hac.SETTINGS_CONST['plugin_temp_sep'][DataType.RUNNER]
+    choice_runners = choice_generate(available_runners, sep_runners)
 
 
     # -- Construct parsers (uses data from plug-ins) -------------------------
