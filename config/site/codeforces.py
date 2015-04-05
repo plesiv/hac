@@ -145,6 +145,10 @@ class SiteCodeforces(ISite):
             if ID_prob:
                 IDs.append(ID_prob)
 
+        # If no problems are successfully manually selected, select them all.
+        if not IDs:
+            IDs = IDs_available
+
         # Notify about selected but non-available problems.
         urls = []
         for ID in IDs:

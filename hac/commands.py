@@ -104,6 +104,18 @@ def _command_prep(**args):
                             warn("Combination [{0}/{1}] does not exist!"
                                   .format(runn, lang_ext))
 
+                #TODO refactor
+                # 5) Dump inputs and outputs.
+                for i, inp in enumerate(prob.inputs):
+                    in_file = join(problems_dirs[prob],
+                                   'in' + os.extsep + str(i+1))
+                    safe_fwrite(in_file, inp, force=conf_all['force'])
+
+                for i, out in enumerate(prob.outputs):
+                    out_file = join(problems_dirs[prob],
+                                   'out' + os.extsep + str(i+1))
+                    safe_fwrite(out_file, out, force=conf_all['force'])
+
     return ExitStatus.OK
 
 
