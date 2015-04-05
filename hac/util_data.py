@@ -154,6 +154,7 @@ def _plugin_discover_runners(dirs):
                         for cdir_p in dirs:
                             if os.path.isdir(cdir_p):
                                 for fname_p in os.listdir(cdir_p):
+                                    # Is filename in proper part format?
                                     tok_p = fpart_pat.search(fname_p)
                                     if tok_p:
                                         lang = tok_p.group("lang")

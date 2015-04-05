@@ -148,7 +148,7 @@ def indent(text, ws=''):
     '   a\\n  \\n    b'
     """
     lines = [ws + ln if (ln and not ln.isspace()) else ln
-                     for ln in text.split(os.linesep)]
+                     for ln in text.rstrip().split(os.linesep)]
     return os.linesep.join(lines)
 
 
