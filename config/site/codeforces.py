@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+import os
 import re
 import sys
 import requests
@@ -30,6 +31,11 @@ class SiteCodeforces(ISite):
     # Xpath selectors.
     xpath_cont_name = '//*[@id="sidebar"]//a[contains(@href, "contest")]/text()'
     xpath_probs_IDs = '//*[@id="content"]//*[@class="id"]//a/text()'
+    xpath_prob_name = '//*[@id="content"]//*[@class="header"]//*[@class="title"]/text()'
+    xpath_prob_time = '//*[@id="content"]//*[@class="time-limit"]/text()'
+    xpath_prob_memory = '//*[@id="content"]//*[@class="memory-limit"]/text()'
+    xpath_prob_ins = '//*[@id="content"]//*[@class="sample-tests"]//*[@class="input"]//pre'
+    xpath_prob_outs = '//*[@id="content"]//*[@class="sample-tests"]//*[@class="output"]//pre'
 
     # Proxy for HTTP requests (handles request caching).
     proxy = RequestsCache()
@@ -103,7 +109,7 @@ class SiteCodeforces(ISite):
         page = SiteCodeforces.proxy.get(url)
         tree = html.fromstring(page.text)
         extr = tree.xpath(SiteCodeforces.xpath_cont_name)
-        cont.name = (extr and str(extr[0])) or "< no name >"
+        cont.name = (extr and str(extr[0])) or None
 
         return cont
 
@@ -139,17 +145,53 @@ class SiteCodeforces(ISite):
             if ID_prob:
                 IDs.append(ID_prob)
 
-        # Notify about selected but non-existant problems.
+        # Notify about selected but non-available problems.
         urls = []
         for ID in IDs:
             if ID in IDs_available:
                 urls.append(url_temp_prob.format(ID))
             else:
-                warn('Problem "' + ID + '" does not exist!')
+                warn('Problem "' + ID + '" does not exist in ' + url_cont)
 
-        return urls
+        return sorted(urls)
 
 
-    def get_problems(self, url):
-        return "Codeforces:get_problems"
+    def get_problems(self, urls):
+        """Fetches data from the problems' URLs and creates problem objects
+        identified by those URLs.
+        """
+        probs = []
+        for url in urls:
+            prob = Problem()
+            prob.url = url
+            url_path = urlparse(url).path
+            assert url_path
+            tokens = SiteCodeforces.patt_cont.search(url_path)
+            prob.ID = tokens.group('PROB')
+            assert prob.ID
+            prob.source_limit_kbyte = self.source_limit_kbyte
+
+            # Data from web (for each problem):
+            page = SiteCodeforces.proxy.get(url)
+            tree = html.fromstring(page.text)
+            #   - problem name,
+            extr = tree.xpath(SiteCodeforces.xpath_prob_name)
+            prob.name = (extr and str(extr[0])) or None
+            #   - problem time limit,
+            extr = tree.xpath(SiteCodeforces.xpath_prob_time)
+            limit = extr and float(extr[0].split()[0]) * 1e3
+            prob.time_limit_ms = limit or self.time_limit_ms
+            #   - problem memory limit,
+            extr = tree.xpath(SiteCodeforces.xpath_prob_memory)
+            limit = extr and float(extr[0].split()[0]) * 2**10
+            prob.memory_limit_kbyte = limit or self.memory_limit_kbyte
+            #   - test inputs,
+            extr = tree.xpath(SiteCodeforces.xpath_prob_ins)
+            prob.inputs = [ os.linesep.join(inp.itertext()) for inp in extr ]
+            #   - test outputs.
+            extr = tree.xpath(SiteCodeforces.xpath_prob_outs)
+            prob.outputs = [ os.linesep.join(out.itertext()) for out in extr ]
+
+            probs.append(prob)
+        return probs
 

@@ -51,9 +51,9 @@ class SiteLocal(ISite):
         cont = Contest()
         cont.url = url
         tokens = SiteLocal.patt_cont.search(url_path)
-        cont.name = tokens.group('CONT')
-        assert cont.name
-        cont.ID = cont.name
+        cont.ID = tokens.group('CONT')
+        assert cont.ID
+        cont.name = cont.ID
         return cont
 
 
@@ -87,14 +87,14 @@ class SiteLocal(ISite):
         """
         probs = []
         for url in urls:
-            url_path = urlparse(url).path
-            assert url_path
             prob = Problem()
             prob.url = url
+            url_path = urlparse(url).path
+            assert url_path
             tokens = SiteLocal.patt_cont.search(url_path)
-            prob.name = tokens.group('PROB')
-            assert prob.name
-            prob.ID = prob.name
+            prob.ID = tokens.group('PROB')
+            assert prob.ID
+            prob.name = prob.ID
             prob.time_limit_ms = self.time_limit_ms
             prob.memory_limit_kbyte = self.memory_limit_kbyte
             prob.source_limit_kbyte = self.source_limit_kbyte

@@ -127,7 +127,7 @@ def main(args=sys.argv[1:]):
 
     # -- Adjust app settings according to configuration ----------------------
     # TODO: adjust verbosity according to config
-    hac.SETTINGS_VAR["verbose_output"] = False
+    hac.SETTINGS_VAR["verbose_output"] = True
 
 
     # NOTE: Tasks done in two steps for testability.
