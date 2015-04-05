@@ -43,6 +43,7 @@ def _command_prep(**args):
     if not isdir(dir_working):
         error('Directory "' + dir_working + '" does not exist!')
         sys.exit(ExitStatus.ERROR)
+        #TODO Check if it exits app here
 
     # 2) Establish contest directory.
     contest_obj = args['contest_obj']
