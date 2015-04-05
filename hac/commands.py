@@ -103,6 +103,8 @@ def _command_prep(**args):
                             warn("Combination [{0}/{1}] does not exist!"
                                   .format(runn, lang_ext))
 
+    return ExitStatus.OK
+
 
 def _command_show(**args):
     """Displays information about:
@@ -151,6 +153,8 @@ def _command_show(**args):
     # Pretty-print data
     printer = PrettyPrinter(indent=1, width=1)
     printer.pprint(data)
+
+    return ExitStatus.OK
 
 
 # Application commands collected in dictionary
