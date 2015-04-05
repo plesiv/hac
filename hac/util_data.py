@@ -8,6 +8,7 @@ import imp
 import os
 import sys
 import re
+import requests
 from string import Template
 
 if sys.version_info.major == 2:
@@ -243,4 +244,16 @@ def plugin_collect(data_type):
                      hac.SETTINGS_CONST["config_app_path"],
                      plugin_path),
     ])
+
+
+# -- Web-data utilities -------------------------------------------------------
+class RequestsCache(object):
+
+    def __init__(self):
+        self._store = {}
+
+    def get(self, url):
+        if url not in self._store:
+            self._store[url] = requests.get(url)
+        return self._store[url]
 

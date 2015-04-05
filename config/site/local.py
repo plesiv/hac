@@ -2,12 +2,13 @@
 
 import re
 import sys
-from hac.data import ISite, Contest, Problem
 
 if sys.version_info.major == 2:
     from urlparse import urlparse
 else:
     from urllib.parse import urlparse
+
+from hac.data import ISite, Contest, Problem
 
 
 class SiteLocal(ISite):
@@ -74,9 +75,9 @@ class SiteLocal(ISite):
         # Match potentially multiple problems from 'problems'.
         for prob in conf['problems']:
             tokens = SiteLocal.patt_prob.findall(prob)
-            prob_ID = tokens and tokens[-1]
-            if prob_ID:
-                urls.append(url_temp_prob.format(prob_ID))
+            ID_prob = tokens and tokens[-1]
+            if ID_prob:
+                urls.append(url_temp_prob.format(ID_prob))
 
         return urls
 
