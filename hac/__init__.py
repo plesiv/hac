@@ -55,5 +55,8 @@ SETTINGS_CONST = {
         DataType.LANG: ".",
         DataType.RUNNER: ".",
     },
+    "plugin_temp_part_prefix": {
+        DataType.RUNNER: r"\$",
+    },
 }
 

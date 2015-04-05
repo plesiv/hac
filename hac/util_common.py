@@ -1,18 +1,19 @@
 # -*- coding: utf-8 -*-
 """Common utilities.
 """
+import re
 import sys
-from os import mkdir, remove
+import os
 from os.path import exists, isdir
 from shutil import rmtree
 
 
 # -- Printing to CLI ----------------------------------------------------------
 def warn(msg):
-    sys.stderr.write("WARNING: " + msg + "\n")
+    sys.stderr.write("WARNING: " + msg + os.linesep)
 
 def error(msg):
-    sys.stderr.write("ERROR: " + msg + "\n")
+    sys.stderr.write("ERROR: " + msg + os.linesep)
 
 
 # -- Lists and dictionaries ---------------------------------------------------
@@ -55,6 +56,7 @@ def list_reduce(a):
     return sorted(set(b))
 
 
+# -- Command line arguments ---------------------------------------------------
 def mainargs_index(a):
     """Removes optional arguments that precede mandatory arguments.
 
@@ -137,6 +139,53 @@ def choice_normal(a, b, separator='.'):
     return ret
 
 
+# -- Templating ---------------------------------------------------------------
+def indent(text, ws=''):
+    """Implementation of textwrap.indent (textwrap.indent not available on
+    Python 2).
+
+    >>> indent('a\\n  \\n b', '   ')
+    '   a\\n  \\n    b'
+    """
+    lines = [ws + ln if (ln and not ln.isspace()) else ln
+                     for ln in text.split(os.linesep)]
+    return os.linesep.join(lines)
+
+
+def indent_distribute(text, mapps, kprefix=r'\$'):
+    """Arguments are:
+
+        * text - template-text,
+        * mapps - maps template-part name to template-part contents.
+
+    Only template parts whose names occur as the first non-whitespace
+    characters on the line in the template-text are considered. Function
+    processes template-text and template-parts by:
+
+        * distributing whitespace before template-part name found in
+          template-text to the lines of corresponding template-part contents
+          (this matched whitespace is removed from template-text),
+        * removes everything after template-part name until the end-of-line.
+
+    >>> indent_distribute(' $pat', {'pat': 'a\\n b\\n  \\nc'})
+    ('$pat', {'pat': ' a\\n  b\\n  \\n c'})
+    """
+    rtext = text
+    rmapps = mapps
+    for key in mapps:
+        pattern = re.compile(r'^(?P<ws>\s*)(?P<part>' + kprefix + key + r'\b)',
+            re.MULTILINE)
+        token = pattern.search(text)
+
+        if token:
+            ws = token.group('ws')
+            part = token.group('part')
+            rtext = re.sub(pattern, part, rtext)
+            rmapps[key] = indent(mapps[key], ws)
+
+    return rtext, rmapps
+
+
 # -- Filesystem ---------------------------------------------------------------
 def safe_mkdir(path, force=False):
     """Carefully handles directory creation. Notifies about special
@@ -146,7 +195,7 @@ def safe_mkdir(path, force=False):
     be replaced with directory named "path".
     """
     if not exists(path):
-        mkdir(path)
+        os.mkdir(path)
     else:
         if isdir(path):
             warn('Directory "' + path + '" already exists!')
@@ -158,8 +207,8 @@ def safe_mkdir(path, force=False):
             #
             if force:
                 warn('Deleting file "' + path + '" and creating directory!')
-                remove(path)
-                mkdir(path)
+                os.remove(path)
+                os.mkdir(path)
             else:
                 warn('"' + path + '" is not a directory!')
 
@@ -182,7 +231,7 @@ def safe_fwrite(path, contents="", force=False):
     elif exists(path):
         if force:
             warn('Deleting file "' + path + '" and creating file!')
-            remove(path)
+            os.remove(path)
         else:
             warn('File named "' + path + '" already exists!')
 
