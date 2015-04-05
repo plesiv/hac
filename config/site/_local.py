@@ -13,33 +13,40 @@ else:
 class SiteLocal(ISite):
     """Local site.
     """
-    # URL templates
-    template_contest_url = "http://localhost/{0}"
-    template_problem_suburl = "/{0}"
+    # URL templates.
+    url_temp_cont = "http://localhost/{0}"
+    url_subtemp_prob = "/{0}"
 
-    # Regex patterns
-    pattern_contest = re.compile(r"/(?P<contest>[^/]*)?(/(?P<problem>[^/]*))?")
-    #   -> contest string has to start with '/'
-    pattern_problem = re.compile(r"[^/]+")
+    # Regex patterns.
+    patt_contest = re.compile(r"/(?P<contest>[^/]*)?(/(?P<problem>[^/]*))?")
+    patt_problem = re.compile(r"[^/]+")
+
 
     def __init__(self):
         self.url = "localhost"
         self.name = "Local"
-        self.ID = "-"
+        self.ID = "local"
         self.time_limit_ms = None
         self.memory_limit_kbyte = None
         self.source_limit_kbyte = None
 
+
     def match_contest(self, conf):
-        url_path = urlparse(conf['location']).path or '/'
-        tokens = SiteLocal.pattern_contest.search(url_path)
+        """Extracts contest data from conf and generates canonic URL
+        identifying that contest.
+        """
+        loc_path = urlparse(conf['location']).path or '/'
+        tokens = SiteLocal.patt_contest.search(loc_path)
         contest_ID = tokens.group('contest') or 'contest'
-        return SiteLocal.template_contest_url.format(contest_ID)
+        return SiteLocal.url_temp_cont.format(contest_ID)
+
 
     def get_contest(self, url):
+        """Creates contest object identified by the given URL.
+        """
         url_path = urlparse(url).path
         assert url_path
-        tokens = SiteLocal.pattern_contest.search(urlparse(url).path)
+        tokens = SiteLocal.patt_contest.search(url_path)
         cont_dict = {}
         cont_dict['url'] = url
         cont_dict['name'] = tokens.group('contest')
@@ -47,33 +54,40 @@ class SiteLocal(ISite):
         cont_dict['ID'] = cont_dict['name']
         return Contest(**cont_dict)
 
+
     def match_problems(self, conf):
-        contest_url = self.match_contest(conf)
-        template_problem_url = contest_url + SiteLocal.template_problem_suburl
+        """Extracts problems data from conf and generates list of canonic URLs
+        identifying those problems.
+        """
+        url_cont = self.match_contest(conf)
+        url_temp_prob = url_cont + SiteLocal.url_subtemp_prob
 
         urls = []
-        # Match single problem from location member
-        url_path = urlparse(conf['location']).path or '/'
-        tokens = SiteLocal.pattern_contest.search(url_path)
+        # Match single problem from 'location'.
+        loc_path = urlparse(conf['location']).path or '/'
+        tokens = SiteLocal.patt_contest.search(loc_path)
         problem_ID = tokens.group('problem')
         if problem_ID:
-            urls.append(template_problem_url.format(problem_ID))
+            urls.append(url_temp_prob.format(problem_ID))
 
-        # Match potentially multiple problems from problems member
+        # Match potentially multiple problems from 'problems'.
         for prob in conf['problems']:
-            tokens = SiteLocal.pattern_problem.findall(prob)
+            tokens = SiteLocal.patt_problem.findall(prob)
             prob_ID = tokens and tokens[-1]
             if prob_ID:
-                urls.append(template_problem_url.format(prob_ID))
+                urls.append(url_temp_prob.format(prob_ID))
 
         return urls
 
+
     def get_problems(self, urls):
+        """Creates problems' objects identified by the provided list of URLs.
+        """
         probs = []
         for url in urls:
             url_path = urlparse(url).path
             assert url_path
-            tokens = SiteLocal.pattern_contest.search(urlparse(url).path)
+            tokens = SiteLocal.patt_contest.search(url_path)
             prob_dict = {}
             prob_dict['url'] = url
             prob_dict['name'] = tokens.group('problem')
