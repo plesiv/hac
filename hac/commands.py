@@ -22,7 +22,7 @@ Commands can access following entries from dictionary "args":
     - problems_objs: list of selected problems (instances of hac.data.Problem).
 """
 import sys
-from os import mkdir
+import os
 from os.path import realpath, exists, isdir, join
 from pprint import PrettyPrinter
 
@@ -39,12 +39,12 @@ def _command_prep(**args):
     conf_all = args['conf_all']
     dir_working = realpath(conf_all['workdir'])
 
-    # Directories #1: working directory has to exist
+    # 1) Working directory has to exist.
     if not isdir(dir_working):
         error('Directory "' + dir_working + '" does not exist!')
         sys.exit(ExitStatus.ERROR)
 
-    # Directories #2: contest directory
+    # 2) Establish contest directory.
     contest_obj = args['contest_obj']
     if conf_all['subdir_depth'] == 2:
         dir_contest = join(dir_working, contest_obj.ID)
@@ -55,7 +55,7 @@ def _command_prep(**args):
     # Proceed if there exists directory hierachy until this point
     if (isdir(dir_contest)):
 
-        # Directories #3: problems directories
+        # 3) Establish problems directories.
         problems_objs = args['problems_objs']
         if conf_all['subdir_depth'] >= 1:
             problems_dirs = {}
@@ -65,22 +65,43 @@ def _command_prep(**args):
         else:
             problems_dirs = {prob: dir_contest for prob in problems_objs}
 
-        # Files #1: create language templates for each problem
         plugin_langs = args['plugin_langs']
         selected_langs = conf_all['lang']
         sep_langs = hac.SETTINGS_CONST['plugin_temp_sep'][DataType.LANG]
 
+        plugin_runners = args['plugin_runners']
+        selected_runners = conf_all['runner']
+        sep_runners = hac.SETTINGS_CONST['plugin_temp_sep'][DataType.RUNNER]
+
+        # 4) Create language and runner templates.
+        # For each problem ...
         for prob in problems_objs:
             if isdir(problems_dirs[prob]):
                 problem_path = join(problems_dirs[prob], prob.ID)
 
-                for lang in selected_langs:
-                    assert sep_langs in lang
-                    assert lang in plugin_langs
-                    lang_ext = lang.split(sep_langs)[0]
-                    problem_file = problem_path + '.' + lang_ext
-                    safe_fwrite(problem_file, plugin_langs[lang],
-                                force=conf_all['force'])
+                # ... create every combiantion of selected runner/language.
+                for runn in selected_runners:
+                    for lang in selected_langs:
+                        assert sep_runners in runn
+                        assert runn in plugin_runners
+                        assert sep_langs in lang
+                        assert lang in plugin_langs
+
+                        runn_ext = runn.split(sep_runners)[0]
+                        lang_ext = lang.split(sep_langs)[0]
+
+                        if lang_ext in plugin_runners[runn]:
+                            runner_file = problem_path + os.extsep + \
+                                          lang_ext + os.extsep + runn_ext
+                            safe_fwrite(runner_file,
+                                        plugin_runners[runn][lang_ext],
+                                        force=conf_all['force'])
+                            lang_file = problem_path + os.extsep + lang_ext
+                            safe_fwrite(lang_file, plugin_langs[lang],
+                                        force=conf_all['force'])
+                        else:
+                            warn("Combination [{0}/{1}] does not exist!"
+                                  .format(runn, lang_ext))
 
 
 def _command_show(**args):
