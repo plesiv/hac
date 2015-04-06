@@ -42,8 +42,7 @@ def _command_prep(**args):
     # 1) Working directory has to exist.
     if not isdir(dir_working):
         error('Directory "' + dir_working + '" does not exist!')
-        sys.exit(ExitStatus.ERROR)
-        #TODO Check if it exits app here
+        return ExitStatus.ERROR
 
     # 2) Establish contest directory.
     contest_obj = args['contest_obj']
@@ -80,13 +79,22 @@ def _command_prep(**args):
             if isdir(problems_dirs[prob]):
                 problem_path = join(problems_dirs[prob], prob.ID)
 
-                # ... create every combiantion of selected runner/language.
+                # ... create language for all selected languages.
+                for lang in selected_langs:
+                    assert sep_langs in lang
+                    assert lang in plugin_langs
+
+                    lang_ext = lang.split(sep_langs)[0]
+
+                    lang_file = problem_path + os.extsep + lang_ext
+                    safe_fwrite(lang_file, plugin_langs[lang],
+                                force=conf_all['force'])
+
+                # ... create runner for every combiantion of runner/language.
                 for runn in selected_runners:
                     for lang in selected_langs:
                         assert sep_runners in runn
                         assert runn in plugin_runners
-                        assert sep_langs in lang
-                        assert lang in plugin_langs
 
                         runn_ext = runn.split(sep_runners)[0]
                         lang_ext = lang.split(sep_langs)[0]
@@ -97,11 +105,8 @@ def _command_prep(**args):
                             safe_fwrite(runner_file,
                                         plugin_runners[runn][lang_ext],
                                         force=conf_all['force'])
-                            lang_file = problem_path + os.extsep + lang_ext
-                            safe_fwrite(lang_file, plugin_langs[lang],
-                                        force=conf_all['force'])
                         else:
-                            warn("Combination [{0}/{1}] does not exist!"
+                            warn("Runner for [{0}/{1}] combo can't be created!"
                                   .format(runn, lang_ext))
 
                 #TODO refactor
@@ -152,7 +157,8 @@ def _command_show(**args):
         'conf_user': args['conf_user'],
         'conf_all': args['conf_all'],
         'plugin_langs': args['plugin_langs'].keys(),
-        'plugin_runners': [], #TODO show all languages for runner
+        'plugin_runners': { r: args['plugin_runners'][r].keys()
+                            for r in args['plugin_runners'] },
         'plugin_sites': [dict(site) for site in args['plugin_sites']],
         'site_obj': dict(args['site_obj']),
         'contest_obj': dict(args['contest_obj']),
