@@ -30,12 +30,12 @@ class SiteCodeforces(ISite):
 
     # Xpath selectors.
     xpath_cont_name = '//*[@id="sidebar"]//a[contains(@href, "contest")]/text()'
-    xpath_probs_IDs = '//*[@id="content"]//*[@class="id"]//a/text()'
-    xpath_prob_name = '//*[@id="content"]//*[@class="header"]//*[@class="title"]/text()'
-    xpath_prob_time = '//*[@id="content"]//*[@class="time-limit"]/text()'
-    xpath_prob_memory = '//*[@id="content"]//*[@class="memory-limit"]/text()'
-    xpath_prob_ins = '//*[@id="content"]//*[@class="sample-tests"]//*[@class="input"]//pre'
-    xpath_prob_outs = '//*[@id="content"]//*[@class="sample-tests"]//*[@class="output"]//pre'
+    xpath_probs_IDs = '//*[@id="pageContent"]//*[@class="id"]//a/text()'
+    xpath_prob_name = '//*[@id="pageContent"]//*[@class="header"]//*[@class="title"]/text()'
+    xpath_prob_time = '//*[@id="pageContent"]//*[@class="time-limit"]/text()'
+    xpath_prob_memory = '//*[@id="pageContent"]//*[@class="memory-limit"]/text()'
+    xpath_prob_ins = '//*[@id="pageContent"]//*[@class="sample-tests"]//*[@class="input"]//pre'
+    xpath_prob_outs = '//*[@id="pageContent"]//*[@class="sample-tests"]//*[@class="output"]//pre'
 
     # Proxy for HTTP requests (handles request caching).
     proxy = RequestsCache()
