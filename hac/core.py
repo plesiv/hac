@@ -95,8 +95,8 @@ def main(args=sys.argv[1:]):
          sys.exit(ExitStatus.ERROR)
 
     # -> Print application version and exit if:
-    #     - "-V" or "--version" is given as optional argument
-    if any([o in args for o in ("-V", "--version")]):
+    #     - "--version" is given as optional argument
+    if "--version" in args:
         print(
         "hac v{0}, License {1}, Copyright (C) 2014-2015 {2}".format(
                                     hac.__version__,
