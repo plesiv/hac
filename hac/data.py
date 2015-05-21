@@ -43,10 +43,6 @@ class ISite(object):
         self.memory_limit_kbyte = memory_limit_kbyte
         self.source_limit_kbyte = source_limit_kbyte
 
-    def __iter__(self):
-        keys = ISite.keys_verbose if hac.SETTINGS_VAR["verbose_output"] else ISite.keys_default
-        for key in keys:
-            yield (key, getattr(self, key))
 
     @abstractmethod
     def match_contest(self, conf):
@@ -85,11 +81,6 @@ class Contest(object):
         self.ID = ID
         self.url = url
 
-    def __iter__(self):
-        keys = Contest.keys_verbose if hac.SETTINGS_VAR["verbose_output"] else Contest.keys_default
-        for key in keys:
-            yield (key, getattr(self, key))
-
 
 class Problem(object):
     """Problem info container.
@@ -109,9 +100,4 @@ class Problem(object):
         self.source_limit_kbyte = source_limit_kbyte
         self.inputs = inputs or []
         self.outputs = outputs or []
-
-    def __iter__(self):
-        keys = Problem.keys_verbose if hac.SETTINGS_VAR["verbose_output"] else Problem.keys_default
-        for key in keys:
-            yield (key, getattr(self, key))
 

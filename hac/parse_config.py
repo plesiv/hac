@@ -17,7 +17,7 @@ class ParserConfig(argparse.ArgumentParser):
             yield arg
 
 
-def get_bare_parser_config():
+def get_bare_config_parser():
     """Returns bare parser for configuration files. Arguments should be added
     to parser manually.
     """

@@ -8,6 +8,36 @@ import argparse
 """Parse arguments used in CLI parser.
 """
 _pargs_pack_cli = [
+    # TODO refactor (some arguments handled by parser, some handled manually)
+    {
+        "names": ("-V", "--version"),
+        "params": {
+            "action": "store_true",
+            "help": """show application version""",
+            "dest": "version",
+            "default": False,
+        },
+    },
+    (
+        {
+            "names": ("-v", "--verbose"),
+            "params": {
+                "action": "store_true",
+                "help": """increase output verbosity""",
+                "dest": "verbose",
+                "default": False,
+            },
+        },
+        {
+            "names": ("-q", "--quiet"),
+            "params": {
+                "action": "store_true",
+                "help": """suppress all output""",
+                "dest": "quiet",
+                "default": False,
+            },
+        },
+    ),
     {
         "names": ("location",),
         "params": {

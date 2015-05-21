@@ -25,7 +25,13 @@ class ExitStatus(object):
 
 # -- Settings -----------------------------------------------------------------
 def init_settings():
-    """Initializes shared settings.
+    """Initializes shared settings. All shared settings are visible throughout
+    the whole application. Some of these settings are configurable via
+    command-line/configuration-files switches.
+
+    These settings are:
+        - visible throughout the whole application,
+        - modifiable by
     """
     global SETTINGS_VAR
 

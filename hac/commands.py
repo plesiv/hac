@@ -132,38 +132,48 @@ def _command_show(**args):
     Expects labels for arguments to be contained in "args_text" argument.
     """
 
-    # Prepare labels for arguments output
-    args_labels_default = {
+    # Prepare labels for printing
+    #  -> DEFAULT (without verbose)
+    args_labels = {
         'conf_all':       '1c --- Total config (overide 1b) .... ',
         'site_obj':       '3a --- Selected site processor ...... ',
         'contest_obj':    '3b --- Selected contest ............. ',
         'problems_objs':  '3c --- Selected problems ............ ',
     }
-    args_labels_verobse = {
-        'conf_global':    '1a --- App default config ........... ',
-        'conf_user':      '1b --- User files config (override 1a)',
-        'plugin_langs':   '2a --- Available language templates . ',
-        'plugin_runners': '2b --- Available runner templates ... ',
-        'plugin_sites':   '2c --- Available site processors .... ',
-    }
 
-    args_labels = args_labels_default
-    if hac.SETTINGS_VAR["verbose_output"]:
-        args_labels.update(args_labels_verobse)
+    #  -> VERBOSE
+    # if verbose
+    if True:
+        args_labels.update({
+            'conf_global':    '1a --- App default config ........... ',
+            'conf_user':      '1b --- User files config (override 1a)',
+            'plugin_langs':   '2a --- Available language templates . ',
+            'plugin_runners': '2b --- Available runner templates ... ',
+            'plugin_sites':   '2c --- Available site processors .... ',
+        })
 
-    # Prepare arguments for printing
+
+    # Prepare application setting-and-config values for printing
     args_printable = {
         'conf_global': args['conf_global'],
         'conf_user': args['conf_user'],
         'conf_all': args['conf_all'],
+
+        # args_printable['plugin_langs'] = ['cpp.0', 'cpp.1', 'py.0']
         'plugin_langs': args['plugin_langs'].keys(),
-        'plugin_runners': { r: args['plugin_runners'][r].keys()
-                            for r in args['plugin_runners'] },
-        'plugin_sites': [dict(site) for site in args['plugin_sites']],
-        'site_obj': dict(args['site_obj']),
-        'contest_obj': dict(args['contest_obj']),
-        'problems_objs': [dict(prob) for prob in args['problems_objs']]
+
+        # args_printable['plugin_langs'] = {'sh.0': ['cpp', 'py'],
+        #                                   'sh.1': ['cpp', 'py']},
+        'plugin_runners': {r: args['plugin_runners'][r].keys()
+                           for r in args['plugin_runners']},
+
+        # Prepare for DEFAULT or VERBOSE
+        'plugin_sites': [site.__dict__ for site in args['plugin_sites']],
+        'site_obj': args['site_obj'].__dict__,
+        'contest_obj': args['contest_obj'].__dict__,
+        'problems_objs': [prob.__dict__ for prob in args['problems_objs']]
     }
+
     #TODO language x runner matrix
 
     # Construct dictionary with data to print
