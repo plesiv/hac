@@ -228,6 +228,7 @@ _plugin_discover_funcs = {
 }
 
 
+# TODO refactor path input to the point of usage of plugin_collect
 def plugin_collect(data_type):
     """Retrieves application default and user-specified plug-ins.
 

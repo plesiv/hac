@@ -22,7 +22,7 @@ class PyTest(TestCommand):
 
 
 def long_description():
-    with open('README.md', encoding='utf-8') as f:
+    with open('README.rst', encoding='utf-8') as f:
         return f.read()
 
 entry_points = {
@@ -32,22 +32,26 @@ entry_points = {
     ],
 }
 
+config_dest='share/doc/hac/config'
 
 setup(
     name='hac',
     version=hac.__version__,
     description=hac.__doc__.strip(),
     long_description=long_description(),
-    url='https://github.com/plesiv/hac/blob/master/README.md',
+    url='https://github.com/plesiv/hac/blob/master/README.rst',
     download_url='https://github.com/plesiv/hac',
     author=hac.__author__,
-    author_email='zplesiv@gmail.com',
+    author_email='z@plesiv.com',
     license='hac.__license__',
 
     packages=find_packages(exclude=['tests*']),
     entry_points=entry_points,
     extras_require={},
-    install_requires=[],
+    install_requires=[
+        'requests>=2.3.0',
+        'lxml>=3.3.5'
+    ],
     tests_require=['pytest'],
     cmdclass = {'test': PyTest},
 
@@ -64,5 +68,4 @@ setup(
         'Topic :: Education',
     ],
     keywords='algorithm competitions',
-    include_package_data=True,
 )
