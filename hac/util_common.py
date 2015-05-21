@@ -4,6 +4,7 @@
 import re
 import sys
 import os
+import stat
 from os.path import exists, isdir
 from shutil import rmtree
 
@@ -213,7 +214,7 @@ def safe_mkdir(path, force=False):
                 warn('"' + path + '" is not a directory!')
 
 
-def safe_fwrite(path, contents="", force=False):
+def safe_fwrite(path, contents="", force=False, executable=False):
     """Carefully handles file writing. Notifies about special occurrences.
 
     Argument force used to decide if priorly existing file named "path" should
@@ -239,6 +240,11 @@ def safe_fwrite(path, contents="", force=False):
     if not exists(path):
         with open(path, 'w') as f:
             f.write(contents)
+
+    # Make file executable
+    if executable:
+        perms = os.stat(path)
+        os.chmod(path, perms.st_mode | stat.S_IEXEC)
 
 
 # -- Metaclassing (portable, works on Python2/Python3) ------------------------

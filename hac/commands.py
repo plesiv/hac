@@ -105,7 +105,8 @@ def _command_prep(**args):
                                           lang_ext + os.extsep + runn_ext
                             safe_fwrite(runner_file,
                                         plugin_runners[runn][lang_ext],
-                                        force=conf_all['force'])
+                                        force=conf_all['force'],
+                                        executable=True)
                         else:
                             warn("Runner for [{0}/{1}] combo can't be created!"
                                   .format(runn, lang_ext))
