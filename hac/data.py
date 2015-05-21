@@ -3,12 +3,6 @@
     - web-sites
     - contests
     - problems
-
-NOTE: Before converting objects of type ISite, Contest and Problem to
-      dictionary (via "dict" function) following global application setting
-      must be initialized:
-
-        hac.SETTINGS_VAR["verbose_output"]
 """
 from abc import ABCMeta, abstractmethod
 
@@ -30,9 +24,6 @@ class ISiteRegistry(ABCMeta):
 class ISite(object):
     """Site template.
     """
-    keys_default = ['ID', 'url']
-    keys_verbose = ['name', 'ID', 'url', 'time_limit_ms', 'memory_limit_kbyte',
-                    'source_limit_kbyte']
 
     def __init__(self, name=None, ID=None, url=None, time_limit_ms=2000,
                  memory_limit_kbyte=262144, source_limit_kbyte=64):
@@ -43,6 +34,11 @@ class ISite(object):
         self.memory_limit_kbyte = memory_limit_kbyte
         self.source_limit_kbyte = source_limit_kbyte
 
+    @staticmethod
+    def get_props(verbose=False):
+        return ['ID', 'url'] if not verbose else \
+               ['name', 'ID', 'url', 'time_limit_ms', 'memory_limit_kbyte',
+                'source_limit_kbyte']
 
     @abstractmethod
     def match_contest(self, conf):
@@ -73,21 +69,21 @@ class ISite(object):
 class Contest(object):
     """Contest info container.
     """
-    keys_default = ['ID', 'url']
-    keys_verbose = ['name', 'ID', 'url']
 
     def __init__(self, name=None, ID=None, url=None):
         self.name = name
         self.ID = ID
         self.url = url
 
+    @staticmethod
+    def get_props(verbose=False):
+        return ['ID', 'url'] if not verbose else \
+               ['name', 'ID', 'url']
+
 
 class Problem(object):
     """Problem info container.
     """
-    keys_default = ['ID', 'url']
-    keys_verbose = ['name', 'ID', 'url', 'time_limit_ms', 'memory_limit_kbyte',
-                    'source_limit_kbyte', 'inputs', 'outputs']
 
     def __init__(self, name=None, ID=None, url=None, time_limit_ms=2000,
                  memory_limit_kbyte=262144, source_limit_kbyte=64, inputs=None,
@@ -100,4 +96,10 @@ class Problem(object):
         self.source_limit_kbyte = source_limit_kbyte
         self.inputs = inputs or []
         self.outputs = outputs or []
+
+    @staticmethod
+    def get_props(verbose=False):
+        return ['ID', 'url'] if not verbose else \
+               ['name', 'ID', 'url', 'time_limit_ms', 'memory_limit_kbyte',
+                'source_limit_kbyte', 'inputs', 'outputs']
 

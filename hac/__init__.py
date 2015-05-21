@@ -38,7 +38,6 @@ def init_settings():
     # Application variable settings
     SETTINGS_VAR = {
         "app_root_dir": '/',
-        "verbose_output" : False,
     }
 
 # Application constant settings.

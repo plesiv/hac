@@ -9,35 +9,7 @@ import argparse
 """
 _pargs_pack_cli = [
     # TODO refactor (some arguments handled by parser, some handled manually)
-    {
-        "names": ("-V", "--version"),
-        "params": {
-            "action": "store_true",
-            "help": """show application version""",
-            "dest": "version",
-            "default": False,
-        },
-    },
-    (
-        {
-            "names": ("-v", "--verbose"),
-            "params": {
-                "action": "store_true",
-                "help": """increase output verbosity""",
-                "dest": "verbose",
-                "default": False,
-            },
-        },
-        {
-            "names": ("-q", "--quiet"),
-            "params": {
-                "action": "store_true",
-                "help": """suppress all output""",
-                "dest": "quiet",
-                "default": False,
-            },
-        },
-    ),
+    # -> remove from argparse when custom help is written
     {
         "names": ("location",),
         "params": {
@@ -74,7 +46,7 @@ _parser_cli_description = "how to use..." #TODO
 _parser_cli_epilog = "Examples..." #TODO
 
 
-def get_bare_parser_cli():
+def get_bare_cli_parser():
     """Returns bare CLI parser object without arguments. Arguments should be
     added to parser manually.
     """

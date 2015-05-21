@@ -29,6 +29,7 @@ from pprint import PrettyPrinter
 import hac
 from hac import DataType, ExitStatus
 from hac.util_common import warn, error, safe_mkdir, safe_fwrite
+from hac.data import ISite, Contest, Problem
 
 
 def _command_prep(**args):
@@ -131,9 +132,10 @@ def _command_show(**args):
 
     Expects labels for arguments to be contained in "args_text" argument.
     """
+    verbose = args['conf_all']['verbose']
 
     # Prepare labels for printing
-    #  -> DEFAULT (without verbose)
+    #  -> TERSE (opposite of verbose)
     args_labels = {
         'conf_all':       '1c --- Total config (overide 1b) .... ',
         'site_obj':       '3a --- Selected site processor ...... ',
@@ -142,8 +144,7 @@ def _command_show(**args):
     }
 
     #  -> VERBOSE
-    # if verbose
-    if True:
+    if verbose:
         args_labels.update({
             'conf_global':    '1a --- App default config ........... ',
             'conf_user':      '1b --- User files config (override 1a)',
@@ -167,11 +168,17 @@ def _command_show(**args):
         'plugin_runners': {r: args['plugin_runners'][r].keys()
                            for r in args['plugin_runners']},
 
-        # Prepare for DEFAULT or VERBOSE
-        'plugin_sites': [site.__dict__ for site in args['plugin_sites']],
-        'site_obj': args['site_obj'].__dict__,
-        'contest_obj': args['contest_obj'].__dict__,
-        'problems_objs': [prob.__dict__ for prob in args['problems_objs']]
+        # Prepare for TERSE or VERBOSE
+        'plugin_sites': [{k: site.__dict__[k]
+                          for k in ISite.get_props(verbose)}
+                         for site in args['plugin_sites']],
+        'site_obj': {k: args['site_obj'].__dict__[k]
+                     for k in ISite.get_props(verbose)},
+        'contest_obj': {k: args['contest_obj'].__dict__[k]
+                        for k in Contest.get_props(verbose)},
+        'problems_objs': [{k: prob.__dict__[k]
+                           for k in Problem.get_props(verbose)}
+                          for prob in args['problems_objs']]
     }
 
     #TODO language x runner matrix

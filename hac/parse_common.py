@@ -15,6 +15,35 @@ from hac.commands import app_commands
 """
 _pargs_pack_common_const = [
     {
+        "names": ("--version",),
+        "params": {
+            "action": "store_true",
+            "help": """show application version and exit""",
+            "dest": "version",
+            "default": False,
+        },
+    },
+    (
+        {
+            "names": ("-v", "--verbose"),
+            "params": {
+                "action": "store_true",
+                "help": """increase output verbosity""",
+                "dest": "verbose",
+                "default": False,
+            },
+        },
+        {
+            "names": ("-V", "--terse"),
+            "params": {
+                "action": "store_true",
+                "help": """decrease output verbosity""",
+                "dest": "quiet",
+                "default": False,
+            },
+        },
+    ),
+    {
         "names": ("-d", "--subdir-depth"),
         "params": {
             "type": int,

@@ -11,7 +11,7 @@ from hac import DataType, ExitStatus
 from hac.commands import app_commands
 from hac.parse_common import get_pargs_pack_common, pargs_packed_add
 from hac.parse_config import get_bare_config_parser
-from hac.parse_cli import get_pargs_pack_cli, get_bare_parser_cli
+from hac.parse_cli import get_pargs_pack_cli, get_bare_cli_parser
 from hac.util_common import error, dict_override, list_reduce, mainargs_index,\
     choice_generate, choice_normal
 from hac.util_data import plugin_collect, plugin_match_site
@@ -56,7 +56,7 @@ def main(args=sys.argv[1:]):
 
     # Add arguments to parsers.
     parser_config = get_bare_config_parser()
-    parser_cli = get_bare_parser_cli()
+    parser_cli = get_bare_cli_parser()
 
     pargs_packed_add(parser_config, pargs_pack_common)
     pargs_packed_add(parser_cli, pargs_pack_common)
@@ -93,7 +93,7 @@ def main(args=sys.argv[1:]):
     if (len(args) == 0) or any([o in args for o in ("-h", "--help")]):
          parser_cli.print_help()
          sys.exit(ExitStatus.ERROR)
- 
+
     # -> Print application version and exit if:
     #     - "-V" or "--version" is given as optional argument
     if any([o in args for o in ("-V", "--version")]):
@@ -147,7 +147,7 @@ def main(args=sys.argv[1:]):
         conf_all['location'] = 'http://' + conf_all['location']
 
 
-    # -- PROCESS AND PREPARE DATA --------------------------------------------
+    # -- FETCH / PROCESS / PREPARE DATA --------------------------------------
     # NOTE: Matching done in two steps for testability.
 
     # Get site processor:
