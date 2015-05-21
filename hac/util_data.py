@@ -241,7 +241,7 @@ def plugin_collect(data_type):
     return plugin_discover([
         os.path.join(hac.SETTINGS_CONST["config_user_path"],
                      plugin_path),
-        os.path.join(hac.SETTINGS_VAR["app_root_dir"],
+        os.path.join(hac.SETTINGS_CONST["app_root_dir"],
                      hac.SETTINGS_CONST["config_app_path"],
                      plugin_path),
     ])

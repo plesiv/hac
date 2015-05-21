@@ -2,10 +2,12 @@
 """hac - Helper for Algorithm Competitions
 """
 import os
+import sys
 
 
 __author__ = 'Zoran Plesivčak'
-__version__ = '0.1.0'
+__version__ = '0.1.0 (Python {0})'.format(
+                  '.'.join(map(str, list(sys.version_info[0:3]))))
 __license__ = 'GPLv2'
 
 
@@ -24,24 +26,10 @@ class ExitStatus(object):
 
 
 # -- Settings -----------------------------------------------------------------
-def init_settings():
-    """Initializes shared settings. All shared settings are visible throughout
-    the whole application. Some of these settings are configurable via
-    command-line/configuration-files switches.
-
-    These settings are:
-        - visible throughout the whole application,
-        - modifiable by
-    """
-    global SETTINGS_VAR
-
-    # Application variable settings
-    SETTINGS_VAR = {
-        "app_root_dir": '/',
-    }
 
 # Application constant settings.
 SETTINGS_CONST = {
+    "app_root_dir": os.path.abspath(os.path.dirname(__file__)),
     "config_filename": "hacrc",
     "config_app_path": "config",
     "config_user_path": \

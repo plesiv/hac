@@ -64,7 +64,7 @@ def main(args=sys.argv[1:]):
 
     # Get default application configuration (from files).
     global_config_file = os.path.join(
-        hac.SETTINGS_VAR["app_root_dir"],
+        hac.SETTINGS_CONST["app_root_dir"],
         hac.SETTINGS_CONST["config_app_path"],
         hac.SETTINGS_CONST["config_filename"])
     assert os.path.exists(global_config_file)

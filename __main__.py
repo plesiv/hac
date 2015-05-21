@@ -9,11 +9,6 @@ import hac
 
 
 if __name__ == '__main__':
-    # Initialize global application settings
-    hac.init_settings()
-    hac.SETTINGS_VAR["app_root_dir"] = dirname(realpath(__file__))
-
-    # Start the application
     from hac.core import main
     sys.exit(main())
 

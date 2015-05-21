@@ -46,6 +46,10 @@ setup(
     license='hac.__license__',
 
     packages=find_packages(exclude=['tests*']),
+    package_data={'hac': ['config/hacrc',
+                          'config/lang/*',
+                          'config/runner/*',
+                          'config/site/*.py']},
     entry_points=entry_points,
     extras_require={},
     install_requires=[
