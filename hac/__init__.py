@@ -5,10 +5,8 @@ import os
 import sys
 
 
-_python_version = '.'.join(map(str, list(sys.version_info[0:3])))
-
 __author__ = 'Zoran Plesivčak'
-__version__ = '0.1.0 (Python {0})'.format(_python_version)
+__version__ = '0.1.0'
 __license__ = 'GPLv2'
 
 
