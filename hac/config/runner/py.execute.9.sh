@@ -1,2 +1,1 @@
-echo "Executing Python programs."
-echo "Outputs collected."
+python2 "$FNAME_EXECUTABLE" <"$FNAME_INPUT" >"$FNAME_MYOUTPUT"

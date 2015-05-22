@@ -1,0 +1,1 @@
+FNAME_EXECUTABLE="${TASK}.py"

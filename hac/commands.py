@@ -115,12 +115,12 @@ def _command_prep(**args):
                 # 5) Dump inputs and outputs.
                 for i, inp in enumerate(prob.inputs):
                     in_file = join(problems_dirs[prob],
-                                   'in' + os.extsep + str(i+1))
+                                   str(i+1) + os.extsep + 'in')
                     safe_fwrite(in_file, inp, force=conf_all['force'])
 
                 for i, out in enumerate(prob.outputs):
                     out_file = join(problems_dirs[prob],
-                                   'out' + os.extsep + str(i+1))
+                                   str(i+1) + os.extsep + 'out')
                     safe_fwrite(out_file, out, force=conf_all['force'])
 
     return ExitStatus.OK

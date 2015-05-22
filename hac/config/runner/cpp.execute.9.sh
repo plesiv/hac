@@ -1,1 +1,1 @@
-echo "Default C++ clean for shell runner"
+./"$FNAME_EXECUTABLE" <"$FNAME_INPUT" >"$FNAME_MYOUTPUT"
