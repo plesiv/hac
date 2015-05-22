@@ -41,10 +41,6 @@ SETTINGS_CONST = {
         DataType.RUNNER: "runner",
         DataType.SITE: "site",
     },
-    "plugin_temp": {
-        DataType.LANG: "temp",
-        DataType.RUNNER: "temp",
-    },
     "plugin_temp_sep": {
         DataType.LANG: ".",
         DataType.RUNNER: ".",

@@ -241,10 +241,12 @@ def safe_fwrite(path, contents="", force=False, executable=False):
         with open(path, 'w') as f:
             f.write(contents)
 
-    # Make file executable
+    # Make file executable for everyone
     if executable:
         perms = os.stat(path)
-        os.chmod(path, perms.st_mode | stat.S_IEXEC)
+        os.chmod(path, perms.st_mode | stat.S_IEXEC |
+                                       stat.S_IXGRP |
+                                       stat.S_IXOTH)
 
 
 # -- Metaclassing (portable, works on Python2/Python3) ------------------------
