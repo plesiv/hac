@@ -151,16 +151,17 @@ If you want to use any of the default configuration/template files as a
 starting point for your customized files, you can:
 
 - copy all default-configuration files in a temporary directory,
-- modify and move in ``~/.config/hac`` those of interest and throw away others.
+- modify and move to ``~/.config/hac`` files of interest and throw away others.
 
 .. code-block:: bash
 
     $ HAC_CONFIG_DIR=~/temp_config hac --copy-config
-    $ # ... change some files from ~/temp_config and move them to ~/.config/hac
+    $ # ... modify interesting files in ~/temp_config and move them to
+    $ # ... ~/.config/hac
     $ rm -r ~/temp_config   # remove temporary directory
 
 
-When **hac** is ran to prepare the environment (``prep`` command):
+When **hac** is run to prepare the environment (``prep`` command):
 
 - selected language templates are copied for each task to the destination
   directories *unchanged*,
@@ -174,11 +175,11 @@ When **hac** is ran to prepare the environment (``prep`` command):
 Priority labels of runner templates and runner-parts are *completely separate*
 from the priority labels of language templates. This means that
 
-- ``cpp.dbg_run.9.sh`` is exclusively a runner-part for ``temp.9.sh`` (and not
-  for ``temp.3.sh`` or ``temp.4.sh``, for example),
-- ``cpp.dbg_run.9.sh`` gets interpolated in ``temp.9.sh`` when *any* *cpp*
-  language template is selected (*cpp.3*, *cpp.9*, *cpp.100*) with *sh.9*
-  runner template.
+- ``cpp.dbg_run.9.sh`` is exclusively a runner-part for ``temp.9.sh`` runner
+  template (and not for ``temp.3.sh`` or ``temp.4.sh`` for example),
+- on the other hand, ``cpp.dbg_run.9.sh`` gets interpolated in ``temp.9.sh``
+  when *any* *cpp* language template is selected (either *cpp.3* or *cpp.9* or
+  even *cpp.100*) with *sh.9* runner template.
 
 
 --------
