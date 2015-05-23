@@ -154,7 +154,6 @@ def main(args=sys.argv[1:]):
     else:
         conf_all = conf_user
 
-
     # -- PROCESS CONFIG / CLI ------------------------------------------------
     # Normalize aggregated configuration.
 

@@ -5,7 +5,13 @@ import os
 
 import hac
 from hac import DataType
-from hac.commands import app_commands
+from hac.commands import app_commands, app_commands_help
+
+
+_commands_choices = sorted(app_commands.keys())
+_commands_help = "\n".join(["Command to be executed:"] +
+                            [app_commands_help[com]
+                                for com in sorted(app_commands.keys())])
 
 
 """Constant common parse arguments used in:
@@ -58,31 +64,34 @@ _pargs_pack_common_const = [
             "type": int,
             "choices": [0, 1, 2],
             "help":
-                """Additional directory depth at which to work; 0 - current
-                directory, 1 - directory per task, 2 - directory for contest
-                and sub-directory per task""",
+"""Additional levels at which to create files:
+  0 - working directory,
+  1 - directory for each problem,
+  2 - directory for contest and sub-directory every
+      task""",
             "dest": "subdir_depth"
         }
     },
     {
-        #TODO document that workdir has to exist beforehand
         "names": ("-w", "--workdir"),
         "params": {
             "help":
-                """Change working directory for program""",
-            "metavar": "DIR",
+"""Change working directory (it has to exist).
+Current directory by default.""",
+            "metavar": "WD",
             "dest": "workdir"
         }
     },
     {
-        "names": ("-t", "--testcases"),
+        "names": ("-t", "--tests"),
         "params": {
             "type": int,
             "choices": [0, 1],
             "help":
-                """Prepare testcases (e.g. I/O samples); 0 - no testcases, 1 -
-                pretests""",
-            "dest": "testcases"
+"""Prepare testcases (I/O samples):
+  0 - no testcases
+  1 - pretests""",
+            "dest": "tests"
         }
     },
     #TODO remove defaults in help
@@ -108,11 +117,9 @@ _pargs_pack_common_const = [
         "names": ("command",),
         "params": {
             "nargs": "?",
-            "choices": sorted(app_commands.keys()),
-            "help":
-                """Prepare environment or show information about current
-                configuration, diagnostics etc.""",
-            "metavar": " | ".join(sorted(app_commands.keys()))
+            "choices": _commands_choices,
+            "help": _commands_help,
+            "metavar": " | ".join(_commands_choices)
         }
     },
 ]
@@ -130,7 +137,7 @@ def get_pargs_pack_common(choice_langs = [], choice_runners = []):
                 "action": "append",
                 "choices": ['no'] + choice_langs,
                 "help":
-                    """Languages for which to prepare the environment""",
+                    """Language-templates to copy""",
                 "dest": "lang"
             }
         },
@@ -139,8 +146,7 @@ def get_pargs_pack_common(choice_langs = [], choice_runners = []):
             "params": {
                 "action": "append",
                 "choices": ['no'] + choice_runners,
-                "help":
-                    """Runners for which to prepare the environment""",
+                "help": """Runner-templates to process and copy""",
                 "dest": "runner"
             }
         },

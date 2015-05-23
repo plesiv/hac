@@ -113,17 +113,18 @@ def _command_prep(**args):
 
                 #TODO refactor
                 # 5) Dump inputs and outputs.
-                for i, inp in enumerate(prob.inputs):
-                    in_file = join(problems_dirs[prob],
-                                   prob.ID + os.extsep + str(i+1) +
-                                   os.extsep + 'in')
-                    safe_fwrite(in_file, inp, force=conf_all['force'])
+                if conf_all['tests'] >= 1:
+                    for i, inp in enumerate(prob.inputs):
+                        in_file = join(problems_dirs[prob],
+                                       prob.ID + os.extsep + str(i+1) +
+                                       os.extsep + 'in')
+                        safe_fwrite(in_file, inp, force=conf_all['force'])
 
-                for i, out in enumerate(prob.outputs):
-                    out_file = join(problems_dirs[prob],
-                                   prob.ID + os.extsep + str(i+1) +
-                                   os.extsep + 'out')
-                    safe_fwrite(out_file, out, force=conf_all['force'])
+                    for i, out in enumerate(prob.outputs):
+                        out_file = join(problems_dirs[prob],
+                                       prob.ID + os.extsep + str(i+1) +
+                                       os.extsep + 'out')
+                        safe_fwrite(out_file, out, force=conf_all['force'])
 
     return ExitStatus.OK
 
@@ -199,4 +200,16 @@ def _command_show(**args):
 # Application commands collected in dictionary
 app_commands = { "prep": _command_prep,
                  "show": _command_show }
+
+app_commands_help = {
+"prep":
+"""  - prep - prepare directories and files for
+    specified problems""",
+
+"show":
+"""  - show - print relevant information about
+    application configuration, available-plugins,
+    identified contest and problems to be fetched
+    (changeable verbosity)"""
+}
 

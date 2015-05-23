@@ -30,7 +30,7 @@
 --workdir=.
 
 # download and prepare pre-tests
---testcases=1
+--tests=1
 
 # warn if files exist already
 --no-force
