@@ -2,8 +2,8 @@
 HAC: Helper for Algorithm Competitions
 **************************************
 
-HAC is *highly extensible and configurable command-line tool* intended to ease
-the boring part of solving algorithm problems:
+**hac** is *highly extensible and configurable command-line tool* intended to
+ease the boring part of solving algorithm problems:
 
 - preparing directory structure,
 - preparing source-code files,
@@ -11,20 +11,22 @@ the boring part of solving algorithm problems:
 - downloading test-cases.
 
 
-HAC can very easily be extended to work with:
+**hac** can be extended very easily to work with:
 
 - any programming language usable from the command-line,
-- any runner (shell, Makefile, ant) usable from the command-line,
+- any runner usable from the command-line (examples: *shell scripts*,
+  *Makefiles*, *ant scripts*),
 - any site that exposes information about contests/problems in an uniform and
-  web-accessible form.
+  web-accessible form (examples: `Codeforces <http://codeforces.com/>`_,
+  `Codechef <http://www.codechef.com/>`_).
 
 
 =======
 Support
 =======
 
-Following sites and runner/language combinations are currently supported. If
-this bothers you, please check `Contribute`_ section.
+If lack of support for particular programming language or site irks you, please
+check `Contribute`_ section.
 
 
 **Sites supported:**
@@ -32,7 +34,7 @@ this bothers you, please check `Contribute`_ section.
 - `Codeforces <http://codeforces.com/>`_
 
 
-**Runners/languages supported:**
+**Runner/language combinations supported:**
 
 +-----------------+----------------------+---------------------+
 |                 |          C++         |        Python       |
@@ -50,10 +52,9 @@ this bothers you, please check `Contribute`_ section.
 Installation
 ============
 
-To install HAC you will need to have `pip`_ installed on your system. Since HAC
-messes with the file-system it is strongly advisable to install it in an
-environment of the regular user (to mitigate the responsibility that comes with
-power ;) ):
+To install **hac** you need to have `pip`_ installed on your system. Since
+**hac** messes with the file-system it is strongly advisable to install it as
+regular user (to mitigate the responsibility that comes with power ;) ):
 
 .. code-block:: bash
 
@@ -77,19 +78,19 @@ Special commands that don't fetch remote data:
 
 .. code-block:: bash
 
-    $ hac -h             # show help
+    $ hac --help         # show help
     $ hac --version      # show version
-    $ hac --copy-config  # copy configuration
+    $ hac --copy-config  # copy configuration (to ~/.config/hac by default)
 
 
-Commands that fetch remote data and processes it (more info in `Examples`_):
+Commands that fetch remote data and process it (more info in `Examples`_):
 
 .. code-block:: bash
 
     $ hac [options...] (prep | show) (CONTEST | PROBLEM) [PROBLEM [PROBLEM ...]]
 
 
-For up-to-date list of command-line arguments and switches check HAC's help
+For up-to-date list of command-line arguments and switches check **hac**'s help
 message.
 
 
@@ -106,15 +107,13 @@ modifiable with ``HAC_CONFIG_DIR`` environment variable) run:
 
 
 Modify user specific configuration by changing files in ``~/.config/hac``. File
-``hacrc`` is main settings file. Total HAC settings are calculated in this
-manner:
+``hacrc`` is main settings file. Total **hac** settings are calculated in a
+*cascaded* manner by (similar in concept to how CSS works):
 
-- defaults are taken from ``hacrc`` from default-configuration directory
-  (un-modifiable by user),
-- settings are taken from ``~/.config/hac/hacrc`` and those that are present
-  there override settings from ``hacrc`` from default-configuration directory,
-- settings are taken from command-line arguments and those that are present
-  there override settings from ``~/.config/hac/hacrc`` and default ``hacrc``.
+- taking settings from ``hacrc`` from default-configuration directory (not
+  writable by user),
+- overriding above settings with those from ``~/.config/hac/hacrc``,
+- overriding above settings from command-line arguments.
 
 Files in ``~/.config/hac`` sub-directories (``lang``, ``runner``, ``site``)
 over-shadow files in default-configuration directory with the same name. For
@@ -128,31 +127,48 @@ prepared for any ``cpp`` language template. Modifying
 ``~/.config/hac/runner/cpp.exec_compile.9.sh`` allows us change compilation
 flags or compiler used for C++ source compilation.
 
-It is best to remove *un-modified* files in ``~/.config/hac`` subdirectories to
-prevent over-shadowing of updated files in default-configuration directory. To
-remove all files in those directories run (**careful, destructive**):
+It is best to remove *un-customized* files in
+``~/.config/hac/{lang,runner,site}`` subdirectories to prevent possible
+over-shadowing of updated files in default-configuration directory (when
+**hac** gets updated). To remove all files in those directories run (**careful,
+destructive**):
 
 .. code-block:: bash
 
     $ rm -r ~/.config/hac/*/*
 
 
-To copy all default-configuration files in a temporary directory (useful when
-you want to use any of the default files as a starting point for your custom
-file).
+If you want to use any of the default configuration/template files as a
+starting point for your customized files, you can:
+
+- copy all default-configuration files in a temporary directory,
+- modify and move in ``~/.config/hac`` those of interest and throw away others.
 
 .. code-block:: bash
 
     $ HAC_CONFIG_DIR=~/temp_config hac --copy-config
-    $ # ... change some files from ~/temp_config and copy them to ~/.config/hac
+    $ # ... change some files from ~/temp_config and move them to ~/.config/hac
     $ rm -r ~/temp_config   # remove temporary directory
 
 
-When HAC is started, selected language templates are copied to the destination
-directories *unchanged* while selected runner templates are *processed*
-(interpolated) with corresponding template-parts. For example
-``cpp.dbg_run.9.sh`` is interpolated in ``temp.9.sh`` at the point where
-``$dbg_run`` label appears alone in the line in ``temp.9.sh`` file.
+When **hac** is ran to prepare the environment (``prep`` command):
+
+- selected language templates are copied for each task to the destination
+  directories *unchanged*,
+- selected runner templates are *processed (interpolated)* with corresponding
+  template-parts. For example if ``cpp`` and ``sh.9`` are selected, contents of
+  ``cpp.dbg_run.9.sh`` are interpolated in ``temp.9.sh`` (appropriately
+  indented) at the point of where label ``$dbg_run`` occurs alone in the line
+  in ``temp.9.sh`` file.
+
+
+Priority labels of runner templates and runner-parts are *completely separate*
+from the priority labels of language templates. This means that
+
+- ``cpp.dbg_run.9.sh`` is exclusively a runner-part for ``temp.9.sh`` (and not
+  for ``temp.3.sh`` or ``temp.4.sh``, for example),
+- ``cpp.dbg_run.9.sh`` gets interpolated in ``temp.9.sh`` when *any* ``cpp``
+  language template gets selected (``cpp.3``, ``cpp.9``, ``cpp.100``).
 
 
 --------
@@ -161,7 +177,7 @@ Examples
 
 **1)** Display verbose information about:
 
-- HAC's configuration,
+- **hac**'s configuration,
 - available sites, runner and language templates,
 - selected site, contest and problems,
 - problems' information for Codeforces contest #527.
@@ -171,14 +187,13 @@ Examples
     $ hac -v show http://codeforces.com/527
 
 
-**2a)** For problems "B" and "C" from Codeforces contest #527 prepare in
-current directory:
+**2a)** For problems "B" and "C" from Codeforces contest #527 prepare:
 
-- source-file from ``cpp`` *highest priority* template (has lowest X among all
-  ``cpp.X`` templates),
+- source-file from ``cpp`` *highest priority* template (has lowest `X` among
+  all ``cpp.X`` templates),
 - runner from ``sh.9`` template (gets interpolated for ``cpp`` language
   template),
-- pre-tests downloaded from Codeforces.
+- pre-tests downloaded from `Codeforces <http://codeforces.com/>`_.
 
 .. code-block:: bash
 
@@ -186,13 +201,14 @@ current directory:
     $ hac -d2 -lcpp -rsh.9 prep http://codeforces.com/527 B C
 
 
-With default configuration both of following lines (#1 and #2) are equivalent
-to the one above:
+With default configuration *any* of the following lines is equivalent to the
+one above:
 
 .. code-block:: bash
 
-    $ hac http://codeforces.com/527 B C  #1
-    $ hac cf/527 B C                     #2
+    $ hac -lcpp.9 -rsh.9 prep http://codeforces.com/527 b c
+    $ hac http://codeforces.com/527 B C
+    $ hac cf/527 2 3
 
 
 **2b)** Write solution for problem "B" and test it on pre-tests:
@@ -217,7 +233,7 @@ to the one above:
 Authors
 =======
 
-`Zoran Plesivčak`_ created HAC and `these fine people`_ have contributed.
+`Zoran Plesivčak`_ created **hac** and `these fine people`_ have contributed.
 
 
 
