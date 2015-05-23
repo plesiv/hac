@@ -58,7 +58,8 @@ To execute command that fetches remote data and processes it run:
 """.format(" | ".join(sorted(app_commands.keys())))
 
 _parser_cli_epilog = \
-"""examples: https://github.com/plesiv/hac#user-content-examples
+"""examples: https://github.com/plesiv/hac#examples
+ 
 """
 
 
