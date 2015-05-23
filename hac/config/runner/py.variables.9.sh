@@ -1,1 +1,1 @@
-FNAME_EXECUTABLE="${TASK}.py"
+FILE_EXEC="${TASK}.py"

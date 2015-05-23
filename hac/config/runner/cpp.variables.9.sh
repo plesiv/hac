@@ -1,1 +1,1 @@
-FNAME_EXECUTABLE="${TASK}.out"
+FILE_EXEC="${TASK}.out"
