@@ -97,7 +97,6 @@ Current directory by default.""",
             "dest": "tests"
         }
     },
-    #TODO remove defaults in help
     (
         {
             "names": ("-f", "--force"),
@@ -132,9 +131,6 @@ def get_pargs_pack_common(choice_langs = [], choice_runners = []):
     """
     _pargs_pack_common_var = [
         {
-            #TODO if -lno -> clear all previous langs
-            #TODO multiple langs separated by comma ?
-            #TODO for no lang in final and executor present -> output executors template
             "names": ("-l", "--lang"),
             "params": {
                 "action": "append",

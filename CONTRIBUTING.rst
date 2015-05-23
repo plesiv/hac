@@ -6,7 +6,7 @@ Contributing to HAC
 Types of contributions
 ----------------------
 
-These are especially needed:
+These are *especially* needed:
 
 - better and more language templates,
 - other runner templates,
@@ -16,7 +16,9 @@ These are especially needed:
 
 Other contributions needed:
 
-- code or documentation improvements.
+- code or documentation improvements,
+- testing and porting HAC to Windows and MAC OS X,
+- creating packages for different platforms (e.g. Ubuntu/Debian, MAC OS X).
 
 
 ----------------------------------------

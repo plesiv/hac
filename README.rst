@@ -40,13 +40,32 @@ this bothers you, please check `Contribute`_ section.
 | **POSIX shell** | ``sh.9`` / ``cpp.9`` | ``sh.9`` / ``py.9`` |
 +-----------------+----------------------+---------------------+
 
+**OS supported:**
+
+- Linux (tested)
+
 
 
 ============
 Installation
 ============
 
-*TODO*: To be written...
+To install HAC you will need to have `pip`_ installed on your system. Since HAC
+messes with the file-system it is strongly advisable to install it in an
+environment of the regular user (to mitigate the responsibility that comes with
+power ;) ):
+
+.. code-block:: bash
+
+    $ pip install --upgrade --user hac
+
+
+Install as super-user at *your own* risk:
+
+.. code-block:: bash
+
+    $ # ... switch to super-user
+    # pip install --upgrade hac
 
 
 
@@ -217,6 +236,7 @@ Licence
 Please see `LICENSE <https://github.com/plesiv/hac/blob/master/LICENSE>`_.
 
 
+.. _pip: http://www.pip-installer.org/en/latest/index.html
 .. _Zoran Plesivčak: http://plesiv.com
 .. _these fine people: https://github.com/plesiv/hac/contributors
 
