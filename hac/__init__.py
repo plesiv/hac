@@ -28,13 +28,13 @@ class ExitStatus(object):
 
 # Application constant settings.
 SETTINGS_CONST = {
-    "app_root_dir": os.path.abspath(os.path.dirname(__file__)),
+    "hac_root_path": os.path.abspath(os.path.dirname(__file__)),
     "config_filename": "hacrc",
-    "config_app_path": "config",
+    "config_dir": "config",
     "config_user_path": \
         os.environ.get('HAC_CONFIG_DIR',
         os.path.expanduser('~/.config/hac')),
-    "plugin_path": {
+    "plugin_dir": {
         DataType.LANG: "lang",
         DataType.RUNNER: "runner",
         DataType.SITE: "site",

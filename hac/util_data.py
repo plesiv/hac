@@ -236,15 +236,15 @@ def plugin_collect(data_type):
     User-specified plug-ins of the same name override application default
     plug-ins.
     """
-    plugin_path = hac.SETTINGS_CONST["plugin_path"][data_type]
+    plugin_dir = hac.SETTINGS_CONST["plugin_dir"][data_type]
     plugin_discover = _plugin_discover_funcs[data_type]
 
     return plugin_discover([
         os.path.join(hac.SETTINGS_CONST["config_user_path"],
-                     plugin_path),
-        os.path.join(hac.SETTINGS_CONST["app_root_dir"],
-                     hac.SETTINGS_CONST["config_app_path"],
-                     plugin_path),
+                     plugin_dir),
+        os.path.join(hac.SETTINGS_CONST["hac_root_path"],
+                     hac.SETTINGS_CONST["config_dir"],
+                     plugin_dir),
     ])
 
 

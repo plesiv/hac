@@ -68,8 +68,8 @@ def main(args=sys.argv[1:]):
     pargs_packed_add(parser_cli, pargs_pack_cli)
 
     # Get default application configuration (from files).
-    global_config_file = os.path.join(hac.SETTINGS_CONST["app_root_dir"],
-                                      hac.SETTINGS_CONST["config_app_path"],
+    global_config_file = os.path.join(hac.SETTINGS_CONST["hac_root_path"],
+                                      hac.SETTINGS_CONST["config_dir"],
                                       hac.SETTINGS_CONST["config_filename"])
     assert os.path.exists(global_config_file)
     env_global = parser_config.parse_args(['@' + global_config_file])
@@ -116,8 +116,8 @@ def main(args=sys.argv[1:]):
     #   - "--copy-config" is given as optional argument
     #
     if "--copy-config" in args:
-        safe_cpdir(os.path.join(hac.SETTINGS_CONST["app_root_dir"],
-                                hac.SETTINGS_CONST["config_app_path"]),
+        safe_cpdir(os.path.join(hac.SETTINGS_CONST["hac_root_path"],
+                                hac.SETTINGS_CONST["config_dir"]),
                    hac.SETTINGS_CONST["config_user_path"])
 
         sys.exit(ExitStatus.OK)
