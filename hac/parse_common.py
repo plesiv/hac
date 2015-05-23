@@ -23,6 +23,15 @@ _pargs_pack_common_const = [
             "default": False,
         },
     },
+    {
+        "names": ("--copy-config",),
+        "params": {
+            "action": "store_true",
+            "help": """copy configuration to user's local directory""",
+            "dest": "copy_config",
+            "default": False,
+        },
+    },
     (
         {
             "names": ("-v", "--verbose"),

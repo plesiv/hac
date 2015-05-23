@@ -13,17 +13,22 @@ from hac.parse_common import get_pargs_pack_common, pargs_packed_add
 from hac.parse_config import get_bare_config_parser
 from hac.parse_cli import get_pargs_pack_cli, get_bare_cli_parser
 from hac.util_common import error, dict_override, list_reduce, mainargs_index,\
-    choice_generate, choice_normal
+    choice_generate, choice_normal, safe_cpdir
 from hac.util_data import plugin_collect, plugin_match_site
 
 
 def main(args=sys.argv[1:]):
-    """Execution flow of the main function:
+    """Execution flow of the application:
 
-    #TODO Execution flow correct
-    ... discover plugins
-    ... get configuration (priorities: default < local < cli)
-    ... branch according to command (prep, show)
+        1) discover and load plugins (languages, runners and sites)
+            1a] read application global defaults
+            1b] override with user's custom plugins
+        2) handle configuration (hacrc files and CLI arguments)
+            2a] read hacrc from application global defaults
+            2b] override with user's hacrc
+            2c] override with command-line arguments
+        3) fetch data from site
+        4) execute command (prep, show)
     """
 
     # -- PLUGIN-SYSTEM -------------------------------------------------------
@@ -63,18 +68,16 @@ def main(args=sys.argv[1:]):
     pargs_packed_add(parser_cli, pargs_pack_cli)
 
     # Get default application configuration (from files).
-    global_config_file = os.path.join(
-        hac.SETTINGS_CONST["app_root_dir"],
-        hac.SETTINGS_CONST["config_app_path"],
-        hac.SETTINGS_CONST["config_filename"])
+    global_config_file = os.path.join(hac.SETTINGS_CONST["app_root_dir"],
+                                      hac.SETTINGS_CONST["config_app_path"],
+                                      hac.SETTINGS_CONST["config_filename"])
     assert os.path.exists(global_config_file)
     env_global = parser_config.parse_args(['@' + global_config_file])
     conf_global = vars(env_global)
 
     # Get user specific configuration (from files).
-    user_config_file = os.path.join(
-        hac.SETTINGS_CONST["config_user_path"],
-        hac.SETTINGS_CONST["config_filename"])
+    user_config_file = os.path.join(hac.SETTINGS_CONST["config_user_path"],
+                                    hac.SETTINGS_CONST["config_filename"])
 
     if os.path.exists(user_config_file):
         env_user = parser_config.parse_args(['@' + user_config_file])
@@ -87,31 +90,50 @@ def main(args=sys.argv[1:]):
     # -- READ CLI ------------------------------------------------------------
     # Special handling of CLI arguments.
 
-    # -> Print help message and exit if:
-    #     - no arguments given OR
-    #     - "-h" or "--help" is given as optional argument
+    # Print help message and exit if:
+    #
+    #   - no arguments given OR
+    #   - "-h" or "--help" is given as optional argument
+    #
     if (len(args) == 0) or any([o in args for o in ("-h", "--help")]):
          parser_cli.print_help()
-         sys.exit(ExitStatus.ERROR)
+         sys.exit(ExitStatus.OK)
 
-    # -> Print application version and exit if:
-    #     - "--version" is given as optional argument
+    # Print application version and exit if:
+    #
+    #   - "--version" is given as optional argument
+    #
     if "--version" in args:
         print(
         "hac v{0}, License {1}, Copyright (C) 2014-2015 {2}".format(
                                     hac.__version__,
                                     hac.__license__,
                                     hac.__author__))
-        sys.exit(ExitStatus.ERROR)
+        sys.exit(ExitStatus.OK)
 
-    # -> Use default command (from configuration files) if:
-    #     - no command given
+    # Copy global configuration to user's local directory if:
+    #
+    #   - "--copy-config" is given as optional argument
+    #
+    if "--copy-config" in args:
+        safe_cpdir(os.path.join(hac.SETTINGS_CONST["app_root_dir"],
+                                hac.SETTINGS_CONST["config_app_path"]),
+                   hac.SETTINGS_CONST["config_user_path"])
+
+        sys.exit(ExitStatus.OK)
+
+    # Use default command (from configuration files) if:
+    #
+    #   - no command given
+    #
     margs_ind = mainargs_index(args)
     if (margs_ind == len(args)) or (args[margs_ind] not in app_commands):
         args.insert(margs_ind, conf_user["command"])
 
-    # -> Notify user and exit if:
-    #     - no location (legal CONTEST / PROBLEM) given
+    # Notify user and exit if:
+    #
+    #   - no location (legal CONTEST / PROBLEM) given
+    #
     if (len(args) == margs_ind + 1) and (args[margs_ind] in app_commands):
         error("No CONTEST / PROBLEM given!")
         sys.exit(ExitStatus.ERROR)

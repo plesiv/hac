@@ -5,6 +5,7 @@ import re
 import sys
 import os
 import stat
+import shutil
 from os.path import exists, isdir
 from shutil import rmtree
 
@@ -212,6 +213,60 @@ def safe_mkdir(path, force=False):
                 os.mkdir(path)
             else:
                 warn('"' + path + '" is not a directory!')
+
+
+def safe_cpdir(path_from, path_to, force=False):
+    """Carefully handles recursive directory copying. Notifies about special
+    occurrences.
+
+    Argument force used to decide if priorly existing files in destination
+    directory should be replaced with new files from source.
+    """
+    # When force is true (branching):
+    #
+    #
+    # - source is DIR  && destination is DIR  -> do nothing
+    #
+    # - source is FILE && destination is DIR  \
+    # - source is DIR  && destination is FILE  -> remove destination
+    # - source is FILE && destination is FILE /
+    #
+    if force:
+        if exists(path_from) and not isdir(path_from) and isdir(path_to):
+            warn('Replacing directory "' + path_to + '"!')
+            rmtree(path_to)
+
+        if exists(path_from) and exists(path_to) and not isdir(path_to):
+            warn('Replacing file "' + path_to + '"!')
+            os.remove(path_to)
+
+    # When source is directory (sequence):
+    #
+    # 1) destination doesn't exist -> create directory
+    # 2) destination is directory  -> recursively copy
+    #
+    if isdir(path_from):
+        if exists(path_to) and not isdir(path_to):
+            warn('File named "' + path_to + '" already exists!')
+
+        if not exists(path_to):
+            os.mkdir(path_to)
+
+        if isdir(path_to):
+            for fp in os.listdir(path_from):
+                safe_cpdir(os.path.join(path_from, fp),
+                           os.path.join(path_to, fp),
+                           force)
+
+    # When source is file:
+    #
+    # - destination doesn't exist -> copy file
+    #
+    elif exists(path_from):
+        if exists(path_to):
+            warn('File/directory named "' + path_to + '" already exists!')
+        else:
+            shutil.copyfile(path_from, path_to)
 
 
 def safe_fwrite(path, contents="", force=False, executable=False):
