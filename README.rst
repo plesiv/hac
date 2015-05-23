@@ -26,7 +26,8 @@ Support
 =======
 
 If lack of support for particular programming language or site irks you, please
-check `Contribute`_ section.
+check `Contribute`_ section. This section contains current up-to-date support
+info.
 
 
 **Sites supported:**
@@ -42,9 +43,17 @@ check `Contribute`_ section.
 | **POSIX shell** | ``sh.9`` / ``cpp.9`` | ``sh.9`` / ``py.9`` |
 +-----------------+----------------------+---------------------+
 
+
 **OS supported:**
 
 - Linux (tested)
+
+
+**Python versions**
+
+- 2.7
+- 3.3
+- 3.4
 
 
 
