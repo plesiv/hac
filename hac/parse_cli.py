@@ -4,6 +4,8 @@
 import os
 import argparse
 
+from hac.commands import app_commands
+
 
 """Parse arguments used in CLI parser.
 """
@@ -44,8 +46,20 @@ def get_pargs_pack_cli():
 
 
 # Parser notes.
-_parser_cli_description = "how to use..." #TODO
-_parser_cli_epilog = "Examples..." #TODO
+_parser_cli_description = \
+"""To execute special command that doesn't fetch remote data run: 
+
+    hac (--help | --version | --copy-config)
+
+To execute command that fetches remote data and processes it run:
+
+    hac [options...] ({0}) (CONTEST | PROBLEM) [PROBLEM [PROBLEM ...]]
+
+""".format(" | ".join(sorted(app_commands.keys())))
+
+_parser_cli_epilog = \
+"""examples: https://github.com/plesiv/hac#user-content-examples
+"""
 
 
 def get_bare_cli_parser():

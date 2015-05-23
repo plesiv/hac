@@ -2,6 +2,34 @@
 HAC: Helper for Algorithm Competitions
 **************************************
 
+=====
+Usage
+=====
+
+
+Special commands that don't fetch remote data:
+
+.. code-block:: bash
+
+    $ hac -h             # show help
+    $ hac --version      # show version
+    $ hac --copy-config  # copy configuration
+
+
+Commands that fetch remote data and processes it (more info in `Examples`_):
+
+.. code-block:: bash
+
+    $ hac [options...] (prep | show) (CONTEST | PROBLEM) [PROBLEM [PROBLEM ...]]
+
+
+--------
+Examples
+--------
+
+Here...
+
+
 =======
 Authors
 =======
