@@ -222,7 +222,7 @@ def plugin_match_site(sites, conf): #very-stupid matching now
         hostname = urlparse(conf['location']).hostname.lower()
         if(hostname in site.name.lower() or hostname in site.ID.lower()):
             return site.url
-    return sites[0].url
+    return list(sorted(sites))[0].url
 
 
 # -- Common data utilities ----------------------------------------------------
