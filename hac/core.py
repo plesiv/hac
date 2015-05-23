@@ -27,15 +27,22 @@ def main(args=sys.argv[1:]):
             2a] read hacrc from application global defaults
             2b] override with user's hacrc
             2c] override with command-line arguments
-        3) fetch data from site
-        4) execute command (prep, show)
+        3) handle special command-line switches
+        4) fetch data from site
+        5) execute command (prep, show)
     """
 
     # -- PLUGIN-SYSTEM -------------------------------------------------------
-    # Discover plug-ins and templates.
-    plugin_langs = plugin_collect(DataType.LANG)     # Get language-templates
-    plugin_runners = plugin_collect(DataType.RUNNER) # Get runners
-    plugin_sites = plugin_collect(DataType.SITE)     # Get site-processors
+    config_global_path = os.path.join(hac.SETTINGS_CONST["hac_root_path"],
+                                      hac.SETTINGS_CONST["config_dir"])
+    config_user_path = hac.SETTINGS_CONST["config_user_path"]
+    # User configs override global configs
+    config_paths = [config_user_path, config_global_path]
+
+    # Discover plug-ins (sites) and templates (runners, languages).
+    plugin_langs = plugin_collect(config_paths, DataType.LANG)
+    plugin_runners = plugin_collect(config_paths, DataType.RUNNER)
+    plugin_sites = plugin_collect(config_paths, DataType.SITE)
 
     # Auxiliary data. If
     #   available_langs == ['cpp.0', 'cpp.1', 'py.15']), then
@@ -68,19 +75,19 @@ def main(args=sys.argv[1:]):
     pargs_packed_add(parser_cli, pargs_pack_cli)
 
     # Get default application configuration (from files).
-    global_config_file = os.path.join(hac.SETTINGS_CONST["hac_root_path"],
+    config_global_file = os.path.join(hac.SETTINGS_CONST["hac_root_path"],
                                       hac.SETTINGS_CONST["config_dir"],
                                       hac.SETTINGS_CONST["config_filename"])
-    assert os.path.exists(global_config_file)
-    env_global = parser_config.parse_args(['@' + global_config_file])
+    assert os.path.exists(config_global_file)
+    env_global = parser_config.parse_args(['@' + config_global_file])
     conf_global = vars(env_global)
 
     # Get user specific configuration (from files).
-    user_config_file = os.path.join(hac.SETTINGS_CONST["config_user_path"],
+    config_user_file = os.path.join(hac.SETTINGS_CONST["config_user_path"],
                                     hac.SETTINGS_CONST["config_filename"])
 
-    if os.path.exists(user_config_file):
-        env_user = parser_config.parse_args(['@' + user_config_file])
+    if os.path.exists(config_user_file):
+        env_user = parser_config.parse_args(['@' + config_user_file])
         # Resolve configuration read from files
         conf_user = dict_override(conf_global, vars(env_user))
     else:

@@ -191,20 +191,25 @@ def _plugin_discover_sites(dirs):
     """Dynamically discovers all web-site processors in a given list of
     directories.
 
-    Returns list of site-processor objects. Site processors occurring in a
-    directories earlier in the input list have a higher priority. All
-    discovered classes are instantiated with empty constructor.
+    Returns list of site-processor objects. When site processors in different
+    locations have the same filename, site processors occurring in an location
+    specified earlier in the input list take precedence.
+
+    All discovered classes are instantiated with empty constructor.
     """
+    registered = set()
     for cdir in dirs:
         if os.path.isdir(cdir):
             for filename in os.listdir(cdir):
                 froot, fext = os.path.splitext(filename)
-                if fext == ".py":
+                if (fext == ".py") and (froot not in registered):
                     fname, fpath, fdescr = imp.find_module(froot, [cdir])
                     if fname:
                         # Register discovered site-processor module in
                         # ISiteRegistry.sites
                         mod = imp.load_module(froot, fname, fpath, fdescr)
+                        # Track registered sites
+                        registered.add(froot)
     return [ site() for site in ISiteRegistry.sites ]
 
 
@@ -228,24 +233,18 @@ _plugin_discover_funcs = {
 }
 
 
-# TODO refactor path input to the point of usage of plugin_collect
-def plugin_collect(data_type):
+def plugin_collect(paths, data_type):
+    """Collects plug-ins of specified type from the list of directories.
 
-    """Retrieves application default and user-specified plug-ins.
-
-    User-specified plug-ins of the same name override application default
-    plug-ins.
+    IMPORTANT: Paths that appear earlier in the list take precedence over the
+    paths that appear later, i.e. if the plug-in appears in multiple locations,
+    one that appears in the location specified earlier will be collected
+    (others will be ignored).
     """
     plugin_dir = hac.SETTINGS_CONST["plugin_dir"][data_type]
     plugin_discover = _plugin_discover_funcs[data_type]
 
-    return plugin_discover([
-        os.path.join(hac.SETTINGS_CONST["config_user_path"],
-                     plugin_dir),
-        os.path.join(hac.SETTINGS_CONST["hac_root_path"],
-                     hac.SETTINGS_CONST["config_dir"],
-                     plugin_dir),
-    ])
+    return plugin_discover([os.path.join(path, plugin_dir) for path in paths])
 
 
 # -- Web-data utilities -------------------------------------------------------

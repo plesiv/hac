@@ -31,13 +31,16 @@ SETTINGS_CONST = {
     "hac_root_path": os.path.abspath(os.path.dirname(__file__)),
     "config_filename": "hacrc",
     "config_dir": "config",
-    "config_user_path": \
-        os.environ.get('HAC_CONFIG_DIR',
-        os.path.expanduser('~/.config/hac')),
+    "config_user_path": os.environ.get('HAC_CONFIG_DIR',
+                                       os.path.expanduser('~/.config/hac')),
     "plugin_dir": {
         DataType.LANG: "lang",
         DataType.RUNNER: "runner",
         DataType.SITE: "site",
+    },
+    "plugin_temp": {
+        DataType.LANG: "temp",
+        DataType.RUNNER: "temp",
     },
     "plugin_temp_sep": {
         DataType.LANG: ".",
