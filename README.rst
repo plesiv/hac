@@ -184,8 +184,15 @@ current directory:
 
     $ mkdir ~/contests && cd ~/contests
     $ hac -d2 -lcpp -rsh.9 prep http://codeforces.com/527 B C
-    $ # ... with default-config equivalent to
-    $ hac http://codeforces.com/527 B C
+
+
+With default configuration both of following lines (#1 and #2) are equivalent
+to the one above:
+
+.. code-block:: bash
+
+    $ hac http://codeforces.com/527 B C  #1
+    $ hac cf/527 B C                     #2
 
 
 **2b)** Write solution for problem "B" and test it on pre-tests:
