@@ -137,7 +137,7 @@ if [ "$COMMAND" == e ]; then
     $exec_compile
     #^^^ templated
 
-    for FILE_IN in *.${EXT_IN}
+    for FILE_IN in ${TASK}.*.${EXT_IN}
     do
         TC=${FILE_IN%%.$EXT_IN}
         FILE_OUT="${TC}.${EXT_OUT}"

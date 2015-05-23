@@ -210,12 +210,3 @@ def main(args=sys.argv[1:]):
         contest_obj = contest_obj,
         problems_objs = problems_objs)
 
-    # TODO problems selectable by number and letter
-    # TODO notify about non-existence of the given problem
-    # TODO #3 decipher which problems to fetch (URL, other) [when no selected,
-    #         get all]
-    # TODO resolve paths got from user (~ etc.)
-    # TODO configurable name of directories for site (ID or NAME)
-    # TODO configurable name of directories for contest (ID or NAME)
-    # TODO configurable name of directories for problem (ID or NAME)
-

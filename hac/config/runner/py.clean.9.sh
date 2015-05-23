@@ -1,1 +1,1 @@
-rm *.${EXT_MYOUT} &> /dev/null
+rm ${TASK}.*.${EXT_MYOUT} &> /dev/null

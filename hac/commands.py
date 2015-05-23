@@ -23,7 +23,7 @@ Commands can access following entries from dictionary "args":
 """
 import sys
 import os
-from os.path import realpath, exists, isdir, join
+from os.path import expanduser, exists, isdir, join
 from pprint import PrettyPrinter
 
 import hac
@@ -38,7 +38,7 @@ def _command_prep(**args):
     This command is idempotent irrespective of the "--force" switch.
     """
     conf_all = args['conf_all']
-    dir_working = realpath(conf_all['workdir'])
+    dir_working = expanduser(conf_all['workdir'])
 
     # 1) Working directory has to exist.
     if not isdir(dir_working):
@@ -111,7 +111,6 @@ def _command_prep(**args):
                             warn("Runner for [{0}/{1}] combo can't be created!"
                                   .format(runn, lang_ext))
 
-                #TODO refactor
                 # 5) Dump inputs and outputs.
                 if conf_all['tests'] >= 1:
                     for i, inp in enumerate(prob.inputs):
@@ -185,7 +184,7 @@ def _command_show(**args):
                           for prob in args['problems_objs']]
     }
 
-    #TODO language x runner matrix
+    #TODO display language x runner matrix
 
     # Construct dictionary with data to print
     data = {args_labels[key]: args_printable[key] for key in args_labels}
