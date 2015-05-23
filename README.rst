@@ -2,11 +2,52 @@
 HAC: Helper for Algorithm Competitions
 **************************************
 
+HAC is *highly extensible and configurable command-line tool* intended to ease
+the boring part of solving algorithm problems:
+
+- preparing directory structure,
+- preparing source-code files,
+- preparing runner files (scripts used for testing solutions),
+- downloading test-cases.
+
+
+HAC can very easily be extended to work with:
+
+- any programming language usable from the command-line,
+- any runner (shell, Makefile, ant) usable from the command-line,
+- any site that exposes information about contests/problems in an uniform and
+  web-accessible form.
+
+
+=======
+Support
+=======
+
+Following sites and runner/language combinations are currently supported. If
+this bothers you, please check `Contribute`_ section.
+
+
+**Sites supported:**
+
+- `Codeforces <http://codeforces.com/>`_
+
+
+**Runners/languages supported:**
+
++-----------------+----------------------+---------------------+
+|                 |          C++         |        Python       |
++=================+======================+=====================+
+| **POSIX shell** | ``sh.9`` / ``cpp.9`` | ``sh.9`` / ``py.9`` |
++-----------------+----------------------+---------------------+
+
+
+
 ============
 Installation
 ============
 
 *TODO*: To be written...
+
 
 
 =====
@@ -143,11 +184,13 @@ Examples
     $ ./B.cpp.sh -d 2
 
 
+
 =======
 Authors
 =======
 
 `Zoran Plesivčak`_ created HAC and `these fine people`_ have contributed.
+
 
 
 ==========
@@ -158,11 +201,13 @@ Contributions are more than welcome! Please see `CONTRIBUTING
 <https://github.com/plesiv/hac/blob/master/CONTRIBUTING.rst>`_.
 
 
+
 ==========
 Change Log
 ==========
 
 Please see `CHANGELOG <https://github.com/plesiv/hac/blob/master/CHANGELOG.rst>`_.
+
 
 
 =======
