@@ -37,11 +37,13 @@ info.
 
 **Runner/language combinations supported:**
 
-+-----------------+----------------------+---------------------+
-|                 |          C++         |        Python       |
-+=================+======================+=====================+
-| **POSIX shell** |  *sh.9*  /  *cpp.9*  |  *sh.9*  /  *py.9*  |
-+-----------------+----------------------+---------------------+
++-----------------+----------------------+
+|                 |     POSIX shell      |
++=================+======================+
+|     **C++**     |  *sh.9*  /  *cpp.9*  |
++-----------------+----------------------+
+|   **Python**    |  *sh.9*  /  *py.9*   |
++-----------------+----------------------+
 
 
 **OS supported:**
@@ -101,6 +103,62 @@ Commands that fetch remote data and process it (more info in `Examples`_):
 
 For up-to-date list of command-line arguments and switches check **hac**'s help
 message.
+
+
+--------
+Examples
+--------
+
+**1)** Display verbose information about:
+
+- **hac**'s configuration,
+- available sites, runner and language templates,
+- selected site, contest and problems,
+- problems' information for Codeforces contest #527.
+
+.. code-block:: bash
+
+    $ hac -v show http://codeforces.com/527
+
+
+**2a)** For problems "B" and "C" from Codeforces contest #527 prepare:
+
+- source-file from *cpp* *highest priority* template (has lowest *X* among
+  all *cpp.X* templates),
+- runner from *sh.9* template (gets interpolated for *cpp* language template),
+- pre-tests downloaded from `Codeforces <http://codeforces.com/>`_.
+
+.. code-block:: bash
+
+    $ mkdir ~/contests && cd ~/contests
+    $ hac -d2 -lcpp -rsh.9 prep http://codeforces.com/527 B C
+
+
+With default configuration *any* of the following lines is equivalent to the
+one above:
+
+.. code-block:: bash
+
+    $ hac -lcpp.9 -rsh.9 prep http://codeforces.com/527 b c
+    $ hac http://codeforces.com/527 B C
+    $ hac cf/527 2 3
+
+
+**2b)** Write solution for problem "B" and test it on pre-tests:
+
+.. code-block:: bash
+
+    $ cd 527/B
+    $ # ... modify B.cpp
+    $ ./B.cpp.sh -e  # test solution on pre-tests
+    $ ./B.cpp.sh -c  # clean generated outputs
+
+
+**2c)** Debug solution for problem "B" on 2nd pre-test:
+
+.. code-block:: bash
+
+    $ ./B.cpp.sh -d 2
 
 
 --------
@@ -180,62 +238,6 @@ from the priority labels of language templates. This means that
 - on the other hand, ``cpp.dbg_run.9.sh`` gets interpolated in ``temp.9.sh``
   when *any* *cpp* language template is selected (either *cpp.3* or *cpp.9* or
   even *cpp.100*) with *sh.9* runner template.
-
-
---------
-Examples
---------
-
-**1)** Display verbose information about:
-
-- **hac**'s configuration,
-- available sites, runner and language templates,
-- selected site, contest and problems,
-- problems' information for Codeforces contest #527.
-
-.. code-block:: bash
-
-    $ hac -v show http://codeforces.com/527
-
-
-**2a)** For problems "B" and "C" from Codeforces contest #527 prepare:
-
-- source-file from *cpp* *highest priority* template (has lowest *X* among
-  all *cpp.X* templates),
-- runner from *sh.9* template (gets interpolated for *cpp* language template),
-- pre-tests downloaded from `Codeforces <http://codeforces.com/>`_.
-
-.. code-block:: bash
-
-    $ mkdir ~/contests && cd ~/contests
-    $ hac -d2 -lcpp -rsh.9 prep http://codeforces.com/527 B C
-
-
-With default configuration *any* of the following lines is equivalent to the
-one above:
-
-.. code-block:: bash
-
-    $ hac -lcpp.9 -rsh.9 prep http://codeforces.com/527 b c
-    $ hac http://codeforces.com/527 B C
-    $ hac cf/527 2 3
-
-
-**2b)** Write solution for problem "B" and test it on pre-tests:
-
-.. code-block:: bash
-
-    $ cd 527/B
-    $ # ... modify B.cpp
-    $ ./B.cpp.sh -e  # test solution on pre-tests
-    $ ./B.cpp.sh -c  # clean generated outputs
-
-
-**2c)** Debug solution for problem "B" on 2nd pre-test:
-
-.. code-block:: bash
-
-    $ ./B.cpp.sh -d 2
 
 
 
