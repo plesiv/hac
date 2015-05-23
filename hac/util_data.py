@@ -218,11 +218,16 @@ def plugin_match_site(sites, conf): #very-stupid matching now
     """Must return a site. Reasonable default site if can't match any site
     explicitly.
     """
+    codeforces_url=None
+
     for site in sites:
         hostname = urlparse(conf['location']).hostname.lower()
         if(hostname in site.name.lower() or hostname in site.ID.lower()):
             return site.url
-    return list(sorted(sites))[0].url
+        if site.ID == 'codeforces':
+            codeforces_url = site.url
+    # Ugly hack: return Codeforces site if no appropriate site selected
+    return codeforces_url
 
 
 # -- Common data utilities ----------------------------------------------------
