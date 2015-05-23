@@ -168,10 +168,11 @@ Examples
 
 .. code-block:: bash
 
-    $ hac -v -d0 show http://codeforces.com/527
+    $ hac -v show http://codeforces.com/527
 
 
-**2a)** For problems "B" and "C" from Codeforces contest #527 prepare:
+**2a)** For problems "B" and "C" from Codeforces contest #527 prepare in
+current directory:
 
 - source-file from ``cpp`` *highest priority* template (has lowest X among all
   ``cpp.X`` templates),
@@ -181,15 +182,15 @@ Examples
 
 .. code-block:: bash
 
-    $ mkdir ~/CF527
-    $ hac -w~/CF527 -d1 -t1 prep http://codeforces.com/527 B C
+    $ mkdir ~/contests && cd ~/contests
+    $ hac -d2 -lcpp -rsh.9 prep http://codeforces.com/527 B C
 
 
 **2b)** Write solution for problem "B" and test it on pre-tests:
 
 .. code-block:: bash
 
-    $ cd ~/CF527/B
+    $ cd 527/B
     $ # ... modify B.cpp
     $ ./B.cpp.sh -e  # test solution on pre-tests
     $ ./B.cpp.sh -c  # clean generated outputs
@@ -199,7 +200,6 @@ Examples
 
 .. code-block:: bash
 
-    $ cd ~/CF527/B
     $ ./B.cpp.sh -d 2
 
 
