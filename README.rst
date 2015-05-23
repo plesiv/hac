@@ -40,7 +40,7 @@ info.
 +-----------------+----------------------+---------------------+
 |                 |          C++         |        Python       |
 +=================+======================+=====================+
-| **POSIX shell** | ``sh.9`` / ``cpp.9`` | ``sh.9`` / ``py.9`` |
+| **POSIX shell** |  *sh.9*  /  *cpp.9*  |  *sh.9*  /  *py.9*  |
 +-----------------+----------------------+---------------------+
 
 
@@ -74,8 +74,8 @@ Install as super-user at *your own* risk:
 
 .. code-block:: bash
 
-    $ # ... switch to super-user
-    # pip install --upgrade hac
+    user$ # ... switch to super-user
+    root$ pip install --upgrade hac
 
 
 
@@ -117,12 +117,12 @@ modifiable with ``HAC_CONFIG_DIR`` environment variable) run:
 
 Modify user specific configuration by changing files in ``~/.config/hac``. File
 ``hacrc`` is main settings file. Total **hac** settings are calculated in a
-*cascaded* manner by (similar in concept to how CSS works):
+*cascaded* manner (similar in concept to how CSS works) by:
 
 - taking settings from ``hacrc`` from default-configuration directory (not
   writable by user),
 - overriding above settings with those from ``~/.config/hac/hacrc``,
-- overriding above settings from command-line arguments.
+- overriding above settings with those from command-line arguments.
 
 Files in ``~/.config/hac`` sub-directories (``lang``, ``runner``, ``site``)
 over-shadow files in default-configuration directory with the same name. For
@@ -131,8 +131,8 @@ default-configuration directory.
 
 Template-part ``~/.config/hac/runner/cpp.exec_compile.9.sh`` over-shadows
 ``cpp.exec_compile.9.sh`` in default-configuration directory. This
-template-part gets interpolated in ``temp.9.sh`` when runner ``sh.9`` is
-prepared for any ``cpp`` language template. Modifying
+template-part gets interpolated in ``temp.9.sh`` when runner *sh.9* is
+prepared for any *cpp* language template. Modifying
 ``~/.config/hac/runner/cpp.exec_compile.9.sh`` allows us change compilation
 flags or compiler used for C++ source compilation.
 
@@ -165,7 +165,7 @@ When **hac** is ran to prepare the environment (``prep`` command):
 - selected language templates are copied for each task to the destination
   directories *unchanged*,
 - selected runner templates are *processed (interpolated)* with corresponding
-  template-parts. For example if ``cpp`` and ``sh.9`` are selected, contents of
+  template-parts. For example if *cpp* and *sh.9* are selected, contents of
   ``cpp.dbg_run.9.sh`` are interpolated in ``temp.9.sh`` (appropriately
   indented) at the point of where label ``$dbg_run`` occurs alone in the line
   in ``temp.9.sh`` file.
@@ -176,8 +176,9 @@ from the priority labels of language templates. This means that
 
 - ``cpp.dbg_run.9.sh`` is exclusively a runner-part for ``temp.9.sh`` (and not
   for ``temp.3.sh`` or ``temp.4.sh``, for example),
-- ``cpp.dbg_run.9.sh`` gets interpolated in ``temp.9.sh`` when *any* ``cpp``
-  language template gets selected (``cpp.3``, ``cpp.9``, ``cpp.100``).
+- ``cpp.dbg_run.9.sh`` gets interpolated in ``temp.9.sh`` when *any* *cpp*
+  language template is selected (*cpp.3*, *cpp.9*, *cpp.100*) with *sh.9*
+  runner template.
 
 
 --------
@@ -198,10 +199,9 @@ Examples
 
 **2a)** For problems "B" and "C" from Codeforces contest #527 prepare:
 
-- source-file from ``cpp`` *highest priority* template (has lowest `X` among
-  all ``cpp.X`` templates),
-- runner from ``sh.9`` template (gets interpolated for ``cpp`` language
-  template),
+- source-file from *cpp* *highest priority* template (has lowest *X* among
+  all *cpp.X* templates),
+- runner from *sh.9* template (gets interpolated for *cpp* language template),
 - pre-tests downloaded from `Codeforces <http://codeforces.com/>`_.
 
 .. code-block:: bash
