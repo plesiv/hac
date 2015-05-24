@@ -10,9 +10,10 @@ import hac
 class PyTest(TestCommand):
     def finalize_options(self):
         TestCommand.finalize_options(self)
+        # TODO: remove hac/config/{lang,runner} directories from test
         self.test_args = [
             '--doctest-modules', '--verbose',
-            './config/site', './hac', './tests'
+            './hac', './tests'
         ]
         self.test_suite = True
 
@@ -31,8 +32,6 @@ entry_points = {
         'hac = hac.core:main',
     ],
 }
-
-config_dest='share/doc/hac/config'
 
 setup(
     name='hac',
