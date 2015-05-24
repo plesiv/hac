@@ -164,84 +164,142 @@ line above:
     $ hac -V show http://codeforces.com/527
 
 
+-------------
+Configuration
+-------------
 
---------
-Tutorial
---------
+User specific configuration is located in ``~/.config/hac`` directory by
+default (set ``HAC_CONFIG_DIR`` environment variable to change it). What
+follows are approaches of how to setup user specific configuration.
 
-To copy configuration to user's local directory (``~/.config/hac`` by default,
-modifiable with ``HAC_CONFIG_DIR`` environment variable) run:
+**[NOT recommended]** Copy all default-configuration to user's configuration
+directory and customize copied files:
 
 .. code-block:: bash
 
     $ hac --copy-config
+    $ # ... edit files in ~/.config/hac
 
 
-Modify user specific configuration by changing files in ``~/.config/hac``. File
-``hacrc`` is main settings file. Total **hac** settings are calculated in a
-*cascaded* manner (similar in concept to how CSS works) by:
+**[Recommended]** Approach that prevents possible over-shadowing of updated
+default-configuration files (when **hac** gets updated):
+
+- copy all default-configuration files in a temporary directory,
+- customize files in a temporary directory,
+- move *only customized* files to ``~/.config/hac``,
+- remove temporary directory.
+
+.. code-block:: bash
+
+    $ HAC_CONFIG_DIR=~/temp_config hac --copy-config
+    $ cd ~/temp_config
+    $ # ... a) customize interesting files in ~/temp_config
+    $ # ... b) move *only* customized files to ~/.config/hac
+    $ rm -r ~/temp_config
+
+
+
+==================
+How **hac** works?
+==================
+
+--------
+Settings
+--------
+
+File ``hacrc`` is the main settings file. Total **hac** settings are calculated
+in a *cascaded* manner (similar to *CSS*) by:
 
 - taking settings from ``hacrc`` from default-configuration directory (not
   writable by user),
 - overriding above settings with those from ``~/.config/hac/hacrc``,
-- overriding above settings with those from command-line arguments.
+- overriding all above settings with those from command-line arguments.
+
+
+---------------------
+Templates and plugins
+---------------------
 
 Files in ``~/.config/hac`` sub-directories (``lang``, ``runner``, ``site``)
-over-shadow files in default-configuration directory with the same name. For
+over-shadow files in default-configuration directory *with the same name*. For
 example file ``~/.config/hac/lang/temp.9.cpp`` over-shadows ``temp.9.cpp`` in
 default-configuration directory.
 
 Template-part ``~/.config/hac/runner/cpp.exec_compile.9.sh`` over-shadows
 ``cpp.exec_compile.9.sh`` in default-configuration directory. This
-template-part gets interpolated in ``temp.9.sh`` when runner *sh.9* is
-prepared for any *cpp* language template. Modifying
+template-part gets interpolated in ``temp.9.sh`` runner template when runner
+*sh.9* is prepared for any *cpp* language template. Creating and customizing
 ``~/.config/hac/runner/cpp.exec_compile.9.sh`` allows us change compilation
 flags or compiler used for C++ source compilation.
 
-It is best to remove *un-customized* files in
-``~/.config/hac/{lang,runner,site}`` subdirectories to prevent possible
-over-shadowing of updated files in default-configuration directory (when
-**hac** gets updated). To remove all files in those directories run (**careful,
-destructive**):
+**hac** dynamically discovers all templates and site-plugins when started and
+displays information about what's found in:
 
-.. code-block:: bash
-
-    $ rm -r ~/.config/hac/*/*
+- help message (``--help`` switch),
+- verbose version of ``show`` command results.
 
 
-If you want to use any of the default configuration/template files as a
-starting point for your customized files, you can:
+-------------------------------
+Templates naming and priorities
+-------------------------------
 
-- copy all default-configuration files in a temporary directory,
-- modify and move to ``~/.config/hac`` files of interest and throw away others.
+Intentionally, **hac** makes discerns file-types of templates solely according
+to template extensions. This means that templates ``*.cc`` and ``*.cpp`` are
+considered as being of different file-type as far as **hac** is concerned.
 
-.. code-block:: bash
+Language templates' filenames are in the format ``temp.<L_PRIORITY>.<L_EXT>``
+and should be located in ``lang`` subdirectory of **hac**'s configuration
+directory. Label ``<L_PRIORITY>`` denotes priority of the template in
+comparison to all other templates with the same ``<L_EXT>`` extension.
 
-    $ HAC_CONFIG_DIR=~/temp_config hac --copy-config
-    $ # ... modify interesting files in ~/temp_config and move them to
-    $ # ... ~/.config/hac
-    $ rm -r ~/temp_config   # remove temporary directory
+**Lower** ``<L_PRIORITY>`` denotes **higher** priority.
 
+Priority labels of runner templates work in the same manner. Runner templates'
+filenames are in the format ``temp.<R_PRIORITY>.<R_EXT>`` and runner-parts'
+filenames are in the format ``<L_EXT>.<R_PART_LABLEL>.<R_PRIORITY>.<R_EXT>``.
+
+When ``temp.<R_PRIORITY>.<R_EXT>`` runner template is selected together with
+any language template with ``<L_EXT>`` extension (*irrespective of language
+templates priority!*), runner-part
+``<L_EXT>.<R_PART_LABLEL>.<R_PRIORITY>.<R_EXT>`` gets interpolated in
+``temp.<R_PRIORITY>.<R_EXT>`` before runner is prepared in the destination
+directory.
+
+Priority labels of runner templates and runner-parts are *completely separate*
+from the priority labels of language templates, this means that ``temp.9.cpp``
+is not directly related to ``temp.9.sh``.
+
+~~~~~~~~
+Examples
+~~~~~~~~
+
+- If  there are ``temp.5.cpp`` and ``temp.9.cpp`` templates present in ``lang``
+  subdirectory, running **hac** with ``-lcpp`` argument would select
+  ``temp.5.cpp`` template. To select ``temp.9.cpp`` template one would have to
+  run **hac** with explicit ``-lcpp.9`` argument that denotes template's
+  *priority*.
+- Runner-part ``cpp.dbg_run.9.sh`` is exclusively a runner-part for
+  ``temp.9.sh`` runner template (and not for ``temp.3.sh`` or ``temp.4.sh``
+  templates).
+- Runner-part ``cpp.dbg_run.9.sh`` gets interpolated in ``temp.9.sh`` when
+  *any* *cpp* language template is selected (either *cpp.3* or *cpp.9* or even
+  *cpp.100*) with *sh.9* runner template. Interpolation is done by replacing
+  ``$dbg_run`` label that appears alone in the line in ``temp.9.sh`` with
+  appropriately indented contents of ``cpp.dbg_run.9.sh``.
+
+
+---------------
+Running **hac**
+---------------
+
+Check **hac**'s help message for more information!
 
 When **hac** is run to prepare the environment (``prep`` command):
 
 - selected language templates are copied for each task to the destination
   directories *unchanged*,
 - selected runner templates are *processed (interpolated)* with corresponding
-  template-parts. For example if *cpp* and *sh.9* are selected, contents of
-  ``cpp.dbg_run.9.sh`` are interpolated in ``temp.9.sh`` (appropriately
-  indented) at the point of where label ``$dbg_run`` occurs alone in the line
-  in ``temp.9.sh`` file.
-
-
-Priority labels of runner templates and runner-parts are *completely separate*
-from the priority labels of language templates. This means that
-
-- ``cpp.dbg_run.9.sh`` is exclusively a runner-part for ``temp.9.sh`` runner
-  template (and not for ``temp.3.sh`` or ``temp.4.sh`` for example),
-- on the other hand, ``cpp.dbg_run.9.sh`` gets interpolated in ``temp.9.sh``
-  when *any* *cpp* language template is selected (either *cpp.3* or *cpp.9* or
-  even *cpp.100*) with *sh.9* runner template.
+  template-parts before being moved to destination directories.
 
 
 
