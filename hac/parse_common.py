@@ -35,6 +35,8 @@ _pargs_pack_common_const = [
             "action": "store_true",
             "help":
 """copy configuration to user's local directory
+(~/.config/hac by default, modifiable by setting
+HAC_CONFIG_DIR environment variable)
 
 """,
             "dest": "copy_config",
