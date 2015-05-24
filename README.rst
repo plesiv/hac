@@ -13,10 +13,10 @@ ease the boring part of solving algorithm problems:
 
 **hac** can be extended very easily to work with:
 
-- any programming language usable from the command-line,
-- any runner usable from the command-line (examples: *shell scripts*,
+- *any programming language* usable from the command-line,
+- *any runner* usable from the command-line (examples: *shell scripts*,
   *Makefiles*, *ant scripts*),
-- any site that exposes information about contests/problems in an uniform and
+- *any site* that exposes information about contests/problems in an uniform and
   web-accessible form (examples: `Codeforces <http://codeforces.com/>`_,
   `Codechef <http://www.codechef.com/>`_).
 
@@ -27,31 +27,30 @@ Support
 
 If lack of support for particular programming language or site irks you, please
 check `Contribute`_ section. This section contains current up-to-date support
-info.
+information.
 
 
-**Sites supported:**
+**Sites:**
 
 - `Codeforces <http://codeforces.com/>`_
 
 
-**Runner/language combinations supported:**
+**Runner/language combinations:**
 
-+-----------------+----------------------+
-|                 |     POSIX shell      |
-+=================+======================+
-|     **C++**     |  *sh.9*  /  *cpp.9*  |
-+-----------------+----------------------+
-|   **Python**    |  *sh.9*  /  *py.9*   |
-+-----------------+----------------------+
++-----------------+----------------------+----------------------+
+|                 |         C++          |        Python        |
++=================+======================+======================+
+| **POSIX shell** |  *sh.9*  /  *cpp.9*  |  *sh.9*  /  *py.9*   |
++-----------------+----------------------+----------------------+
 
 
 **OS supported:**
 
 - Linux (tested)
+- MAC OS X (probably, not tested)
 
 
-**Python versions**
+**Python versions:**
 
 - 2.7
 - 3.3
@@ -65,14 +64,14 @@ Installation
 
 To install **hac** you need to have `pip`_ installed on your system. Since
 **hac** messes with the file-system it is strongly advisable to install it as
-regular user (to mitigate the responsibility that comes with power ;) ):
+regular user (to mitigate the responsibility that comes with the power ;) ):
 
 .. code-block:: bash
 
     $ pip install --upgrade --user hac
 
 
-Install as super-user at *your own* risk:
+Install at system-wide level as super-user at *your own* risk:
 
 .. code-block:: bash
 
@@ -109,22 +108,11 @@ message.
 Examples
 --------
 
-**1)** Display verbose information about:
+**1a)** Prepare these things for problems "B" and "C" from Codeforces contest
+#527:
 
-- **hac**'s configuration,
-- available sites, runner and language templates,
-- selected site, contest and problems,
-- problems' information for Codeforces contest #527.
-
-.. code-block:: bash
-
-    $ hac -v show http://codeforces.com/527
-
-
-**2a)** For problems "B" and "C" from Codeforces contest #527 prepare:
-
-- source-file from *cpp* *highest priority* template (has lowest *X* among
-  all *cpp.X* templates),
+- source-file from *cpp* *highest priority* template (has lowest *X* among all
+  *cpp.X* templates),
 - runner from *sh.9* template (gets interpolated for *cpp* language template),
 - pre-tests downloaded from `Codeforces <http://codeforces.com/>`_.
 
@@ -135,16 +123,17 @@ Examples
 
 
 With default configuration *any* of the following lines is equivalent to the
-one above:
+line above:
 
 .. code-block:: bash
 
     $ hac -lcpp.9 -rsh.9 prep http://codeforces.com/527 b c
     $ hac http://codeforces.com/527 B C
+    $ hac CODEFORCES/527/B 3
     $ hac cf/527 2 3
 
 
-**2b)** Write solution for problem "B" and test it on pre-tests:
+**1b)** Write solution for problem "B" and test it on pre-tests:
 
 .. code-block:: bash
 
@@ -154,11 +143,26 @@ one above:
     $ ./B.cpp.sh -c  # clean generated outputs
 
 
-**2c)** Debug solution for problem "B" on 2nd pre-test:
+**1c)** Debug solution for problem "B" on 2nd pre-test:
 
 .. code-block:: bash
 
     $ ./B.cpp.sh -d 2
+
+
+**2)** Display verbose information about:
+
+- **hac**'s configuration,
+- available sites, runner and language templates,
+- selected site, contest and problems,
+- problems' information for Codeforces contest #527.
+
+.. code-block:: bash
+
+    $ hac -v show http://codeforces.com/527
+    $ # ... for terse information message
+    $ hac -V show http://codeforces.com/527
+
 
 
 --------
