@@ -243,8 +243,8 @@ displays information about what's found in:
 Templates naming and priorities
 -------------------------------
 
-Intentionally, **hac** makes discerns file-types of templates solely according
-to template extensions. This means that templates ``*.cc`` and ``*.cpp`` are
+Intentionally, **hac** discerns file-types of templates solely according to
+template extensions. This means that templates ``*.cc`` and ``*.cpp`` are
 considered as being of different file-type as far as **hac** is concerned.
 
 Language templates' filenames are in the format ``temp.<L_PRIORITY>.<L_EXT>``
@@ -263,7 +263,7 @@ any language template with ``<L_EXT>`` extension (*irrespective of language
 templates priority!*), runner-part
 ``<L_EXT>.<R_PART_LABLEL>.<R_PRIORITY>.<R_EXT>`` gets interpolated in
 ``temp.<R_PRIORITY>.<R_EXT>`` before runner is prepared in the destination
-directory.
+directory. These files should be located in ``runner`` subdirectory.
 
 Priority labels of runner templates and runner-parts are *completely separate*
 from the priority labels of language templates, this means that ``temp.9.cpp``
