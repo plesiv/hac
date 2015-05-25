@@ -1,0 +1,2 @@
+EXT_SRC=c
+FILE_EXEC="${TASK}.out"

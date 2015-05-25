@@ -13,7 +13,6 @@ TASK=${FILE_RUNNER%%.*}  # Remove all the extensions
 EXT_IN=in
 EXT_OUT=out
 EXT_MYOUT=my.out
-EXT_SRC=cpp
 for LARG; do true; done; # Last CLI argument
 
 #vvv templated
@@ -83,7 +82,7 @@ compare_files() {
 COMMAND=
 
 if [ "$#" -ne 0 ]; then
-    while getopts ":hced" opt; do
+    while getopts ":ced" opt; do
         case $opt in
             c)  [ -n "$COMMAND" ] &&
                 die "\e[1;34mERROR: Options are mutually exclusive!\e[0m"
@@ -104,17 +103,16 @@ fi
 # 1) Show usage instructions
 if [ -z "$COMMAND" ]; then
 cat <<EOF
-usage: ./${FILE_RUNNER} [-h | -c | -e | -d TESTCASE]
+usage: ./${FILE_RUNNER} [-c | -e | -d TESTCASE]
 
 optional arguments:
-  -h            show this help message
   -c            clean files created by previous runs (executables,
                 outputs etc.)
   -e            run all test-cases and compare them with expected answers
   -d TESTCASE   debug program for specified test-case
 
 
-For example, to debug program for second test-case execute:
+EXAMPLE ... to debug program for second test-case execute:
 
     ./${FILE_RUNNER} -d 2
 

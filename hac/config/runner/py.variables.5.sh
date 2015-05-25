@@ -1,1 +1,2 @@
+EXT_SRC=py
 FILE_EXEC="${TASK}.py"
