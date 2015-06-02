@@ -1,1 +1,1 @@
-rm  ${TASK}.*.${EXT_MYOUT} ${FILE_EXEC} &> /dev/null
+rm ${FILE_EXEC} ${TASK} ${TASK}.*.${EXT_MYOUT} &> /dev/null

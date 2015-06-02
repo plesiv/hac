@@ -1,0 +1,3 @@
+EXT_SRC=pas
+FILE_SRC="${TASK}.${EXT_SRC}"
+FILE_EXEC="${TASK}"

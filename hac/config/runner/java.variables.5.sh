@@ -1,2 +1,3 @@
 EXT_SRC=java
+FILE_SRC="${TASK}.${EXT_SRC}"
 FILE_EXEC="${TASK}.class"
