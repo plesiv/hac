@@ -269,9 +269,9 @@ Priority labels of runner templates and runner-parts are *completely separate*
 from the priority labels of language templates, this means that ``temp.9.cpp``
 is not directly related to ``temp.9.sh``.
 
-~~~~~~~~
-Examples
-~~~~~~~~
+~~~~~~~~~~~~~~
+Clarifications
+~~~~~~~~~~~~~~
 
 - If  there are ``temp.5.cpp`` and ``temp.9.cpp`` templates present in ``lang``
   subdirectory, running **hac** with ``-lcpp`` argument would select

@@ -24,7 +24,7 @@ $variables
 #
 # Functions for handling errors.
 #
-error() {
+warn() {
     echo -e "$*" >&2
 }
 die () {
@@ -48,12 +48,12 @@ compare_files() {
 
     # Input verification
     if [ -z "$1" ] || [ -z "$2" ]; then
-        error "Testcase ${TC}: \e[1;34mERROR: Filename empty!\e[0m"
+        warn "Testcase ${TC}: \e[1;34mERROR: Filename empty!\e[0m"
         return 1
     fi
 
     if [ ! -f "$1" ] || [ ! -f "$2" ]; then
-        error "Testcase ${TC}: \e[1;34mERROR: File doesn't exist!\e[0m"
+        warn "Testcase ${TC}: \e[1;34mERROR: File doesn't exist!\e[0m"
         return 1
     fi
 
