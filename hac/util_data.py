@@ -213,7 +213,7 @@ def _plugin_discover_sites(dirs):
     return [ site() for site in ISiteRegistry.sites ]
 
 
-# TODO crowd-source writing of this function
+#TODO NOW write heuristic site matcher / refactor / move to common / write tests
 def plugin_match_site(sites, conf): #very-stupid matching now
     """Must return a site. Reasonable default site if can't match any site
     explicitly.

@@ -1,0 +1,71 @@
+Usage:
+    hac [options...] [prep | show] (CONTEST | PROBLEM) [PROBLEM [PROBLEM ...]]
+    hac (--help [SITE] | --version | --copy-config)
+
+FORM #1
+
+    To execute command that fetches remote data and processes it:
+
+      hac [options...] [prep | show] (CONTEST | PROBLEM) [PROBLEM [PROBLEM ...]]
+
+    Positional arguments:
+      prep | show           Command to be executed:
+                              - prep - prepare directories and files for
+                                specified problems
+                              - show - print relevant information about
+                                application configuration, available-plugins,
+                                identified contest and problems to be fetched
+                                (changeable verbosity)
+      (CONTEST | PROBLEM)   Contest or problem identifier. It can be either:
+                              - contest/problem URL
+                              - string of form "website-ID/contest-ID"
+      PROBLEM               Optional identifiers for additional problems from
+                            contest specified by previous argument. Identifiers
+                            can be either:
+                              - problem's ID
+                              - problem's index (counting from 1)
+
+    Optional arguments (options):
+      -v                    increase output verbosity
+      -V                    decrease output verbosity
+      -d {0,1,2}            Additional levels at which to create files:
+                              0 - working directory,
+                              1 - directory for each problem,
+                              2 - directory for contest and sub-directory every
+                                  task
+      -w WORKDIR            Change working directory (it has to exist). Current
+                            directory by default.
+      -t {0,1}              Prepare testcases (I/O samples):
+                              0 - no testcases
+                              1 - pre-tests
+      -f                    Overwrite existing files
+      -F                    Warn if files already exist
+      -l LANG               Language-templates to process and output
+      -r RUNNER             Runner-templates to process and output
+
+Available LANG values:      no, c, c.5, cpp, cpp.5, java, java.5, pas, pas.5,
+                            py, py.5
+
+Available RUNNER values:    no, sh, sh.5
+
+
+FORM #2
+
+    To execute special command that doesn't fetch remote data:
+
+      hac (--help [SITE] | --version | --copy-config)
+
+    Special commands:
+      --help [SITE]         show main help message (this message) or SITE
+                            specific help message
+      --version             show application version information
+      --copy-config         copy configuration to user's local directory
+                            (~/.config/hac by default, modifiable by setting
+                            HAC_CONFIG_DIR environment variable)
+
+Available SITE values:      Local, Codeforces
+
+
+examples: https://github.com/plesiv/hac#examples
+
+

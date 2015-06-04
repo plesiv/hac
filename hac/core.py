@@ -39,12 +39,15 @@ def main(args=sys.argv[1:]):
     # User configs override global configs
     config_paths = [config_user_path, config_global_path]
 
+    #TODO NOW separate/refactor templating from plugin collection
     # Discover plug-ins (sites) and templates (runners, languages).
     plugin_langs = plugin_collect(config_paths, DataType.LANG)
     plugin_runners = plugin_collect(config_paths, DataType.RUNNER)
     plugin_sites = plugin_collect(config_paths, DataType.SITE)
 
-    # Auxiliary data. If
+    # Generating auxiliary data.
+    #
+    # For example:
     #   available_langs == ['cpp.0', 'cpp.1', 'py.15']), then
     #   choice_langs    == ['cpp', 'cpp.0', 'cpp.1', 'py', 'py.15']
     available_langs = plugin_langs.keys()
