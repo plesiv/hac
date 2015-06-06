@@ -19,6 +19,17 @@ for LARG; do true; done; # Last CLI argument
 $variables
 #^^^ templated
 
+# OS dependent message coloring
+if [[ "$OSTYPE" == "darwin"* ]]; then
+    C_OK="\033[1;32m"
+    C_ERROR="\033[1;34m"
+    C_END="\033[0m"
+else
+    C_OK="\e[1;32m"
+    C_ERROR="\e[1;34m"
+    C_END="\e[0m"
+fi
+
 
 # -- Utility functions --------------------------------------------------------
 #
@@ -48,12 +59,12 @@ compare_files() {
 
     # Input verification
     if [ -z "$1" ] || [ -z "$2" ]; then
-        warn "Testcase ${TC}: \e[1;34mERROR: Filename empty!\e[0m"
+        error "Testcase ${TC}: ${C_ERROR}ERROR: Filename empty!${C_END}"
         return 1
     fi
 
     if [ ! -f "$1" ] || [ ! -f "$2" ]; then
-        warn "Testcase ${TC}: \e[1;34mERROR: File doesn't exist!\e[0m"
+        error "Testcase ${TC}: ${C_ERROR}ERROR: File doesn't exist!${C_END}"
         return 1
     fi
 
@@ -67,9 +78,9 @@ compare_files() {
     DIFF_TMP=$(diff -u --label="Answer" --label="Output" "$TMP1" "$TMP2")
 
     if [ $? -eq 0 ]; then
-        echo -e "Testcase ${TC}: \e[1;32mOK\e[0m"
+        echo -e "Testcase ${TC}: ${C_OK}OK${C_END}"
     else
-        echo -e "Testcase ${TC}: \e[1;31mWrong Answer\e[0m"
+        echo -e "Testcase ${TC}: ${C_ERROR}Wrong Answer${C_END}"
         echo "$DIFF_TMP"
     fi
 
@@ -85,15 +96,15 @@ if [ "$#" -ne 0 ]; then
     while getopts ":ced" opt; do
         case $opt in
             c)  [ -n "$COMMAND" ] &&
-                die "\e[1;34mERROR: Options are mutually exclusive!\e[0m"
+                die "${C_ERROR}ERROR: Options are mutually exclusive!${C_END}"
                 COMMAND=c ;;
             e)  [ -n "$COMMAND" ] &&
-                die "\e[1;34mERROR: Options are mutually exclusive!\e[0m"
+                die "${C_ERROR}ERROR: Options are mutually exclusive!${C_END}"
                 COMMAND=e ;;
             d)  [ -n "$COMMAND" ] &&
-                die "\e[1;34mERROR: Options are mutually exclusive!\e[0m"
+                die "${C_ERROR}ERROR: Options are mutually exclusive!${C_END}"
                 COMMAND=d ;;
-            \?) die "\e[1;34mERROR: Invalid option: -$OPTARG\e[0m"
+            \?) die "${C_ERROR}ERROR: Invalid option: -$OPTARG${C_END}"
         esac
     done
 fi
@@ -163,7 +174,7 @@ if [ "$COMMAND" == d ]; then
     FILE_IN="${TASK}.${LARG}.${EXT_IN}"
 
     if [ ! -f "$FILE_IN" ]; then
-        die "\e[1;34mERROR: File \"${FILE_IN}\" doesn't exist!\e[0m"
+        die "${C_ERROR}ERROR: File \"${FILE_IN}\" doesn't exist!${C_END}"
     fi
 
     # Debug executable
@@ -171,4 +182,3 @@ if [ "$COMMAND" == d ]; then
     $dbg_run
     #^^^ templated
 fi
-
