@@ -13,7 +13,7 @@ class PyTest(TestCommand):
         # TODO: remove hac/config/{lang,runner} directories from test
         self.test_args = [
             '--doctest-modules', '--verbose',
-            './hac', './tests'
+            './hac',
         ]
         self.test_suite = True
 
