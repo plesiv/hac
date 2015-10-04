@@ -15,13 +15,13 @@ class SiteLocal(ISite):
     """Local site processor.
     """
 
-    # URL templates.
-    url_temp_cont = "http://localhost/{0}"
-    url_temp_s_prob = "/{0}"
-
     # Regex patterns.
-    patt_cont = re.compile(r"/(?P<CONT>[^/]*)?(/(?P<PROB>[^/]*))?")
-    patt_prob = re.compile(r"[^/]+")
+    pattern_contest = re.compile(r"/(?P<CONTEST>[^/]*)?(/(?P<PROBLEM>[^/]*))?")
+    pattern_problem = re.compile(r"[^/]+")
+
+    # URL templates.
+    url_template_contest = "http://localhost/{0}"
+    url_template_suffix_problem = "/{0}"
 
 
     def __init__(self):
@@ -34,70 +34,67 @@ class SiteLocal(ISite):
 
 
     def match_contest(self, conf):
-        """Extracts contest data from conf and generates canonic URL
-        identifying that contest.
+        """Overridden.
         """
-        loc_path = urlparse(conf['location']).path or '/'
-        tokens = SiteLocal.patt_cont.search(loc_path)
-        ID_cont = tokens.group('CONT') or 'contest'
-        return SiteLocal.url_temp_cont.format(ID_cont)
+        location = urlparse(conf['location']).path or '/'
+        tokens = SiteLocal.pattern_contest.search(location)
+        contest_id = tokens.group('CONTEST') or 'contest'
+        return SiteLocal.url_template_contest.format(contest_id)
 
 
     def get_contest(self, url):
-        """Creates contest object identified by the given URL.
+        """Overridden.
         """
         url_path = urlparse(url).path
         assert url_path
-        cont = Contest()
-        cont.url = url
-        tokens = SiteLocal.patt_cont.search(url_path)
-        cont.id = tokens.group('CONT')
-        assert cont.id
-        cont.name = cont.id
-        return cont
+        contest = Contest()
+        contest.url = url
+        tokens = SiteLocal.pattern_contest.search(url_path)
+        contest.id = tokens.group('CONTEST')
+        assert contest.id
+        contest.name = contest.id
+        return contest
 
 
     def match_problems(self, conf):
-        """Extracts problems data from conf and generates list of canonic URLs
-        identifying those problems.
+        """Overridden.
         """
-        url_cont = self.match_contest(conf)
-        url_temp_prob = url_cont + SiteLocal.url_temp_s_prob
+        url_contest = self.match_contest(conf)
+        url_template_problem = url_contest + SiteLocal.url_template_suffix_problem
 
         urls = []
         # Match single problem from 'location'.
-        loc_path = urlparse(conf['location']).path or '/'
-        tokens = SiteLocal.patt_cont.search(loc_path)
-        ID_prob = tokens.group('PROB')
-        if ID_prob:
-            urls.append(url_temp_prob.format(ID_prob))
+        location = urlparse(conf['location']).path or '/'
+        tokens = SiteLocal.pattern_contest.search(location)
+        problem_id = tokens.group('PROBLEM')
+        if problem_id:
+            urls.append(url_template_problem.format(problem_id))
 
         # Match potentially multiple problems from 'problems'.
-        for prob in conf['problems']:
-            tokens = SiteLocal.patt_prob.findall(prob)
-            ID_prob = tokens and tokens[-1]
-            if ID_prob:
-                urls.append(url_temp_prob.format(ID_prob))
+        for problem in conf['problems']:
+            tokens = SiteLocal.pattern_problem.findall(problem)
+            problem_id = tokens and tokens[-1]
+            if problem_id:
+                urls.append(url_template_problem.format(problem_id))
 
         return urls
 
 
     def get_problems(self, urls):
-        """Creates problems' objects identified by the provided list of URLs.
+        """Overridden.
         """
         probs = []
         for url in urls:
-            prob = Problem()
-            prob.url = url
+            problem = Problem()
+            problem.url = url
             url_path = urlparse(url).path
             assert url_path
-            tokens = SiteLocal.patt_cont.search(url_path)
-            prob.id = tokens.group('PROB')
-            assert prob.id
-            prob.name = prob.id
-            prob.time_limit_ms = self.time_limit_ms
-            prob.memory_limit_kbyte = self.memory_limit_kbyte
-            prob.source_limit_kbyte = self.source_limit_kbyte
-            probs.append(prob)
+            tokens = SiteLocal.pattern_contest.search(url_path)
+            problem.id = tokens.group('PROBLEM')
+            assert problem.id
+            problem.name = problem.id
+            problem.time_limit_ms = self.time_limit_ms
+            problem.memory_limit_kbyte = self.memory_limit_kbyte
+            problem.source_limit_kbyte = self.source_limit_kbyte
+            probs.append(problem)
         return probs
-
