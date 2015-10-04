@@ -37,7 +37,7 @@ class SiteCodeforces(ISite):
     xpath_prob_ins = '//*[@id="pageContent"]//*[@class="sample-tests"]//*[@class="input"]//pre'
     xpath_prob_outs = '//*[@id="pageContent"]//*[@class="sample-tests"]//*[@class="output"]//pre'
 
-    # Proxy for HTTP requests (handles request caching).
+    # Proxy for HTTP requests (handles request caching during single run of the program).
     proxy = RequestsCache()
 
     # Helper methods
