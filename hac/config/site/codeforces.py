@@ -18,47 +18,67 @@ from hac.util_data import RequestsCache
 
 class SiteCodeforces(ISite):
     """Codeforces site processor.
+
+    >>> path1 = "/contest/512/problem/a"
+    >>> SiteCodeforces.pattern_contest.search(path1).group("PROBLEM")
+    'a'
+
+    >>> path2 = "/425/problem/C"
+    >>> SiteCodeforces.pattern_contest.search(path2).group("CONTEST")
+    '425'
+
+    >>> path3 = ""
+    >>> SiteCodeforces.pattern_contest.search(path3) is None
+    True
+
+    >>> path4 = "/"
+    >>> SiteCodeforces.pattern_contest.search(path4) is None
+    True
     """
 
-    # URL templates.
-    url_temp_cont = "http://codeforces.com/contest/{0}"
-    url_temp_s_prob = "/problem/{0}"
-
     # Regex patterns.
-    patt_cont = re.compile(r"/(contest/)?(?P<CONT>[^/]*)?(/(problem/)?(?P<PROB>[^/]*))?")
-    patt_prob = re.compile(r"[^/]+")
+    pattern_contest = re.compile(
+        r"(/contest)?"                              # (optional) '/contest' prefix
+        r"/(?P<CONTEST>[0-9]+)"                     # (mandatory) contest identifier
+        r"(/(problem)?/(?P<PROBLEM>[a-zA-Z0-9]+))?" # (optional) problem identifier
+    )
+    pattern_problem = re.compile(r"[a-zA-Z0-9]+")
+
+    # URL templates.
+    url_template_contest = "http://codeforces.com/contest/{0}"
+    url_template_suffix_problem = "/problem/{0}"
 
     # Xpath selectors.
-    xpath_cont_name = '//*[@id="sidebar"]//a[contains(@href, "contest")]/text()'
-    xpath_probs_IDs = '//*[@id="pageContent"]//*[@class="id"]//a/text()'
-    xpath_prob_name = '//*[@id="pageContent"]//*[@class="header"]//*[@class="title"]/text()'
-    xpath_prob_time = '//*[@id="pageContent"]//*[@class="time-limit"]/text()'
-    xpath_prob_memory = '//*[@id="pageContent"]//*[@class="memory-limit"]/text()'
-    xpath_prob_ins = '//*[@id="pageContent"]//*[@class="sample-tests"]//*[@class="input"]//pre'
-    xpath_prob_outs = '//*[@id="pageContent"]//*[@class="sample-tests"]//*[@class="output"]//pre'
+    xpath_contest_name = '//*[@id="sidebar"]//a[contains(@href, "contest")]/text()'
+    xpath_problem_ids = '//*[@id="pageContent"]//*[@class="id"]//a/text()'
+    xpath_problem_name = '//*[@id="pageContent"]//*[@class="header"]//*[@class="title"]/text()'
+    xpath_problem_time = '//*[@id="pageContent"]//*[@class="time-limit"]/text()'
+    xpath_problem_memory = '//*[@id="pageContent"]//*[@class="memory-limit"]/text()'
+    xpath_problem_ins = '//*[@id="pageContent"]//*[@class="sample-tests"]//*[@class="input"]//pre'
+    xpath_problem_outs = '//*[@id="pageContent"]//*[@class="sample-tests"]//*[@class="output"]//pre'
 
     # Proxy for HTTP requests (handles request caching during single run of the program).
-    proxy = RequestsCache()
+    _proxy = RequestsCache()
 
     # Helper methods
     @staticmethod
-    def ID_prob_encode(id_in):
+    def resolve_problem_id(id_in):
         """Codeforces problems are encoded with uppercase latin letters. This
         function handles conversion from:
 
             - lowercase latin letters,
             - numbers.
 
-        >>> SiteCodeforces.ID_prob_encode('A')
+        >>> SiteCodeforces.resolve_problem_id('A')
         'A'
 
-        >>> SiteCodeforces.ID_prob_encode('z')
+        >>> SiteCodeforces.resolve_problem_id('z')
         'Z'
 
-        >>> SiteCodeforces.ID_prob_encode('3')
+        >>> SiteCodeforces.resolve_problem_id('3')
         'C'
 
-        >>> SiteCodeforces.ID_prob_encode('.') is None
+        >>> SiteCodeforces.resolve_problem_id('.') is None
         True
         """
         if isinstance(id_in, str):
@@ -84,118 +104,120 @@ class SiteCodeforces(ISite):
 
 
     def match_contest(self, conf):
-        """Extracts contest data from conf and generates canonic URL
-        identifying that contest.
+        """Overridden.
         """
-        loc_path = urlparse(conf['location']).path or '/'
-        tokens = SiteCodeforces.patt_cont.search(loc_path)
-        ID_cont = tokens.group('CONT') or 'contest'
-        return SiteCodeforces.url_temp_cont.format(ID_cont)
+        location = urlparse(conf['location']).path or '/'
+        tokens = SiteCodeforces.pattern_contest.search(location)
+        contest_id = "999999" if tokens is None else tokens.group('CONTEST')
+        return SiteCodeforces.url_template_contest.format(contest_id)
 
 
     def get_contest(self, url):
-        """Fetches data from the contest URL and creates contest object
-        identified by that URL.
+        """Overridden.
         """
         url_path = urlparse(url).path
         assert url_path
-        cont = Contest()
-        cont.url = url
-        tokens = SiteCodeforces.patt_cont.search(url_path)
-        cont.id = tokens.group('CONT')
+        contest = Contest()
+        contest.url = url
+        tokens = SiteCodeforces.pattern_contest.search(url_path)
+        contest.id = tokens.group('CONTEST')
+
+        page = SiteCodeforces._proxy.get(url)
 
         # Data from web:
         #   - contest name.
-        page = SiteCodeforces.proxy.get(url)
-        tree = html.fromstring(page.text)
-        extr = tree.xpath(SiteCodeforces.xpath_cont_name)
-        cont.name = (extr and str(extr[0])) or None
+        if page.status_code == 200:
+            t = html.fromstring(page.text)
+            e = t.xpath(SiteCodeforces.xpath_contest_name)
+            contest.name = (e and str(e[0])) or None
 
-        return cont
+        return contest
 
 
     def match_problems(self, conf):
-        """Extracts problems data from conf and generates list of canonic URLs
-        identifying those problems.
+        """Overridden.
         """
-        url_cont = self.match_contest(conf)
-        url_temp_prob = url_cont + SiteCodeforces.url_temp_s_prob
+        url_contest = self.match_contest(conf)
+        url_template_problem = url_contest + SiteCodeforces.url_template_suffix_problem
+
+        page = SiteCodeforces._proxy.get(url_contest)
 
         # Data from web:
-        #   - available problem IDs.
-        page = SiteCodeforces.proxy.get(url_cont)
-        tree = html.fromstring(page.text)
-        extr = tree.xpath(SiteCodeforces.xpath_probs_IDs)
-        IDs_available = [ str(e.strip()) for e in extr ]
+        #   - available problem ids.
+        if page.status_code == 200:
+            t = html.fromstring(page.text)
+            e = t.xpath(SiteCodeforces.xpath_problem_ids)
+            ids_available = [ str(e.strip()) for e in e ]
 
-        IDs = []
+        ids = []
         # Match single problem from 'location'.
-        loc_path = urlparse(conf['location']).path or '/'
-        tokens = SiteCodeforces.patt_cont.search(loc_path)
-        ID_raw = tokens.group('PROB')
-        ID_prob = SiteCodeforces.ID_prob_encode(ID_raw)
-        if ID_prob:
-            IDs.append(ID_prob)
+        location = urlparse(conf['location']).path or '/'
+        tokens = SiteCodeforces.pattern_contest.search(location)
+        if tokens is not None:
+            id_raw = tokens.group('PROBLEM')
+            id_problem = SiteCodeforces.resolve_problem_id(id_raw)
+            if id_problem:
+                ids.append(id_problem)
 
         # Match potentially multiple problems from 'problems'.
         for prob in conf['problems']:
-            tokens = SiteCodeforces.patt_prob.findall(prob)
-            ID_raw = tokens and tokens[-1]
-            ID_prob = SiteCodeforces.ID_prob_encode(ID_raw)
-            if ID_prob:
-                IDs.append(ID_prob)
+            tokens = SiteCodeforces.pattern_problem.findall(prob)
+            id_raw = tokens and tokens[-1]
+            id_problem = SiteCodeforces.resolve_problem_id(id_raw)
+            if id_problem:
+                ids.append(id_problem)
 
         # If no problems are successfully manually selected, select them all.
-        if not IDs:
-            IDs = IDs_available
+        if not ids:
+            ids = ids_available
 
         # Notify about selected but non-available problems.
         urls = []
-        for ID in IDs:
-            if ID in IDs_available:
-                urls.append(url_temp_prob.format(ID))
+        for id in ids:
+            if id in ids_available:
+                urls.append(url_template_problem.format(id))
             else:
-                warn('Problem "' + ID + '" does not exist in ' + url_cont)
+                warn('Problem "' + id + '" does not exist in ' + url_contest)
 
         return sorted(urls)
 
 
     def get_problems(self, urls):
-        """Fetches data from the problems' URLs and creates problem objects
-        identified by those URLs.
+        """Overridden.
         """
-        probs = []
+        problems = []
         for url in urls:
-            prob = Problem()
-            prob.url = url
+            problem = Problem()
+            problem.url = url
             url_path = urlparse(url).path
             assert url_path
-            tokens = SiteCodeforces.patt_cont.search(url_path)
-            prob.id = tokens.group('PROB')
-            assert prob.id
-            prob.source_limit_kbyte = self.source_limit_kbyte
+            tokens = SiteCodeforces.pattern_contest.search(url_path)
+            problem.id = tokens.group('PROBLEM')
+            assert problem.id
+            problem.source_limit_kbyte = self.source_limit_kbyte
+
+            page = SiteCodeforces._proxy.get(url)
 
             # Data from web (for each problem):
-            page = SiteCodeforces.proxy.get(url)
-            tree = html.fromstring(page.text)
-            #   - problem name,
-            extr = tree.xpath(SiteCodeforces.xpath_prob_name)
-            prob.name = (extr and str(extr[0])) or None
-            #   - problem time limit,
-            extr = tree.xpath(SiteCodeforces.xpath_prob_time)
-            limit = extr and float(extr[0].split()[0]) * 1e3
-            prob.time_limit_ms = limit or self.time_limit_ms
-            #   - problem memory limit,
-            extr = tree.xpath(SiteCodeforces.xpath_prob_memory)
-            limit = extr and float(extr[0].split()[0]) * 2**10
-            prob.memory_limit_kbyte = limit or self.memory_limit_kbyte
-            #   - test inputs,
-            extr = tree.xpath(SiteCodeforces.xpath_prob_ins)
-            prob.inputs = [ os.linesep.join(inp.itertext()) for inp in extr ]
-            #   - test outputs.
-            extr = tree.xpath(SiteCodeforces.xpath_prob_outs)
-            prob.outputs = [ os.linesep.join(out.itertext()) for out in extr ]
+            if page.status_code == 200:
+                t = html.fromstring(page.text)
+                #   - problem name,
+                e = t.xpath(SiteCodeforces.xpath_problem_name)
+                problem.name = (e and str(e[0])) or None
+                #   - problem time limit,
+                e = t.xpath(SiteCodeforces.xpath_problem_time)
+                limit = e and float(e[0].split()[0]) * 1e3
+                problem.time_limit_ms = limit or self.time_limit_ms
+                #   - problem memory limit,
+                e = t.xpath(SiteCodeforces.xpath_problem_memory)
+                limit = e and float(e[0].split()[0]) * 2**10
+                problem.memory_limit_kbyte = limit or self.memory_limit_kbyte
+                #   - test inputs,
+                e = t.xpath(SiteCodeforces.xpath_problem_ins)
+                problem.inputs = [ os.linesep.join(inp.itertext()) for inp in e ]
+                #   - test outputs.
+                e = t.xpath(SiteCodeforces.xpath_problem_outs)
+                problem.outputs = [ os.linesep.join(out.itertext()) for out in e ]
 
-            probs.append(prob)
-        return probs
-
+                problems.append(problem)
+        return problems
