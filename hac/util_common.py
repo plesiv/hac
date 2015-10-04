@@ -96,11 +96,13 @@ def choice_generate(a, separator='.'):
     return sorted(b)
 
 
-def choice_normal(a, b, separator='.'):
+def choice_normal(a, all_canonic, separator='.'):
     """Normalizes list a so that among multiple choices that differ only in
     priority modifier, just the highest priority one is present in the output
     list. All the members in the output list are in the canonic form
     <TYPE>.<PRIORITY>.
+
+    List all_canonic contains the all available canonic entries.
 
     If in there is entry without the priority modifier in the input list, it
     corresponds to the request for highest priority choice available (one with
@@ -118,16 +120,16 @@ def choice_normal(a, b, separator='.'):
         - bare entries: 'cpp', 'py'
     """
     separator = '.'
-    assert all([separator in ec for ec in b])
-    c2c = {ec: ec for ec in b}  # Map canonic to canonic.
+    assert all([separator in ec for ec in all_canonic])
+    c2c = {ec: ec for ec in all_canonic}  # Map canonic to canonic.
 
-    r2c = c2c.copy()            # Map regular to canonic.
-    for ec in sorted(set(b)):
+    r2c = c2c.copy()                      # Map regular to canonic.
+    for ec in sorted(set(all_canonic)):
         eb = ec.split(separator)[0]
         if eb not in r2c:
             r2c[eb] = ec
 
-    r2b = {}                    # Map regular to bare.
+    r2b = {}                              # Map regular to bare.
     for er in r2c:
         assert separator in r2c[er]
         r2b[er] = r2c[er].split(separator)[0]
