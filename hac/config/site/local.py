@@ -83,7 +83,7 @@ class SiteLocal(ISite):
     def get_problems(self, urls):
         """Overridden.
         """
-        probs = []
+        problems = []
         for url in urls:
             problem = Problem()
             problem.url = url
@@ -96,5 +96,5 @@ class SiteLocal(ISite):
             problem.time_limit_ms = self.time_limit_ms
             problem.memory_limit_kbyte = self.memory_limit_kbyte
             problem.source_limit_kbyte = self.source_limit_kbyte
-            probs.append(problem)
-        return probs
+            problems.append(problem)
+        return problems
