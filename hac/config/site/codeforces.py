@@ -75,7 +75,7 @@ class SiteCodeforces(ISite):
 
 
     def __init__(self):
-        self.url = "http://codeforces.com/"
+        self.url = "codeforces.com"
         self.name = "Codeforces"
         self.ID = "codeforces"
         self.time_limit_ms = None
