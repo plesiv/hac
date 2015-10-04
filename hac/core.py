@@ -48,7 +48,7 @@ def main(args=sys.argv[1:]):
     # Generating auxiliary data.
     #
     # For example:
-    #   available_langs == ['cpp.0', 'cpp.1', 'py.15']), then
+    #   available_langs == ['cpp.0', 'cpp.1', 'py.15'], then
     #   choice_langs    == ['cpp', 'cpp.0', 'cpp.1', 'py', 'py.15']
     available_langs = plugin_langs.keys()
     sep_langs = hac.SETTINGS_CONST['plugin_temp_sep'][DataType.LANG]
