@@ -10,6 +10,7 @@ import sys
 import re
 import requests
 from string import Template
+from difflib import SequenceMatcher
 
 if sys.version_info.major == 2:
     from urlparse import urlparse
@@ -213,21 +214,24 @@ def _plugin_discover_sites(dirs):
     return [ site() for site in ISiteRegistry.sites ]
 
 
-#TODO NOW write heuristic site matcher / refactor / move to common / write tests
-def plugin_match_site(sites, conf): #very-stupid matching now
-    """Must return a site. Reasonable default site if can't match any site
-    explicitly.
-    """
-    codeforces_url=None
+def plugin_match_site(sites, conf):
+    """From all avaiable sites retrieve the url of the site that matches
+    location member of the config the best.
 
+    Currently, Ratcliff-Obershelp string matching algorithm from difflib is
+    used for this.
+    """
+    matcher = SequenceMatcher(None)
+
+    matcher.set_seq2(conf['location'].lower())
+    urls_ranked = []
     for site in sites:
-        hostname = urlparse(conf['location']).hostname.lower()
-        if(hostname in site.name.lower() or hostname in site.ID.lower()):
-            return site.url
-        if site.ID == 'codeforces':
-            codeforces_url = site.url
-    # Ugly hack: return Codeforces site if no appropriate site selected
-    return codeforces_url
+        url = site.url.lower()
+        matcher.set_seq1(url)
+        urls_ranked.append((matcher.ratio(), url))
+
+    _, best_matching_url = sorted(urls_ranked, reverse=True)[0]
+    return best_matching_url
 
 
 # -- Common data utilities ----------------------------------------------------
