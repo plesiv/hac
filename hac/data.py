@@ -42,25 +42,28 @@ class ISite(object):
 
     @abstractmethod
     def match_contest(self, conf):
-        """Returns well formated contest URL according to user input.
+        """Generates well formated URL of the contest according to user input.
         """
         pass
 
     @abstractmethod
     def get_contest(self, url):
-        """Expects well formated URL. Returns Contest object.
+        """Fetches data from the provided contest URL and generates contest
+        object.
         """
         pass
 
     @abstractmethod
     def match_problems(self, conf):
-        """Returns list of well formated problem URLs according to user input.
+        """Generates list of well formated problem URLs according to user
+        input.
         """
         pass
 
     @abstractmethod
     def get_problems(self, urls):
-        """Expects list of well formated URLs. Returns list of Problem objects.
+        """Fetches data from the provided problem URLs and generates list of
+        problem objects.
         """
         pass
 
