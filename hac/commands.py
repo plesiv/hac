@@ -48,7 +48,7 @@ def _command_prep(**args):
     # 2) Establish contest directory.
     contest_obj = args['contest_obj']
     if conf_all['subdir_depth'] == 2:
-        dir_contest = join(dir_working, contest_obj.ID)
+        dir_contest = join(dir_working, contest_obj.id)
         safe_mkdir(dir_contest, force=conf_all['force'])
     else:
         dir_contest = dir_working
@@ -61,7 +61,7 @@ def _command_prep(**args):
         if conf_all['subdir_depth'] >= 1:
             problems_dirs = {}
             for prob in problems_objs:
-                problems_dirs[prob] = join(dir_contest, prob.ID)
+                problems_dirs[prob] = join(dir_contest, prob.id)
                 safe_mkdir(problems_dirs[prob], force=conf_all['force'])
         else:
             problems_dirs = {prob: dir_contest for prob in problems_objs}
@@ -78,7 +78,7 @@ def _command_prep(**args):
         # For each problem ...
         for prob in problems_objs:
             if isdir(problems_dirs[prob]):
-                problem_path = join(problems_dirs[prob], prob.ID)
+                problem_path = join(problems_dirs[prob], prob.id)
 
                 # ... create language for all selected languages.
                 for lang in selected_langs:
@@ -115,13 +115,13 @@ def _command_prep(**args):
                 if conf_all['tests'] >= 1:
                     for i, inp in enumerate(prob.inputs):
                         in_file = join(problems_dirs[prob],
-                                       prob.ID + os.extsep + str(i+1) +
+                                       prob.id + os.extsep + str(i+1) +
                                        os.extsep + 'in')
                         safe_fwrite(in_file, inp, force=conf_all['force'])
 
                     for i, out in enumerate(prob.outputs):
                         out_file = join(problems_dirs[prob],
-                                       prob.ID + os.extsep + str(i+1) +
+                                       prob.id + os.extsep + str(i+1) +
                                        os.extsep + 'out')
                         safe_fwrite(out_file, out, force=conf_all['force'])
 

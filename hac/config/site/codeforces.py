@@ -77,7 +77,7 @@ class SiteCodeforces(ISite):
     def __init__(self):
         self.url = "codeforces.com"
         self.name = "Codeforces"
-        self.ID = "codeforces"
+        self.id = "codeforces"
         self.time_limit_ms = None
         self.memory_limit_kbyte = None
         self.source_limit_kbyte = 64
@@ -102,7 +102,7 @@ class SiteCodeforces(ISite):
         cont = Contest()
         cont.url = url
         tokens = SiteCodeforces.patt_cont.search(url_path)
-        cont.ID = tokens.group('CONT')
+        cont.id = tokens.group('CONT')
 
         # Data from web:
         #   - contest name.
@@ -171,8 +171,8 @@ class SiteCodeforces(ISite):
             url_path = urlparse(url).path
             assert url_path
             tokens = SiteCodeforces.patt_cont.search(url_path)
-            prob.ID = tokens.group('PROB')
-            assert prob.ID
+            prob.id = tokens.group('PROB')
+            assert prob.id
             prob.source_limit_kbyte = self.source_limit_kbyte
 
             # Data from web (for each problem):

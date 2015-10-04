@@ -27,7 +27,7 @@ class SiteLocal(ISite):
     def __init__(self):
         self.url = "localhost"
         self.name = "Local"
-        self.ID = "local"
+        self.id = "local"
         self.time_limit_ms = None
         self.memory_limit_kbyte = None
         self.source_limit_kbyte = None
@@ -51,9 +51,9 @@ class SiteLocal(ISite):
         cont = Contest()
         cont.url = url
         tokens = SiteLocal.patt_cont.search(url_path)
-        cont.ID = tokens.group('CONT')
-        assert cont.ID
-        cont.name = cont.ID
+        cont.id = tokens.group('CONT')
+        assert cont.id
+        cont.name = cont.id
         return cont
 
 
@@ -92,9 +92,9 @@ class SiteLocal(ISite):
             url_path = urlparse(url).path
             assert url_path
             tokens = SiteLocal.patt_cont.search(url_path)
-            prob.ID = tokens.group('PROB')
-            assert prob.ID
-            prob.name = prob.ID
+            prob.id = tokens.group('PROB')
+            assert prob.id
+            prob.name = prob.id
             prob.time_limit_ms = self.time_limit_ms
             prob.memory_limit_kbyte = self.memory_limit_kbyte
             prob.source_limit_kbyte = self.source_limit_kbyte

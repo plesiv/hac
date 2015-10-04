@@ -25,10 +25,10 @@ class ISite(object):
     """Site template.
     """
 
-    def __init__(self, name=None, ID=None, url=None, time_limit_ms=2000,
+    def __init__(self, name=None, id=None, url=None, time_limit_ms=2000,
                  memory_limit_kbyte=262144, source_limit_kbyte=64):
         self.name = name
-        self.ID = ID
+        self.id = id
         self.url = url
         self.time_limit_ms = time_limit_ms
         self.memory_limit_kbyte = memory_limit_kbyte
@@ -36,8 +36,8 @@ class ISite(object):
 
     @staticmethod
     def get_props(verbose=False):
-        return ['ID', 'url'] if not verbose else \
-               ['name', 'ID', 'url', 'time_limit_ms', 'memory_limit_kbyte',
+        return ['id', 'url'] if not verbose else \
+               ['name', 'id', 'url', 'time_limit_ms', 'memory_limit_kbyte',
                 'source_limit_kbyte']
 
     @abstractmethod
@@ -70,26 +70,26 @@ class Contest(object):
     """Contest info container.
     """
 
-    def __init__(self, name=None, ID=None, url=None):
+    def __init__(self, name=None, id=None, url=None):
         self.name = name
-        self.ID = ID
+        self.id = id
         self.url = url
 
     @staticmethod
     def get_props(verbose=False):
-        return ['ID', 'url'] if not verbose else \
-               ['name', 'ID', 'url']
+        return ['id', 'url'] if not verbose else \
+               ['name', 'id', 'url']
 
 
 class Problem(object):
     """Problem info container.
     """
 
-    def __init__(self, name=None, ID=None, url=None, time_limit_ms=2000,
+    def __init__(self, name=None, id=None, url=None, time_limit_ms=2000,
                  memory_limit_kbyte=262144, source_limit_kbyte=64, inputs=None,
                  outputs=None):
         self.name = name
-        self.ID = ID
+        self.id = id
         self.url = url
         self.time_limit_ms = time_limit_ms
         self.memory_limit_kbyte = memory_limit_kbyte
@@ -99,7 +99,7 @@ class Problem(object):
 
     @staticmethod
     def get_props(verbose=False):
-        return ['ID', 'url'] if not verbose else \
-               ['name', 'ID', 'url', 'time_limit_ms', 'memory_limit_kbyte',
+        return ['id', 'url'] if not verbose else \
+               ['name', 'id', 'url', 'time_limit_ms', 'memory_limit_kbyte',
                 'source_limit_kbyte', 'inputs', 'outputs']
 
