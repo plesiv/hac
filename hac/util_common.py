@@ -30,6 +30,9 @@ def dict_override(a, b):
 
     >>> dict_override({'a': 3,'b': None}, {'a': 1,'b': 2}) == {'a': 1,'b': 2}
     True
+
+    >>> dict_override({'a': 6,'b': None}, {'b': 7}) == {'a': 6,'b': 7}
+    True
     """
     res = {}
     for key in (set(a.keys()) | set(b.keys())):
@@ -48,7 +51,7 @@ def list_reduce(a):
     >>> list_reduce(['cpp', 'no', 'php', 'py', 'php', 'py'])
     ['php', 'py']
 
-    >>> list_reduce(['cpp', 'no', 'php', 'py', 'php', 'no', 'py', 'cpp'])
+    >>> list_reduce(['js', 'no', 'c', 'cc', 'php', 'no', 'py', 'cpp'])
     ['cpp', 'py']
     """
     b = list(reversed(a))
