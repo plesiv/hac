@@ -206,7 +206,7 @@ class SiteCodeforces(ISite):
                 problem.name = (e and str(e[0])) or None
                 #   - problem time limit,
                 e = t.xpath(SiteCodeforces.xpath_problem_time)
-                limit = e and float(e[0].split()[0]) * 1e3
+                limit = e and float(e[0].split()[0]) * 1000
                 problem.time_limit_ms = limit or self.time_limit_ms
                 #   - problem memory limit,
                 e = t.xpath(SiteCodeforces.xpath_problem_memory)
