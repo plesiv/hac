@@ -175,8 +175,8 @@ class SiteCodeChef(ISite):
                 ids_selected.append(problem)
 
         # Match potentially multiple problems from 'problems'.
-        for p in conf["problems"]:
-            tokens = SiteCodeChef.pattern_problem.findall(p)
+        for problem in conf["problems"]:
+            tokens = SiteCodeChef.pattern_problem.findall(problem)
             ids_selected.extend(tokens)
 
         # If no problems are successfully manually selected, select them all.

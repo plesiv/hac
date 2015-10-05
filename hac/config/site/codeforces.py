@@ -160,8 +160,8 @@ class SiteCodeforces(ISite):
                 ids.append(id_problem)
 
         # Match potentially multiple problems from 'problems'.
-        for prob in conf['problems']:
-            tokens = SiteCodeforces.pattern_problem.findall(prob)
+        for problem in conf['problems']:
+            tokens = SiteCodeforces.pattern_problem.findall(problem)
             id_raw = tokens and tokens[-1]
             id_problem = SiteCodeforces.resolve_problem_id(id_raw)
             if id_problem:
