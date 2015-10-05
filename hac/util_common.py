@@ -74,7 +74,7 @@ def mainargs_index(a):
     >>> mainargs_index([])
     0
     """
-    indices = [ i for i, v in enumerate(a) if not v.startswith("-") ]
+    indices = [i for i, v in enumerate(a) if not v.startswith("-")]
     return indices[0] if indices else len(a)
 
 

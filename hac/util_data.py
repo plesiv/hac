@@ -211,7 +211,7 @@ def _plugin_discover_sites(dirs):
                         mod = imp.load_module(froot, fname, fpath, fdescr)
                         # Track registered sites
                         registered.add(froot)
-    return [ site() for site in ISiteRegistry.sites ]
+    return [site() for site in ISiteRegistry.sites]
 
 
 def plugin_match_site(sites, conf):

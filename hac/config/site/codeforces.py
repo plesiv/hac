@@ -147,7 +147,7 @@ class SiteCodeforces(ISite):
         if page.status_code == 200:
             t = html.fromstring(page.text)
             e = t.xpath(SiteCodeforces.xpath_problem_ids)
-            ids_available = [ str(e.strip()) for e in e ]
+            ids_available = [str(e.strip()) for e in e]
 
         ids = []
         # Match single problem from 'location'.
@@ -214,10 +214,10 @@ class SiteCodeforces(ISite):
                 problem.memory_limit_kbyte = limit or self.memory_limit_kbyte
                 #   - test inputs,
                 e = t.xpath(SiteCodeforces.xpath_problem_ins)
-                problem.inputs = [ os.linesep.join(inp.itertext()) for inp in e ]
+                problem.inputs = [os.linesep.join(inp.itertext()) for inp in e]
                 #   - test outputs.
                 e = t.xpath(SiteCodeforces.xpath_problem_outs)
-                problem.outputs = [ os.linesep.join(out.itertext()) for out in e ]
+                problem.outputs = [os.linesep.join(out.itertext()) for out in e]
 
                 problems.append(problem)
         return problems
