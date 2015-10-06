@@ -35,6 +35,8 @@ class ISite(object):
         self.memory_limit_kbyte = memory_limit_kbyte
         self.source_limit_kbyte = source_limit_kbyte
 
+        self._info = None
+
     @staticmethod
     def get_props(verbose=False):
         return ['id', 'url'] if not verbose else \

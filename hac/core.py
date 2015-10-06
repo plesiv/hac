@@ -189,6 +189,10 @@ def main(args=sys.argv[1:]):
     assert site_matched
     site_obj = site_matched[0]
 
+    # Print the site specific info.
+    if site_obj._info:
+        print(site_obj._info)
+
     # Get contest data (utilize web-site processor).
     contest_url = site_obj.match_contest(conf_all)
     contest_obj = site_obj.get_contest(contest_url)

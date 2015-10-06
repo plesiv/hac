@@ -1,10 +1,5 @@
 # -*- coding: utf-8 -*-
 
-#-----------------------------------------------------------------------------
-# IMPORTANT: broken currently due to not being able to parse CodeChef as static
-#            page!
-#-----------------------------------------------------------------------------
-
 import os
 import re
 import sys
@@ -117,6 +112,8 @@ class SiteCodeChef(ISite):
         self.time_limit_ms = None
         self.memory_limit_kbyte = 262144
         self.source_limit_kbyte = 50
+
+        self._info = "[SiteCodeChef] Fetching test inputs/outputs not supported!"
 
 
     def match_contest(self, conf):

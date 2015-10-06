@@ -1,9 +1,5 @@
 # -*- coding: utf-8 -*-
 
-#-----------------------------------------------------------------------------
-# IMPORTANT: broken currently due to SPOJ not being uniform across the problem
-#            pages!
-#-----------------------------------------------------------------------------
 
 import os
 import re
@@ -69,6 +65,8 @@ class SiteSpoj(ISite):
         self.time_limit_ms = None
         self.memory_limit_kbyte = None
         self.source_limit_kbyte = None
+
+        self._info = "[SiteSpoj] Fetching only a subset of problems is supported!"
 
 
     def match_contest(self, conf):
@@ -159,6 +157,9 @@ class SiteSpoj(ISite):
                     problem.inputs and
                     problem.outputs):
                         problems.append(problem)
+                else:
+                    warn('Problem "' + problem.id + '" not fetched successfully!')
+
             else:
                 warn('Problem "' + problem.id + '" does not exist on Spoj!')
 

@@ -102,6 +102,8 @@ class SiteCodeforces(ISite):
         self.memory_limit_kbyte = None
         self.source_limit_kbyte = 64
 
+        self._info = None
+
 
     def match_contest(self, conf):
         """Overridden.

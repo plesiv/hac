@@ -62,6 +62,8 @@ class SiteRosalind(ISite):
         self.memory_limit_kbyte = None
         self.source_limit_kbyte = None
 
+        self._info = None
+
 
     def match_contest(self, conf):
         """Overridden.
