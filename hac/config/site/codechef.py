@@ -3,7 +3,6 @@
 import os
 import re
 import sys
-import requests
 from lxml import html
 
 if sys.version_info.major == 2:
@@ -12,7 +11,6 @@ else:
     from urllib.parse import urlparse
 
 from hac.data import ISite, Contest, Problem
-from hac.util_common import warn
 from hac.util_data import RequestsCache
 
 

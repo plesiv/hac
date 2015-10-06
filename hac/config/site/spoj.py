@@ -1,10 +1,7 @@
 # -*- coding: utf-8 -*-
 
-
-import os
 import re
 import sys
-import requests
 from lxml import html
 
 if sys.version_info.major == 2:
