@@ -29,7 +29,7 @@ class SiteSpoj(ISite):
     'TEST'
 
     >>> path2 = "/BOOKS1"
-    >>> SiteSpoj.pattern_contest.search(path2).group("CONTEST")
+    >>> SiteSpoj.pattern_contest.search(path2).group("PROBLEM")
     'BOOKS1'
 
     >>> path3 = ""
@@ -43,7 +43,7 @@ class SiteSpoj(ISite):
 
     # Regex patterns.
     pattern_contest = re.compile(
-        r"/(problems)?/(?P<PROBLEM>[a-zA-Z0-9]+)"    # (mandatory) problem identifier
+        r"(/problems)?/(?P<PROBLEM>[a-zA-Z0-9]+)"    # (mandatory) problem identifier
     )
     pattern_problem = re.compile(r"[a-zA-Z0-9]+")
 
