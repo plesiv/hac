@@ -11,6 +11,7 @@ else:
     from urllib.parse import urlparse
 
 from hac.data import ISite, Contest, Problem
+from hac.util_common import warn
 from hac.util_data import RequestsCache
 
 
@@ -159,6 +160,9 @@ class SiteCodeChef(ISite):
             t = html.fromstring(page.text)
             e = t.xpath(SiteCodeChef.xpath_problem_ids)
             ids_available = [str(e.strip()) for e in e]
+        else:
+            warn('Unable to fetch: ' + url_contest)
+            return []
 
         ids_selected = []
         # Match single problem from 'location'.
