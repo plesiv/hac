@@ -29,6 +29,7 @@ class ISite(object):
                  memory_limit_kbyte=262144, source_limit_kbyte=64):
         self.name = name
         self.id = id
+        # 'url' member used to distinguish between different sites.
         self.url = url
         self.time_limit_ms = time_limit_ms
         self.memory_limit_kbyte = memory_limit_kbyte
