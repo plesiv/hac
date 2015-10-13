@@ -33,13 +33,17 @@ class SiteCodeforces(ISite):
     >>> path4 = "/"
     >>> SiteCodeforces.pattern_contest.search(path4) is None
     True
+
+    >>> path5 = "/425/C"
+    >>> SiteCodeforces.pattern_contest.search(path5).group("PROBLEM")
+    'C'
     """
 
     # Regex patterns.
     pattern_contest = re.compile(
         r"(/contest)?"                              # (optional) '/contest' prefix
         r"/(?P<CONTEST>[0-9]+)"                     # (mandatory) contest identifier
-        r"(/(problem)?/(?P<PROBLEM>[a-zA-Z0-9]+))?" # (optional) problem identifier
+        r"((/problem)?/(?P<PROBLEM>[a-zA-Z0-9]+))?" # (optional) problem identifier
     )
     pattern_problem = re.compile(r"[a-zA-Z0-9]+")
 
