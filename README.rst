@@ -2,166 +2,113 @@
 HAC: Helper for Algorithm Competitions
 **************************************
 
-**hac** is *highly extensible and configurable command-line tool* intended to
-ease the boring part of solving algorithm problems:
+**hac** is *extensible* and *configurable* command-line tool for algorithm
+competitions. It does:
 
-- preparing directory structure,
-- preparing source-code files,
-- preparing runner files (scripts used for testing solutions),
-- downloading test-cases.
-
-
-**hac** can be extended very easily to work with:
-
-- *any programming language* usable from the command-line,
-- *any runner* usable from the command-line (examples: *shell scripts*,
-  *Makefiles*, *ant scripts*),
-- *any site* that exposes information about contests/problems in an uniform and
-  web-accessible form (examples: `Codeforces <http://codeforces.com/>`_,
-  `Codechef <http://www.codechef.com/>`_).
+- prepares directories and source files,
+- prepares runner files (scripts used for testing solutions),
+- downloads test-cases.
 
 
 =======
-Support
+Install
 =======
 
-If lack of support for particular programming language or site irks you, please
-check `Contribute`_ section. This section contains current up-to-date support
-information.
-
-
-**Sites:**
-
-- `Codeforces <http://codeforces.com/>`_
-
-
-**Runner/language combinations:**
-
-+-----------------+----------------------+----------------------+
-|                 |         C++          |        Python        |
-+=================+======================+======================+
-| **POSIX shell** |  *sh.9*  /  *cpp.9*  |  *sh.9*  /  *py.9*   |
-+-----------------+----------------------+----------------------+
-
-
-**OS supported:**
-
-- Linux (tested)
-- MAC OS X (probably, not tested)
-
-
-**Python versions:**
-
-- 2.7
-- 3.3
-- 3.4
-
-
-
-============
-Installation
-============
-
-To install **hac** you need to have `pip`_ installed on your system. Since
-**hac** messes with the file-system it is strongly advisable to install it as
-regular user (to mitigate the responsibility that comes with the power ;) ):
+Recommended to install as non-root:
 
 .. code-block:: bash
 
     $ pip install --upgrade --user hac
 
 
-Install at system-wide level as super-user at *your own* risk:
-
-.. code-block:: bash
-
-    user$ # ... switch to super-user
-    root$ pip install --upgrade hac
-
-
-
 =====
 Usage
 =====
 
-Special commands that don't fetch remote data:
+---------
+Example 1
+---------
+
+**A)** For problems "A", "B" and "C" from Codeforces contest #527 prepare:
+
+- source file from *cpp* highest priority template (has lowest *X* among
+  *cpp.X* language templates),
+- runner from *sh.5* template (interpolated for *cpp* language template),
+- test-cases downloaded from `Codeforces <http://codeforces.com/>`_.
 
 .. code-block:: bash
 
-    $ hac --help         # show help
-    $ hac --version      # show version
-    $ hac --copy-config  # copy configuration (to ~/.config/hac by default)
+    $ hac -lcpp -rsh.5 codeforces/527 a b c
 
 
-Commands that fetch remote data and process it (more info in `Examples`_):
+With default configuration all of the next lines do same as the one above:
 
 .. code-block:: bash
 
-    $ hac [options...] (prep | show) (CONTEST | PROBLEM) [PROBLEM [PROBLEM ...]]
+    $ hac -lcpp.5 -rsh.5 prep http://codeforces.com/527/A B C
+    $ hac prep codeforces.com/527 B 1 c
+    $ hac -d2 CODEFORCES/527 1 2 3
+    $ hac forc/527 a b c
 
 
-For up-to-date list of command-line arguments and switches check **hac**'s help
-message.
-
-
---------
-Examples
---------
-
-**1a)** Prepare these things for problems "B" and "C" from Codeforces contest
-#527:
-
-- source-file from *cpp* *highest priority* template (has lowest *X* among all
-  *cpp.X* templates),
-- runner from *sh.9* template (gets interpolated for *cpp* language template),
-- pre-tests downloaded from `Codeforces <http://codeforces.com/>`_.
-
-.. code-block:: bash
-
-    $ mkdir ~/contests && cd ~/contests
-    $ hac -d2 -lcpp -rsh.9 prep http://codeforces.com/527 B C
-
-
-With default configuration *any* of the following lines is equivalent to the
-line above:
-
-.. code-block:: bash
-
-    $ hac -lcpp.9 -rsh.9 prep http://codeforces.com/527 b c
-    $ hac http://codeforces.com/527 B C
-    $ hac CODEFORCES/527/B 3
-    $ hac cf/527 2 3
-
-
-**1b)** Write solution for problem "B" and test it on pre-tests:
+**B)** Write solution for problem "B" and test it on test-cases:
 
 .. code-block:: bash
 
     $ cd 527/B
     $ # ... modify B.cpp
-    $ ./B.cpp.sh -e  # test solution on pre-tests
+    $ ./B.cpp.sh -e  # test solution on test-cases
     $ ./B.cpp.sh -c  # clean generated outputs
 
 
-**1c)** Debug solution for problem "B" on 2nd pre-test:
+**C)** Debug solution for problem "B" on 2nd test-case:
 
 .. code-block:: bash
 
     $ ./B.cpp.sh -d 2
 
 
-**2)** Display verbose information about:
+---------
+Example 2
+---------
 
-- **hac**'s configuration,
-- available sites, runner and language templates,
-- selected site, contest and problems,
-- problems' information for Codeforces contest #527.
+Display information about **hac** and selected site/problems:
 
 .. code-block:: bash
 
-    $ hac -v show http://codeforces.com/527
-    $ # ... for terse information message
-    $ hac -V show http://codeforces.com/527
+    $ hac -v show codeforces/527     # verbose
+    $ hac -V show codeforces/527     # terse
+
+
+
+
+=======
+Support
+=======
+
+**Sites:**
+
++-----------------------+----------------------+----------------------+
+| Site \ Problems from  |       Contest        |        Archive       |
++=======================+======================+======================+
+|     Codeforces.com    |        **YES**       |       **NO**         |
++-----------------------+----------------------+----------------------+
+|     Rosalind.info     |                      |       **YES**        |
++-----------------------+----------------------+----------------------+
+|     Spoj.com          |                      |       **PARTIAL**    |
++-----------------------+----------------------+----------------------+
+|     Codechef.com      |        **NO**        |       **NO**         |
++-----------------------+----------------------+----------------------+
+
+
+**Runner/language combinations:**
+
++-----------------+----------------+------------------+-----------------+-------------------+------------------+
+|                 |         C      |        C++       |       Python    |       Java        |       Pascal     |
++=================+================+==================+=================+===================+==================+
+| **POSIX shell** | *sh.5* / *c.5* | *sh.5* / *cpp.5* | *sh.5* / *py.5* | *sh.5* / *java.5* | *sh.5* / *pas.5* |
++-----------------+----------------+------------------+-----------------+-------------------+------------------+
+
 
 
 -------------
@@ -338,4 +285,43 @@ Please see `LICENSE <https://github.com/plesiv/hac/blob/master/LICENSE>`_.
 .. _pip: http://www.pip-installer.org/en/latest/index.html
 .. _Zoran Plesivčak: http://plesiv.com
 .. _these fine people: https://github.com/plesiv/hac/contributors
+
+
+
+===========
+User Manual
+===========
+
+**hac** can be extended very easily to work with:
+
+- *any programming language* usable from the command-line,
+- *any runner* usable from the command-line (examples: *shell scripts*,
+  *Makefiles*, *ant scripts*),
+- *any site* that exposes information about contests/problems in an uniform and
+  web-accessible form (examples: `Codeforces <http://codeforces.com/>`_,
+  `Codechef <http://www.codechef.com/>`_).
+
+
+=====
+Usage
+=====
+
+Special commands that don't fetch remote data:
+
+.. code-block:: bash
+
+    $ hac --help         # show help
+    $ hac --version      # show version
+    $ hac --copy-config  # copy configuration (to ~/.config/hac by default)
+
+
+Commands that fetch remote data and process it (more info in `Examples`_):
+
+.. code-block:: bash
+
+    $ hac [options...] (prep | show) (CONTEST | PROBLEM) [PROBLEM [PROBLEM ...]]
+
+
+For up-to-date list of command-line arguments and switches check **hac**'s help
+message.
 
