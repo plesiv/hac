@@ -3,10 +3,10 @@ HAC: Helper for Algorithm Competitions
 **************************************
 
 **hac** is *extensible* and *configurable* command-line tool for algorithm
-competitions. It does:
+competitions. It:
 
-- prepares directories and source files,
-- prepares runner files (scripts used for testing solutions),
+- prepares directory structures and source files,
+- prepares runner files (scripts used to test solutions),
 - downloads test-cases.
 
 
@@ -29,7 +29,8 @@ Usage
 Example 1
 ---------
 
-**A)** For problems "A", "B" and "C" from Codeforces contest #527 prepare:
+**A)** For problems "A", "B" and "C" from `Codeforces contest #527
+<http://codeforces.com/contest/527>`_ prepare:
 
 - source file from *cpp* highest priority template (has lowest *X* among
   *cpp.X* language templates),
@@ -88,17 +89,17 @@ Support
 
 **Sites:**
 
-+-----------------------+----------------------+----------------------+
-| Site \ Problems from  |       Contest        |        Archive       |
-+=======================+======================+======================+
-|     Codeforces.com    |        **YES**       |       **NO**         |
-+-----------------------+----------------------+----------------------+
-|     Rosalind.info     |                      |       **YES**        |
-+-----------------------+----------------------+----------------------+
-|     Spoj.com          |                      |       **PARTIAL**    |
-+-----------------------+----------------------+----------------------+
-|     Codechef.com      |        **NO**        |       **NO**         |
-+-----------------------+----------------------+----------------------+
++------------------------------------------------+----------------------+----------------------+
+| Site \\ Fetching problems from                 |       Contest        |        Archive       |
++================================================+======================+======================+
+| `Codeforces.com <http://codeforces.com/>`_     |        **YES**       |       **NO**         |
++------------------------------------------------+----------------------+----------------------+
+| `Rosalind <http://rosalind.info/>`_            |                      |       **YES**        |
++------------------------------------------------+----------------------+----------------------+
+| `Sphere online judge <http://www.spoj.com/>`_  |                      |       **PARTIAL**    |
++------------------------------------------------+----------------------+----------------------+
+| `Codechef <https://www.codechef.com/>`_        |        **NO**        |       **NO**         |
++------------------------------------------------+----------------------+----------------------+
 
 
 **Runner/language combinations:**
@@ -116,35 +117,97 @@ Configuration
 -------------
 
 User specific configuration is located in ``~/.config/hac`` directory by
-default (set ``HAC_CONFIG_DIR`` environment variable to change it). What
-follows are approaches of how to setup user specific configuration.
+default (set ``HAC_CONFIG_DIR`` environment variable to change this). 
 
-**[NOT recommended]** Copy all default-configuration to user's configuration
-directory and customize copied files:
-
-.. code-block:: bash
-
-    $ hac --copy-config
-    $ # ... edit files in ~/.config/hac
-
-
-**[Recommended]** Approach that prevents possible over-shadowing of updated
-default-configuration files (when **hac** gets updated):
+To configure **hac**:
 
 - copy all default-configuration files in a temporary directory,
-- customize files in a temporary directory,
-- move *only customized* files to ``~/.config/hac``,
-- remove temporary directory.
 
 .. code-block:: bash
 
     $ HAC_CONFIG_DIR=~/temp_config hac --copy-config
-    $ cd ~/temp_config
-    $ # ... a) customize interesting files in ~/temp_config
-    $ # ... b) move *only* customized files to ~/.config/hac
+
+- customize files in a temporary directory ``~/temp_config``,
+- move *only customized* files to ``~/.config/hac``, e.g.
+
+.. code-block:: bash
+
+    $ mkdir -p ~/.config/hac
+    $ cp ~/temp_config/hacrc ~/.config/hacrc
+
+- remove temporary directory.
+
+.. code-block:: bash
+
     $ rm -r ~/temp_config
 
+This approach is desirable because only configuration files that differ from
+the default ones should be present in user's configuration directory, so that
+only selected default configuration will be overshadowed.
 
+
+
+==========
+Contribute
+==========
+
+Contributions are welcome! Please see `CONTRIBUTING
+<https://github.com/plesiv/hac/blob/master/CONTRIBUTING.rst>`_.
+
+
+
+==========
+Change Log
+==========
+
+Please see `CHANGELOG <https://github.com/plesiv/hac/blob/master/CHANGELOG.rst>`_.
+
+
+
+=======
+Licence
+=======
+
+Please see `LICENSE <https://github.com/plesiv/hac/blob/master/LICENSE>`_.
+
+
+
+===========
+User Manual
+===========
+
+**hac** can be extended very easily to work with:
+
+- *any programming language* usable from the command-line,
+- *any runner* usable from the command-line (examples: *shell scripts*,
+  *Makefiles*, *ant scripts*),
+- *any site* that exposes information about contests/problems in an uniform and
+  web-accessible form (examples: `Codeforces <http://codeforces.com/>`_,
+  `Codechef <http://www.codechef.com/>`_).
+
+
+=====
+Usage
+=====
+
+Special commands that don't fetch remote data:
+
+.. code-block:: bash
+
+    $ hac --help         # show help
+    $ hac --version      # show version
+    $ hac --copy-config  # copy configuration (to ~/.config/hac by default)
+
+
+Commands that fetch remote data and process it (more info in `Examples`_):
+
+.. code-block:: bash
+
+    $ hac [options...] (prep | show) (CONTEST | PROBLEM) [PROBLEM [PROBLEM ...]]
+
+
+For up-to-date list of command-line arguments and switches check **hac**'s help
+message.
 
 ==================
 How **hac** works?
@@ -247,81 +310,4 @@ When **hac** is run to prepare the environment (``prep`` command):
   directories *unchanged*,
 - selected runner templates are *processed (interpolated)* with corresponding
   template-parts before being moved to destination directories.
-
-
-
-=======
-Authors
-=======
-
-`Zoran Plesivčak`_ created **hac** and `these fine people`_ have contributed.
-
-
-
-==========
-Contribute
-==========
-
-Contributions are more than welcome! Please see `CONTRIBUTING
-<https://github.com/plesiv/hac/blob/master/CONTRIBUTING.rst>`_.
-
-
-
-==========
-Change Log
-==========
-
-Please see `CHANGELOG <https://github.com/plesiv/hac/blob/master/CHANGELOG.rst>`_.
-
-
-
-=======
-Licence
-=======
-
-Please see `LICENSE <https://github.com/plesiv/hac/blob/master/LICENSE>`_.
-
-
-.. _pip: http://www.pip-installer.org/en/latest/index.html
-.. _Zoran Plesivčak: http://plesiv.com
-.. _these fine people: https://github.com/plesiv/hac/contributors
-
-
-
-===========
-User Manual
-===========
-
-**hac** can be extended very easily to work with:
-
-- *any programming language* usable from the command-line,
-- *any runner* usable from the command-line (examples: *shell scripts*,
-  *Makefiles*, *ant scripts*),
-- *any site* that exposes information about contests/problems in an uniform and
-  web-accessible form (examples: `Codeforces <http://codeforces.com/>`_,
-  `Codechef <http://www.codechef.com/>`_).
-
-
-=====
-Usage
-=====
-
-Special commands that don't fetch remote data:
-
-.. code-block:: bash
-
-    $ hac --help         # show help
-    $ hac --version      # show version
-    $ hac --copy-config  # copy configuration (to ~/.config/hac by default)
-
-
-Commands that fetch remote data and process it (more info in `Examples`_):
-
-.. code-block:: bash
-
-    $ hac [options...] (prep | show) (CONTEST | PROBLEM) [PROBLEM [PROBLEM ...]]
-
-
-For up-to-date list of command-line arguments and switches check **hac**'s help
-message.
 
