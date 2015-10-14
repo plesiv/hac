@@ -123,34 +123,35 @@ Support
 Configuration
 -------------
 
-User specific configuration is located in ``~/.config/hac`` directory by
-default (set ``HAC_CONFIG_DIR`` environment variable to change this). 
+User specific configuration should be placed in ``~/.config/hac`` directory by
+default (to change configuration directory you need to set ``HAC_CONFIG_DIR``
+environment variable).
 
-To configure **hac**:
+In order to configure **hac** according to your preferences:
 
-- copy all default-configuration files in a temporary directory,
+1. copy default configuration files in a temporary directory,
 
 .. code-block:: bash
 
     $ HAC_CONFIG_DIR=~/temp_config hac --copy-config
 
-- customize files in a temporary directory ``~/temp_config``,
-- move *only customized* files to ``~/.config/hac``, e.g.
+2. customize interesting files in ``~/temp_config``,
+3. move *only customized* files to ``~/.config/hac``, e.g.
 
 .. code-block:: bash
 
     $ mkdir -p ~/.config/hac
     $ cp ~/temp_config/hacrc ~/.config/hacrc
 
-- remove temporary directory.
+4. remove temporary directory.
 
 .. code-block:: bash
 
     $ rm -r ~/temp_config
 
 This approach is desirable because only configuration files that differ from
-the default ones should be present in user's configuration directory, so that
-only selected default configuration will be overshadowed.
+the default ones should be present in configuration directory, thereby
+effectively overshadowing the default configuration.
 
 
 
