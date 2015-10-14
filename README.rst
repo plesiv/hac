@@ -119,9 +119,9 @@ Support
 
 
 
--------------
+=============
 Configuration
--------------
+=============
 
 User specific configuration should be placed in ``~/.config/hac`` directory by
 default (to change configuration directory you need to set ``HAC_CONFIG_DIR``
