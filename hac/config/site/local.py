@@ -13,10 +13,29 @@ from hac.data import ISite, Contest, Problem
 
 class SiteLocal(ISite):
     """Local site processor.
+
+    >>> path1 = "/new-contest 43 3 5"
+    >>> SiteLocal.pattern_contest.search(path1).group("PROBLEM") is None
+    True
+
+    >>> path2 = "/old-contest/52 24 2 2"
+    >>> SiteLocal.pattern_contest.search(path2).group("CONTEST")
+    'old-contest'
+
+    >>> path3 = ""
+    >>> SiteLocal.pattern_contest.search(path3) is None
+    True
+
+    >>> path4 = "/"
+    >>> SiteLocal.pattern_contest.search(path4) is None
+    True
     """
 
     # Regex patterns.
-    pattern_contest = re.compile(r"/(?P<CONTEST>[^/]*)?(/(?P<PROBLEM>[^/]*))?")
+    pattern_contest = re.compile(
+        r"/(?P<CONTEST>[^/]+)"      # (effectively optional) contest identifier
+        r"(/(?P<PROBLEM>[^/]+))?"   # (optional) problem identifier
+    )
     pattern_problem = re.compile(r"[^/]+")
 
     # URL templates.
@@ -40,7 +59,7 @@ class SiteLocal(ISite):
         """
         location = urlparse(conf['location']).path or '/'
         tokens = SiteLocal.pattern_contest.search(location)
-        contest_id = tokens.group('CONTEST') or 'contest'
+        contest_id = 'local-contest' if tokens is None else tokens.group('CONTEST')
         return SiteLocal.url_template_contest.format(contest_id)
 
 
@@ -68,7 +87,7 @@ class SiteLocal(ISite):
         # Match single problem from 'location'.
         location = urlparse(conf['location']).path or '/'
         tokens = SiteLocal.pattern_contest.search(location)
-        problem_id = tokens.group('PROBLEM')
+        problem_id = tokens and tokens.group('PROBLEM')
         if problem_id:
             urls.append(url_template_problem.format(problem_id))
 
