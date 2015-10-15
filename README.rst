@@ -1,6 +1,8 @@
 **************************************
 HAC: Helper for Algorithm Competitions
 **************************************
+|license| |pypi_version| |pypi_downloads| |python_versions| |linux_build| |code_quality|
+
 
 **hac** is *extensible* and *configurable* command-line tool for algorithm
 competitions. It:
@@ -181,3 +183,28 @@ Licence
 =======
 
 Please see `LICENSE <https://github.com/plesiv/hac/blob/master/LICENSE>`_.
+
+
+.. |license| image:: https://img.shields.io/github/license/plesiv/hac.svg?style=plastic
+   :target: https://github.com/plesiv/hac/blob/master/LICENSE
+   :alt: License
+
+.. |pypi_version| image:: https://img.shields.io/pypi/v/hac.svg?style=plastic
+   :target: https://pypi.python.org/pypi/hac
+   :alt: PyPI Version
+
+.. |pypi_downloads| image:: https://img.shields.io/pypi/dm/hac.svg?style=plastic
+   :target: https://pypi.python.org/pypi/hac
+   :alt: PyPI Monthly downloads
+
+.. |python_versions| image:: https://img.shields.io/pypi/pyversions/hac.svg?style=plastic
+   :target: https://pypi.python.org/pypi/hac
+   :alt: PyPI Supported Python versions
+
+.. |linux_build| image:: https://img.shields.io/travis/plesiv/hac/master.svg?label=linux%20build&style=plastic
+   :target: http://travis-ci.org/plesiv/hac
+   :alt: Linux Build status
+
+.. |code_quality| image:: https://img.shields.io/codacy/0e405bf71d584768aabd44b82f6f4e47.svg?style=plastic
+   :target: https://www.codacy.com/app/z_2/hac/files
+   :alt: Code Quality
