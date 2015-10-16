@@ -1,7 +1,7 @@
 **************************************
 HAC: Helper for Algorithm Competitions
 **************************************
-|license| |pypi_version| |pypi_downloads| |python_versions| |linux_build| |code_quality|
+|pypi_version| |pypi_downloads| |python_versions| |linux_build| |code_quality|
 
 
 **hac** is *extensible* and *configurable* command-line tool for algorithm
@@ -184,10 +184,6 @@ Licence
 
 Please see `LICENSE <https://github.com/plesiv/hac/blob/master/LICENSE>`_.
 
-
-.. |license| image:: https://img.shields.io/github/license/plesiv/hac.svg?style=plastic
-   :target: https://github.com/plesiv/hac/blob/master/LICENSE
-   :alt: License
 
 .. |pypi_version| image:: https://img.shields.io/pypi/v/hac.svg?style=plastic
    :target: https://pypi.python.org/pypi/hac
