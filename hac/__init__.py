@@ -6,7 +6,7 @@ import sys
 
 
 __author__ = 'Zoran Plesivčak'
-__version__ = '1.0.5-devel'
+__version__ = '1.0.5'
 __license__ = 'GPLv2'
 
 
