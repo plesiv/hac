@@ -47,8 +47,8 @@ die () {
 # Pipe function for whitespace-normalization of text.
 #
 normalize_pipe() {
-    # append newline     | squeeze spaces  | squeeze newlines
-    (cat -; printf "\n") | tr -s " "       | tr -s "\n"
+    # append newline     | squeeze spaces    | squeeze newlines  | strip whitespace
+    (cat -; printf "\n") | tr -s " "         | tr -s "\n"        | sed -e 's/\s*$//' -e 's/^\s*//'
 }
 
 #
