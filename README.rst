@@ -3,6 +3,8 @@ HAC: Helper for Algorithm Competitions
 **************************************
 |pypi_version| |pypi_downloads| |python_versions| |linux_build| |code_quality|
 
+**This project needs a maintainer; please** `contact me <mailto:z@plesiv.com>`_
+**if interested!**
 
 **hac** is *extensible* and *configurable* command-line tool for algorithm
 competitions. It:

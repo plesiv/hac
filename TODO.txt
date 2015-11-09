@@ -1,0 +1,77 @@
+General
+-------
+- fix or add language template / runner combinations
+    - java
+    - pascal
+    - ruby
+    - haskell
+    - php
+    - javascript
+    - scala
+    - go
+    - perl
+    - ocaml
+    - d
+    - lua
+    - julia
+    - scheme
+    - rush
+    - octave
+- remove pycache files that appear when copy_conifg is performed
+- make sure that pyc files are not created in user's config directory
+- clean-up CLI arguments processing (take a look at: new-cli.txt)
+- clean-up help message
+- clean-up error messages
+- generate language / runner matrix in help message
+- add colors for to error messages
+- add infomation about available sites & templates in the help messages
+- add more tests
+- do tests with tox
+- detect / inform about errors in config
+- try to use some templating engine for templates (e.g. jinja) instead of the
+- support system-tests download (full test-cases)
+  cutom one used
+- better / more-readable show command
+- MAC support
+- Windows support
+- run code through pep8 & flake8
+- general clean-up of the code
+- enable un-templated runners output for trouble-shooting
+- support for fetching data through proxy
+- easier install (maybe as an executable archive)
+- configurable filenames for outputed files
+
+
+Site processors (plugins)
+-------------------------
+- Codeforces (handle urls for problems outside of competition)
+- Codechef (evaluate Javascript; handle corner-cases)
+- SPOJ (handle all corner-cases)
+- UVa
+- CodeJam
+- Hackerrank
+
+
+Site processors (general)
+-------------------------
+- cleaner decision tree on when:
+    - e.g. request for resource succeeds / fails
+- when task is selected multiple times; remove duplicates
+
+
+Documentation
+-------------
+- write DEVELOPMENT instructions
+- clean-up CONTRIBUTING
+- clean-up User's manual
+- rendering time_limit & memory_limit in runner template
+    - this will require separation of templating from plugin collection so that
+      templating can be done when site information is available as well
+
+
+Templates
+---------
+- more robust runner template
+    - graceful degradation / helpful notifications
+- measuring time, memory and source size in runners
+
